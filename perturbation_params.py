@@ -5,41 +5,11 @@ from common import getArrayZShape
 from sys import exit
 
 
-rho00 = 1.0
-#rho00 = 0.3  #second exp of inhom
-
-mediumType = "homog"
-#mediumType = "inhomog"  #variable density rho00 to test with wave packet
-if(mediumType=="inhomog"):
-	rho01 = 0.01
-	#rho01 = 1.2#second exp of inhom
-	ze = [0.5*(z0_0 + zf_0),0.5*(z0_1 + zf_1)]
-	#ze = [z0_0 + 0.7*(zf_0 - z0_0),z0_1 + 0.7*(zf_1 - z0_1)]#second exp of inhom
-	we = 0.4
-	#we = 0.5#second exp of inhom
-	#densFunc = lambda z: 1 + np.tanh((z - getArrayZShape(ze[0], ze[1], len(z[0])))/we)
-	#I have to apply func (argument function) before applying tanh: see initcond_soundwave
-	densFunc = lambda z: 1 + np.tanh(z /we)
-
-p00 = 1.0
-
-
-v00 = 0.0
-
-cs00 = math.sqrt(gamma * p00 / rho00)
-print("cs00 = %4.3f" % cs00)
-
-#v00 = - cs00 /  5.5
-#v00 =  0.5 * cs00
-#v00 = - cs00
-#v00 =  cs00
+from medium_params import mediumType
 
 A = 3.0 * 10.0 ** (-4)
 #A = 5.0 * 10.0 ** (-2)
 
-periodicType = "repeat" #used for moving plane
-#periodicType = "refl" #use it with wave packet
-#periodicType = "diff" #tried to use it with hankel 
 
 wType = "all"
 #wType = "pot"
@@ -56,10 +26,10 @@ if(timesZArgW == 1):
 	functionType = "sine" 
 	#functionType = "gauss" 
 	#functionType = "hankel" 
-	#argType = "x"
+	argType = "x"
 	#argType = "y"
 	#argType = "r"
-	argType = "d1" 
+	#argType = "d1" 
 	
 
 	if(argType == "x"):

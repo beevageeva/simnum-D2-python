@@ -1,6 +1,6 @@
 from constants import gamma
 import numpy as np
-from initcond_soundwave import lrBoundaryConditionsPresRho, lrBoundaryConditionsVel
+from boundary_conditions import lrBoundaryConditionsPresRho, lrBoundaryConditionsVel
 lrBoundaryConditions = None
 
 
