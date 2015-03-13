@@ -1,27 +1,27 @@
 gamma = 5.0/3
 
-z0 = [3.1, 3.1]
-zf = [7.4, 7.4]
-
-
+z0_0 = 3.1
+zf_0 = 7.4
+z0_1 = 3.1
+zf_1 = 7.4
 
 #domainType = "centered"   #argType = r expects a domainType = centered
-#domainType = "pos00" #use it with d1 and wave packet
-domainType = "unmodified"
+domainType = "pos00" #use it with d1 and wave packet
+#domainType = "unmodified"
 
 if domainType == "centered":
 	#centered
-	lhalf = 0.5 *  min((zf[1] - z0[1]),(zf[0] - z0[0]) )
-	z0[0] = z0[1] = -lhalf
-	zf[0] = zf[1] = lhalf
+	lhalf = 0.5 *  min((zf_1 - z0_1),(zf_0 - z0_0) )
+	z0_0 = z0_1 = -lhalf
+	zf_0 = zf_1 = lhalf
 
 
 elif domainType == "pos00":
 	#0,0
-	zf[0] = zf[0] - z0[0]
-	zf[1] = zf[1] - z0[1]
-	z0[0] = 0
-	z0[1] = 0
+	zf_0 = zf_0 - z0_0
+	zf_1 = zf_1 - z0_1
+	z0_0 = 0
+	z0_1 = 0
 
 	
 
