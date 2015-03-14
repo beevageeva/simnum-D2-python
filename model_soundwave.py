@@ -28,12 +28,12 @@ class Model:
 		self.pres = r["pres"]
 		self.rho = r["rho"]
 		self.vel = r["vel"]
-		print("--------initial pres")
-		print(self.pres)
-		print("--------initial rho")
-		print(self.rho)
-		print("--------initial  vel")
-		print(self.vel)
+		#print("--------initial pres")
+		#print(self.pres)
+		#print("--------initial rho")
+		#print(self.rho)
+		#print("--------initial  vel")
+		#print(self.vel)
 	
 		r = getInitialUcUe(self.rho, self.vel, self.pres)
 		self.uc = r['uc']

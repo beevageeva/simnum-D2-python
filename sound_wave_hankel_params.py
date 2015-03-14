@@ -4,7 +4,8 @@ from sound_wave_monochr_params import k
 
 
 def getSoundWaveFunction(k):
-	res = lambda z:  hankel1(0, k * z)
+	from perturbation_params import argFunc
+	res = lambda z:  hankel1(0, k * argFunc(z))
 	return res
 
 def getSoundWaveSymDerivFunction(z):

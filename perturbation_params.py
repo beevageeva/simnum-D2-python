@@ -21,15 +21,16 @@ functionType = "sine"
 
 
 if waveType == "lineal":	
-	argType = "x"
-	#argType = "y"
+	#argType = "x"
+	argType = "y"
 	#argType = "d1" 
 	
 
 	if(argType == "x"):
-		nx = 5.0
-		wl = zf[0] - z0[0]
-		k1 = nx / (zf[0] - z0[0])
+		nx = 1.0
+		from common import getDz0
+		wl = zf[0] - z0[0] + getDz0()
+		k1 = nx / wl
 		#k1 = nx 
 		argFunc = lambda x: k1 * x[0]
 		velFunc = lambda x: (x,np.zeros(x.shape))
@@ -37,7 +38,7 @@ if waveType == "lineal":
 	elif argType == "y":
 		wl = zf[1] - z0[1]
 		ny = 1
-		k2 = ny / (zf[1] - z0[1])
+		k2 = ny / wl
 		#k2 = ny
 		argFunc = lambda x: k2 * x[1]
 		velFunc = lambda x: (np.zeros(x.shape),x)

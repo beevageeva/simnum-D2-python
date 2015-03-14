@@ -54,21 +54,19 @@ def getFunctionFromType(functionType):
 def getInitialPresRhoVel(z):
 	from medium_params import p00, v00, cs00, rho00,  mediumType
 	from perturbation_params import A,  functionType, waveType
+	from constants import z0, zf
 
 	w = getFunctionFromType(functionType)
+	f = w(z)
 
 	if(waveType == "lineal"):
 		from perturbation_params import argFunc, velFunc
 
-		#f = w(argFunc(z))
-		f = w(z)
 
 		v1 = v00 + cs00 * A* f
 		vel = np.dstack(velFunc(v1))
 		return {'pres': p00 + gamma * p00 * A* f  , 'rho': rho00 + rho00 *A* f , 'vel': vel }
 	elif(waveType == "radial"):
-		r = np.sqrt(z[0]**2+z[1]**2)
-		f = w(r)
 		#now w is the velocity potential # gradient
 		deriv = getGradientFunctionSym(functionType)
 		if(deriv is None):
@@ -79,7 +77,7 @@ def getInitialPresRhoVel(z):
 			dz1 = getDz1()
 			fder =  np.gradient(f,math.sqrt(dz0**2 + dz1**2) )
 		else:
-			fder = deriv(r)	
+			fder = deriv(np.sqrt(z[0]**2+z[1]**2))	
 		from math import sqrt
 		v1 = (v00 + A * fder) * sqrt(2)			
 		vel = np.dstack(v1, v1)
