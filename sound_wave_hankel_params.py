@@ -1,21 +1,32 @@
 from scipy.special import hankel1
+import numpy as np
 
 from sound_wave_monochr_params import k
 
 
 def getSoundWaveFunction(k):
 	from perturbation_params import argFunc
-	res = lambda z:  hankel1(0, k * argFunc(z))
-	return res
+	def resFunc(z): 
+		res =  hankel1(0, k * argFunc(z))
+		smoothInterp(z, res)
+		#multiply by a window function
+		n = len(z[0]) - 1
+		windowFunction1D = np.blackman(n+1)
+		windowFunction2D = np.outer(windowFunction1D, windowFunction1D)
+		return res * windowFunction2D
+		#return res
+	return resFunc
 
-def getSoundWaveSymDerivFunction(z):
+def getSoundWaveSymDerivFunction2(z):
 	 return -k * hankel1(1, k * z)
 
 def smoothInterp(z, res):
 	from scipy.interpolate import CloughTocher2DInterpolator
-	RI = 1 #mask a circle around 0,0 -> assumes a centered domain with radius RI and sets  the values here by intterpolation
-	n = len(z[0]) - 1
-	y,x=np.ogrid[-n / 2: n/2 + 1, -n / 2: n/2 + 1]
+	RI = 10 #mask a circle around 0,0 -> assumes a centered domain with radius RI and sets  the values here by intterpolation
+	#n = len(z[0]) - 1
+	#y,x=np.ogrid[-n / 2: n/2 + 1, -n / 2: n/2 + 1]
+	n = len(z[0]) 
+	y,x=np.ogrid[-n / 2: n/2 , -n / 2: n/2 ]
 	mask = x**2+y**2 < RI**2
 	nMask = ~mask
 	acl = np.dstack((z[0][nMask], z[1][nMask]))
@@ -27,7 +38,13 @@ def smoothInterp(z, res):
 #			resIntImag = fimag(z[0][mask], z[1][mask])
 #			res[mask] = resIntReal + 1j * resIntImag
 	f = CloughTocher2DInterpolator(acl, res[nMask])
+	print("n=%d" % n)
 	res[mask] = f(z[0][mask], z[1][mask])
+	for i in range(n/2):
+		for j in range(n/2):
+			res[n/2-i][n/2+j] = res[n/2+i][n/2+j]
+			res[n/2-i][n/2-j] = res[n/2+i][n/2+j]
+			res[n/2+i][n/2-j] = res[n/2+i][n/2+j]
 
 def w1(z, z0):
 	#r = k * func(z-z0)

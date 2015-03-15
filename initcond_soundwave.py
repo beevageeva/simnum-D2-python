@@ -75,13 +75,20 @@ def getInitialPresRhoVel(z):
 			from math import sqrt	
 			dz0 = getDz0()
 			dz1 = getDz1()
-			fder =  np.gradient(f,math.sqrt(dz0**2 + dz1**2) )
+			grad =  np.gradient(f, dz0, dz1 )
+			fder = np.sqrt(grad[0]**2 + grad[1]**2)
 		else:
-			fder = deriv(np.sqrt(z[0]**2+z[1]**2))	
+			fder = deriv(np.sqrt(z[0]**2+z[1]**2))
+		print("f")	
+		print(f.shape)	
+		print("fder")	
+		print(fder.shape)	
 		from math import sqrt
-		v1 = (v00 + A * fder) * sqrt(2)			
-		vel = np.dstack(v1, v1)
-		return {'pres': p00  , 'rho': rho00 , 'vel': vel }
+		v1 = (v00 + A * np.real(fder)) * sqrt(2)			
+		vel = np.dstack((v1, v1))
+		from perturbation_params import omega	
+		presPert = A * rho00* omega * np.real(1j  * f)
+		return {'pres': p00 + presPert , 'rho': rho00  + presPert / (cs00**2), 'vel': vel }
 
 
 

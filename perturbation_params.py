@@ -10,20 +10,20 @@ from medium_params import mediumType
 A = 3.0 * 10.0 ** (-4)
 #A = 5.0 * 10.0 ** (-2)
 
-waveType = "lineal"
-#waveType = "radial"
+#waveType = "lineal"
+waveType = "radial"
 #functionType = "wavepacket"
-functionType = "sine" 
+#functionType = "sine" 
 #functionType = "gauss" 
-#functionType = "hankel" 
+functionType = "hankel" 
 
 
 
 
 if waveType == "lineal":	
 	#argType = "x"
-	argType = "y"
-	#argType = "d1" 
+	#argType = "y"
+	argType = "d1" 
 	
 
 	if(argType == "x"):
@@ -37,7 +37,7 @@ if waveType == "lineal":
 		
 	elif argType == "y":
 		wl = zf[1] - z0[1]
-		ny = 1
+		ny = 3.0
 		k2 = ny / wl
 		#k2 = ny
 		argFunc = lambda x: k2 * x[1]
@@ -62,7 +62,7 @@ elif waveType == "radial":
 	if mediumType == "inhomog":
 		print("radial not impl for inhomog")
 		exit(0)
-	from soundwave_medium_params import cs00
+	from medium_params import cs00
 	omega = cs00 * k
 
 
