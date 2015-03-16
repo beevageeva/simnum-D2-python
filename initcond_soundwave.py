@@ -79,13 +79,30 @@ def getInitialPresRhoVel(z):
 			fder = np.sqrt(grad[0]**2 + grad[1]**2)
 		else:
 			fder = deriv(np.sqrt(z[0]**2+z[1]**2))
-		print("f")	
-		print(f.shape)	
-		print("fder")	
-		print(fder.shape)	
+		#print("f")	
+		#print(f.shape)	
+		#print("fder")	
+		#print(fder.shape)	
 		from math import sqrt
 		v1 = (v00 + A * np.real(fder)) * sqrt(2)			
 		vel = np.dstack((v1, v1))
+		n = len(z[0])
+		for i in range(n/2):
+			for j in range(n/2):
+				#change sign and assure symmetric
+#				vel[n/2-i-1][n/2-j-1][0] = -vel[n/2+i][n/2+j][0]
+#				vel[n/2-i-1][n/2-j-1][1] = -vel[n/2+i][n/2+j][1]
+#				vel[n/2-i-1][n/2+j][0] = vel[n/2+i][n/2+j][0]
+#				vel[n/2-i-1][n/2+j][1] = -vel[n/2+i][n/2+j][1]
+#				vel[n/2+i][n/2-j-1][0] = -vel[n/2+i][n/2+j][0]
+#				vel[n/2+i][n/2-j-1][1] = vel[n/2+i][n/2+j][1]
+
+				#only change sign
+				vel[n/2-i-1][n/2-j-1][0] *= -1
+				vel[n/2-i-1][n/2-j-1][1] *= -1
+				vel[n/2-i-1][n/2+j][1] *= -1
+				vel[n/2+i][n/2-j-1][0] *= -1
+				
 		from perturbation_params import omega	
 		presPert = A * rho00* omega * np.real(1j  * f)
 		return {'pres': p00 + presPert , 'rho': rho00  + presPert / (cs00**2), 'vel': vel }

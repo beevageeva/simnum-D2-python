@@ -46,6 +46,9 @@ class VisualPlot:
 		ax.set_ylabel("y")
 		ax.set_title("%s%d"% (title, subplotNumber))
 		ax.grid(True)
+		#np.set_printoptions(threshold='nan')
+		#print("addAxisColor: values")
+		#print(values)
 		ax.imshow(values)
 		ax.relim()
 		ax.autoscale_view(True,True,True)
@@ -89,6 +92,7 @@ class VisualPlot:
 		if testKeyInDict("color", plots):
 			plt.figure(4)
 			self.addAxisColor(arrayToAppendAxes, title, vals, n , i, subplotNumber,colspan)
+			plt.draw()
 			if plotAnalitical:
 				plt.figure(5)
 				self.addAxisColor(arrayToAppendAxes, ("%s-an" % title), vals, n , i, subplotNumber,colspan)
@@ -195,8 +199,8 @@ class VisualPlot:
 		plt.show(block=False)
 
 	def afterInit(self):
-		import time
-		time.sleep(20)
+		#import time
+		#time.sleep(20)
 		#save initial figures to files
 		if saveImages:
 			numFig = 0

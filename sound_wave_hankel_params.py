@@ -4,21 +4,31 @@ import numpy as np
 from sound_wave_monochr_params import k
 
 
+smoothInterp = False
+#smoothInterp = True
+#withWindow = False
+withWindow = True
+
+
 def getSoundWaveFunction(k):
 	from perturbation_params import argFunc
 	def resFunc(z): 
 		res =  hankel1(0, k * argFunc(z))
-		smoothInterp(z, res)
-		#multiply by a window function
-		n = len(z[0]) - 1
-		windowFunction1D = np.blackman(n+1)
-		windowFunction2D = np.outer(windowFunction1D, windowFunction1D)
-		return res * windowFunction2D
-		#return res
+		if smoothInterp:
+			smoothInterp(z, res)
+		if withWindow:
+			#multiply by a window function
+			windowFunction1D = np.blackman(len(z[0]))
+			windowFunction2D = np.outer(windowFunction1D, windowFunction1D)
+			return res * windowFunction2D
+		else:
+			return res
 	return resFunc
 
-def getSoundWaveSymDerivFunction2(z):
-	 return -k * hankel1(1, k * z)
+#if smooth interp or multiplied by a window function this will not be the gradient anymore
+if not smoothInterp and not withWindow:
+	def getSoundWaveSymDerivFunction(z):
+		 return -k * hankel1(1, k * z)
 
 def smoothInterp(z, res):
 	from scipy.interpolate import CloughTocher2DInterpolator
@@ -42,9 +52,9 @@ def smoothInterp(z, res):
 	res[mask] = f(z[0][mask], z[1][mask])
 	for i in range(n/2):
 		for j in range(n/2):
-			res[n/2-i][n/2+j] = res[n/2+i][n/2+j]
-			res[n/2-i][n/2-j] = res[n/2+i][n/2+j]
-			res[n/2+i][n/2-j] = res[n/2+i][n/2+j]
+			res[n/2-i-1][n/2+j] = res[n/2+i][n/2+j]
+			res[n/2-i-1][n/2-j-1] = res[n/2+i][n/2+j]
+			res[n/2+i][n/2-j-1] = res[n/2+i][n/2+j]
 
 def w1(z, z0):
 	#r = k * func(z-z0)
