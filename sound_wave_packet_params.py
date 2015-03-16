@@ -9,9 +9,11 @@
 import numpy as np
 from constants import z0, zf
 from math import pi,sqrt
+from perturbation_params import argType
 
 k0 = 60.0
-zc = z0 + 0.2 * (zf - z0)
+zc = [z0[0] + 0.2 * (zf[0] - z0[0]), z0[1] + 0.2 * (zf[1] - z0[1])]
+
 W = 0.05
 
 from soundwave_medium_params import mediumType
@@ -40,7 +42,8 @@ def getSoundWaveGaussFunction(zc, W):
 
 	"""
 	def gaussFunction(z):
-		t2 = np.subtract(z,zc) ** 2
+		from common import getArrayZShape
+		t2 = argFunc(z - getArrayZShape(zc[0], zc[1])) ** 2
 		return np.exp(-np.divide(t2, W**2))	 
 	return gaussFunction
 
@@ -62,7 +65,9 @@ def getSoundWaveFunction(k0, zc, W):
 
 	"""
 	def gaussPacketFunction(z):
-		return np.multiply(getSoundWaveGaussFunction(zc, W)(z),  np.cos(2.0 * pi * k0 * (z-z0)/ (zf - z0) ) )
+		from common import getArrayZShape
+
+		return np.multiply(getSoundWaveGaussFunction(zc, W)(z),  np.cos(2.0 * pi * k0 * argFunc(z-getArrayZShape(z0[0], z0[1])) ) )
 	return gaussPacketFunction
 
 

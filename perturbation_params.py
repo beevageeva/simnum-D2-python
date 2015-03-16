@@ -10,12 +10,12 @@ from medium_params import mediumType
 A = 3.0 * 10.0 ** (-4)
 #A = 5.0 * 10.0 ** (-2)
 
-#waveType = "lineal"
-waveType = "radial"
-#functionType = "wavepacket"
+waveType = "lineal"
+#waveType = "radial"
+functionType = "wavepacket"
 #functionType = "sine" 
 #functionType = "gauss" 
-functionType = "hankel" 
+#functionType = "hankel" 
 
 
 
