@@ -15,5 +15,5 @@ plots = {"3d": False, "dim0": [0.5 * (zf[0] + z0[0]), False], "dim1": [0.5 * (zf
 plotVelFFT = False
 #plotVelFFT = True
 
-#plotAnalitical = True
-plotAnalitical = False
+plotAnalitical = True
+#plotAnalitical = False

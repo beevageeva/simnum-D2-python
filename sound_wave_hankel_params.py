@@ -4,12 +4,17 @@ import numpy as np
 from sound_wave_monochr_params import k
 
 
-smoothInterp = False
-#smoothInterp = True
+#smoothInterp = False
+smoothInterp = True
 #withWindow = False
 withWindow = True
+#useAnDer = True
+useAnDer = False
 
-
+"""
+	returns the sondWaveFunction
+	Note I have to apply here argFunc from perturbation_params becuase soemtimes I have to apply it to some other arg as z0
+"""
 def getSoundWaveFunction(k):
 	from perturbation_params import argFunc
 	def resFunc(z): 
@@ -26,9 +31,25 @@ def getSoundWaveFunction(k):
 	return resFunc
 
 #if smooth interp or multiplied by a window function this will not be the gradient anymore
-if not smoothInterp and not withWindow:
+#if not smoothInterp and not withWindow:
+if useAnDer:
+	"""
+		returns the nalytic derivative of soundWaveFunction
+		Note I have to apply here argFunc from perturbation_params
+	"""
 	def getSoundWaveSymDerivFunction(z):
-		 return -k * hankel1(1, k * z)
+		from perturbation_params import argFunc
+		res =  hankel1(1, k * argFunc(z))
+		if smoothInterp:
+			smoothInterp(z, res)
+		if withWindow:
+			#multiply by a window function
+			windowFunction1D = np.blackman(len(z[0]))
+			windowFunction2D = np.outer(windowFunction1D, windowFunction1D)
+			res *= windowFunction2D
+		return -k * res
+
+
 
 def smoothInterp(z, res):
 	from scipy.interpolate import CloughTocher2DInterpolator
@@ -48,7 +69,7 @@ def smoothInterp(z, res):
 #			resIntImag = fimag(z[0][mask], z[1][mask])
 #			res[mask] = resIntReal + 1j * resIntImag
 	f = CloughTocher2DInterpolator(acl, res[nMask])
-	print("n=%d" % n)
+	#print("n=%d" % n)
 	res[mask] = f(z[0][mask], z[1][mask])
 	for i in range(n/2):
 		for j in range(n/2):
