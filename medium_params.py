@@ -12,12 +12,21 @@ mediumType = "homog"
 #mediumType = "inhomog"  #variable density rho00 to test with wave packet
 
 if(mediumType=="homog"):
+	#rho00 = 2.0
+	#rho00 = 0.5
 	rho00 = 1.0
 	cs00 = math.sqrt(gamma * p00 / rho00)
 
 elif(mediumType=="inhomog"):
-	rho00 = 1.0
-	rho01 = 0.01
+	inhomogSubtype = 1
+	#inhomogSubtype = 2
+	if inhomogSubtype == 1:
+		rho00 = 1.0
+		rho01 = 0.01
+	elif inhomogSubtype == 2:
+		rho00 = 0.3
+		rho01 = 1.2
+	
 	#rho00 = 0.3  #second exp of inhom
 	#rho01 = 1.2#second exp of inhom
 	ze = [0.5*(z0[0] + zf[0]),0.5*(z0[1] + zf[1])]
@@ -28,9 +37,23 @@ elif(mediumType=="inhomog"):
 	#I have to apply func (argument function) before applying tanh: see initcond_soundwave
 	densFunc = lambda z: 1 + np.tanh(z /we)
 	from common import getArrayZShape
-	from perturbation_params import densargfunc	
-	def rho00(z):
-		return rho00 + 0.5 * (rho01-rho00) * densFunc(densargfunc(z - getArrayZShape(ze[0], ze[1], len(z[0]))))
+	#like in old?
+	from perturbation_params import argFunc, waveType
+	if waveType == "lineal":
+		from perturbation_params import argType
+		if argType == "d1":
+			from perturbation_params import k1,k2,modk
+			densargFunc = lambda x: k1/modk * x[0] + k2/modk * x[1]	
 	
-	cs00 = lambda(z): np.sqrt(gamma * p00 / densFunc(z))
+	
+	#just argFunc delete above 
+	#densargFunc = argFunc
+	#densargFunc = lambda z: z[0] #horrizontal
+	
+
+	
+	def rho0(z):
+		return rho00 + 0.5 * (rho01-rho00) * densFunc(densargFunc(z - getArrayZShape(ze[0], ze[1], len(z[0]))))
+	
+	cs00 = lambda(z): np.sqrt(gamma * p00 / densFunc(densargFunc(z)))
 

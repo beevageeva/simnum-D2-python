@@ -29,8 +29,8 @@ elif(mediumType=="inhomog"):
 	densFunc = lambda z: 1 + np.tanh(z /we)
 	from common import getArrayZShape
 	from perturbation_params import densargfunc	
-	def rho00(z):
+	def rho0(z):
 		return rho00 + 0.5 * (rho01-rho00) * densFunc(densargfunc(z - getArrayZShape(ze[0], ze[1], len(z[0]))))
 	
-	cs00 = lambda(z): np.sqrt(gamma * p00 / densFunc(z))
+	cs00 = lambda(z): np.sqrt(gamma * p00 / densFunc(densargfunc(z)))
 

@@ -8,8 +8,8 @@ smoothInterp = False
 #smoothInterp = True
 withWindow = False
 #withWindow = True
-useAnDer = True
-#useAnDer = False
+#useAnDer = True
+useAnDer = False
 
 """
 	returns the sondWaveFunction
@@ -20,7 +20,7 @@ def getSoundWaveFunction(k):
 	def resFunc(z): 
 		res =  hankel1(0, k * argFunc(z))
 		if smoothInterp:
-			smoothInterp(z, res)
+			smoothInterpCl(z, res)
 		if withWindow:
 			#multiply by a window function
 			windowFunction1D = np.blackman(len(z[0]))
@@ -41,7 +41,7 @@ if useAnDer:
 		from perturbation_params import argFunc
 		res =  hankel1(1, k * argFunc(z))
 		if smoothInterp:
-			smoothInterp(z, res)
+			smoothInterpCl(z, res)
 		if withWindow:
 			#multiply by a window function
 			windowFunction1D = np.blackman(len(z[0]))
@@ -51,7 +51,7 @@ if useAnDer:
 
 
 
-def smoothInterp(z, res):
+def smoothInterpCl(z, res):
 	from scipy.interpolate import CloughTocher2DInterpolator
 	RI = 10 #mask a circle around 0,0 -> assumes a centered domain with radius RI and sets  the values here by intterpolation
 	#n = len(z[0]) - 1
@@ -59,6 +59,8 @@ def smoothInterp(z, res):
 	n = len(z[0]) 
 	y,x=np.ogrid[-n / 2: n/2 , -n / 2: n/2 ]
 	mask = x**2+y**2 < RI**2
+	print("MASK")
+	print(mask)
 	nMask = ~mask
 	acl = np.dstack((z[0][nMask], z[1][nMask]))
 	acl = acl[0] #TODO why

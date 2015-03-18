@@ -12,13 +12,17 @@ from scipy.fftpack import fft,fftfreq#forFourierTransform
 
 from notifier_params import plots, plotAnalitical
 
-#saveImages = True
-saveImages = False
+saveImages = True
+#saveImages = False
 
 
 #ylim = {"pres":{ "maxY": 1.0005, "minY": 0.9995} , "vel" : { "maxY": 0.00035, "minY": -0.00035}, "rho":{ "maxY": 1.0004, "minY": 0.9996}} 
+ylim = {"pres":{ "maxY": 1.0003, "minY": 0.9997} , "vel" : { "maxY": 0.00025, "minY": -0.00025}, "rho":{ "maxY": 1.0003, "minY": 0.9997}} 
+#ylim = {"pres":{ "maxY": 1.0003, "minY": 0.9997} , "vel" : { "maxY": 0.00025, "minY": -0.00025}, "rho":{ "maxY": 0.5002, "minY": 0.4998}} 
+#ylim = {"pres":{ "maxY": 1.0003, "minY": 0.9997} , "vel" : { "maxY": 0.00025, "minY": -0.00025}, "rho":{ "maxY": 2.0002, "minY": 1.9998}} 
 #xlim = {"minX" : 0, "maxX" : 4.3}
-ylim = None
+#ylim = None
+xlim = None
 
 	
 #because methods are different in python3 and python2
@@ -89,6 +93,36 @@ class VisualPlot:
 				self.maxPoints["dim1"]["%s%d" % (title, subplotNumber)] = markMaxValue
 			self.addAxisProj(ax, title, values, markMaxValue)
 			arrayToAppendAxes.append(ax)
+
+		if hasattr(self, "projMask"):
+			if(vals.ndim == 2):
+				values = vals[self.projMask]
+			else:
+				values = vals[self.projMask, subplotNumber]
+			plt.figure(6)
+			if(colspan):
+				ax = plt.subplot2grid((n,2), (i,subplotNumber), colspan=2)
+			else:
+				ax = plt.subplot2grid((n,2), (i,subplotNumber))
+			markMaxValue = None
+			linez = np.dstack((self.z[0][self.projMask], self.z[1][self.projMask]))
+			linez = linez[0]	
+			newz = np.sqrt(  (linez[:,0] - linez[0][0])**2 + (linez[:,1] - linez[0][1])**2  )
+#			print("addProjAxis linez")
+#			print(linez)
+#			print("z[0][0]")
+#			print(self.z[0][0])
+#			print(self.z[0][0].shape)
+#			print("newz")
+#			print(newz)
+#			print(newz.shape)
+			if(plots["line"][1]):
+				markMaxIndex = np.argmax(values)
+				markMaxValue = newz[markMaxIndex]
+				self.maxPoints["line"]["%s%d" % (title, subplotNumber)] = markMaxValue
+			self.addAxisProj(ax, title, values, markMaxValue, newz)
+			arrayToAppendAxes.append(ax)
+
 		if testKeyInDict("color", plots):
 			plt.figure(4)
 			self.addAxisColor(arrayToAppendAxes, title, vals, n , i, subplotNumber,colspan)
@@ -100,18 +134,24 @@ class VisualPlot:
 
 
 	
-	def addAxisProj(self, ax, title, vals, markMaxValue = None):
+	def addAxisProj(self, ax, title, vals, markMaxValue = None, newz = None):
+		if newz is None:
+			newz = self.z[0][0]
 		ax.set_xlabel("z")
 		ax.set_ylabel(title)
 		ax.grid(True)
-		ax.plot(self.z[0][0], vals)
-		if(markMaxValue):
+		ax.plot(newz, vals)
+		if(not markMaxValue is None):
 			ax.vlines(markMaxValue, np.min(vals[0]) if plotAnalitical else np.min(vals), np.max(vals[0]) if plotAnalitical else np.max(vals), color='b', label="max")
 			#ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 		if(ylim):
 			ax.set_ylim(ylim[title]["minY"],ylim[title]["maxY"])
-			ax.set_xlim(xlim["minX"],xlim["maxX"])
 			ax.yaxis.set_major_formatter(FormatStrFormatter('%.4f'))
+			if xlim:
+				ax.set_xlim(xlim["minX"],xlim["maxX"])
+			else:
+				ax.autoscale_view(True,True,False)
+			
 		else:
 			ax.relim()
 			ax.autoscale_view(True,True,True)
@@ -147,6 +187,26 @@ class VisualPlot:
 				fig = plt.figure(3)
 				fig.suptitle("Dim1 z0=%4.3f" % plots["dim1"][0])
 				self.dim1ProjIndex = getZIndex1(plots["dim1"][0])
+				plt.get_current_fig_manager().window.wm_geometry("1000x900+50+50")
+				fig.subplots_adjust(right=0.8)
+				self.figures.append(fig)
+			if testKeyInDict("line", plots):
+				if plots["line"][1]:
+					self.maxPoints["line"] = {}
+				fig = plt.figure(6)
+				fig.suptitle("Line %s" % str(plots["line"][0]))
+				n = len(z[0])
+				y,x=np.ogrid[-n / 2: n/2 , -n / 2: n/2 ]
+				self.projMask = plots["line"][0](x,y)
+#				print("************visual_plot PROJMASK")
+#				print(self.projMask)
+#				print("shape")
+#				print(self.projMask.shape)
+#				print("************visual_plot z[0]")
+#				print(z[0])
+#				print("shape")
+#				print(z[0].shape)
+
 				plt.get_current_fig_manager().window.wm_geometry("1000x900+50+50")
 				fig.subplots_adjust(right=0.8)
 				self.figures.append(fig)
@@ -244,23 +304,37 @@ class VisualPlot:
 		ax.relim()
 		ax.autoscale_view(True,True,True)
 
-	def updateAxisProj(self, ax, title, vals, markMaxValue = None, maxLegend = None):	
+	def updateAxisProj(self, ax, title, vals, markMaxValue = None, maxLegend = None, newz = None):
+		if newz is None:
+			newz =  self.z[0][0]	
 		ax.cla()
 		ax.set_xlabel("z")
 		ax.set_ylabel(title)
 		if(plotAnalitical):
-			ax.plot(self.z[0][0],  vals[0], label="num")
-			ax.plot(self.z[0][0],  vals[1], color="r", label="an")
+			ax.plot(newz,  vals[0], label="num")
+			ax.plot(newz,  vals[1], color="r", label="an")
 		else:
-			ax.plot(self.z[0][0],  vals)
+#			print("updateAxisProj: title %s " % title)	
+#			print("newz")
+#			print(newz)
+#			print("newz shape")
+#			print(newz.shape)
+#			print("vals")
+#			print(vals)
+#			print("vals shape")
+#			print(vals.shape)
+			ax.plot(newz,  vals)
 		if(markMaxValue):
 			ax.vlines(markMaxValue, np.min(vals[0]) if plotAnalitical else np.min(vals), np.max(vals[0]) if plotAnalitical else np.max(vals), color='b', label=maxLegend)
 		ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 		ax.grid(True)
 		if(ylim):
 			ax.set_ylim(ylim[title]["minY"],ylim[title]["maxY"])
-			ax.set_xlim(xlim["minX"],xlim["maxX"])
 			ax.yaxis.set_major_formatter(FormatStrFormatter('%.4f'))
+			if xlim:
+				ax.set_xlim(xlim["minX"],xlim["maxX"])
+			else:
+				ax.autoscale_view(True,True,False)
 		else:
 			ax.relim()
 			ax.autoscale_view(True,True,True)
@@ -311,6 +385,33 @@ class VisualPlot:
 				self.maxPoints["dim1"]["%s%d" % (title, index)] = markMaxValue
 			self.updateAxisProj(axesArray[ni], "%s" %(title), values, markMaxValue, markMaxTitle)
 			ni+=1
+
+		if hasattr(self, "projMask"):
+			if(vdim == 2):
+				values =  [vals[0][self.projMask], vals[1][self.projMask]] if plotAnalitical else vals[self.projMask]
+				if not plotAnalitical:	
+					print("MASK UPDATE PROJ AXIS")
+					print(np.max(vals))
+					print("max on values proj")
+					print(np.max(values))
+			else:
+				values = [vals[0][:,:,index][self.projMask], vals[1][:,:,index][self.projMask]]  if plotAnalitical else vals[:,:,index][self.projMask]
+			markMaxValue = None
+			markMaxTitle = None
+			linez = np.dstack((self.z[0][self.projMask], self.z[1][self.projMask]))
+			linez = linez[0]	
+			newz = np.sqrt(  (linez[:,0] - linez[0][0])**2 + (linez[:,1] - linez[0][1])**2  )
+			
+			if(plots["line"][1]):
+				markMaxIndex = np.argmax(values[0]) if plotAnalitical else np.argmax(values)
+				markMaxValue = newz[markMaxIndex]
+				#TODO speed periodic for line
+				#maxSpeed = getSpeedPeriodic1(markMaxValue, self.maxPoints["line"]["%s%d" % (title, index)], dt)	
+				#markMaxTitle = "ms= %4.3f" % maxSpeed
+				self.maxPoints["line"]["%s%d" % (title, index)] = markMaxValue
+			self.updateAxisProj(axesArray[ni], "%s" %(title), values, markMaxValue, markMaxTitle, newz)
+			ni+=1
+
 		if testKeyInDict("color", plots):
 			if(vdim == 2):
 				values = vals[0] if plotAnalitical else vals

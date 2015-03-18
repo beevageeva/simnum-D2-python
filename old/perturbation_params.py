@@ -19,8 +19,8 @@ if(wType=="pot" and mediumType == "inhomog"):
 	sys.exit(0)
 
 
-timesZArgW = 1 #1(sine, gauss, hankel test - with wType = "pot") or 2(wave packet)
-#timesZArgW = 2 
+#timesZArgW = 1 #1(sine, gauss, hankel test - with wType = "pot") or 2(wave packet)
+timesZArgW = 2 
 
 if(timesZArgW == 1):
 	functionType = "sine" 
@@ -163,8 +163,10 @@ elif(timesZArgW == 2):
 	#k0 = [15.0,15.0] #second exp of inhom
 	k = [k0[0] * kf[0], k0[1] * kf[1]]
 	zc = [0.5 * (z0_0+ zf_0), 0.5 * (z0_1 + zf_1)] #in the middle
+	#zc = [z0_0 + 0.2 * (zf_0 - z0_0), z0_1 + 0.2 * (zf_1 - z0_1)] #first exp inhom
 	#zc = [z0_0 + (3.0/20.0)*(zf_0 - z0_0),z0_1 + (3.0/20.0)*(zf_1 - z0_1) ] #second exp of inhom
 	W = 0.05
+	#W = 0.25
 	#W = 0.25#second exp of inhom
 	def w(z, nwav=k0):
 		n = len(z[0])

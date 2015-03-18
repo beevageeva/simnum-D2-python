@@ -52,7 +52,8 @@ def getInitialPresRhoVel(z):
 		from perturbation_params import velFunc
 		from medium_params import  mediumType
 		if(mediumType == "inhomog"):
-			rho00 = rho00(z)
+			from medium_params import rho0	
+			rho00 = rho0(z)
 			cs00 = cs00(z)
 		#initial velocity
 		v1 = v00 + cs00 * A* f

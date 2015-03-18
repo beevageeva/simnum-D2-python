@@ -105,6 +105,7 @@ def getFunctionFromType(functionType):
 	except ImportError:	
 		print("Function type %s not defined !" % functionType)
 		import sys
+		print sys.exc_info()[0]
 		sys.exit(0)
 	return w
 
@@ -117,9 +118,16 @@ def getInitialPresRhoVel(z):
 		#I have already argFunc called in the function definition
 		f = w(z)
 		from perturbation_params import argFunc, velFunc
-		v1 = v00 + cs00 * A* f
+		if mediumType == "homog":
+			cs0 = cs00
+			rho0 = rho00
+		else:
+			from medium_params import rho0
+			cs0 = cs00(z)
+			rho0 = rho0(z)
+		v1 = v00 + cs0 * A* f
 		vel = np.dstack(velFunc(v1))
-		return {'pres': p00 + gamma * p00 * A* f  , 'rho': rho00 + rho00 *A* f , 'vel': vel }
+		return {'pres': p00 + gamma * p00 * A* f  , 'rho': rho0 + rho0 *A* f , 'vel': vel }
 	elif(waveType == "radial"):
 		return getRadialAnalitic(z, 0)
 
