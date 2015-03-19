@@ -173,8 +173,9 @@ class Model:
 			self.vel = r["vel"]	
 			self.pres = r["pres"]
 			##print("NSTEP %d" % nstep)
-			#print("VARS after recalculate at time %4.3f" % time)
-			#self.showVars()
+			#if time>0.08:
+			#	print("VARS after recalculate at time %4.3f" % time)
+			#	self.showVars()
 			from notifier_params import nstepsPlot, plotAnalitical
 			if(nstep % nstepsPlot == 0):
 				##print("upd")

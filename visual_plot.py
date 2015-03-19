@@ -17,7 +17,7 @@ saveImages = True
 
 
 #ylim = {"pres":{ "maxY": 1.0005, "minY": 0.9995} , "vel" : { "maxY": 0.00035, "minY": -0.00035}, "rho":{ "maxY": 1.0004, "minY": 0.9996}} 
-ylim = {"pres":{ "maxY": 1.0003, "minY": 0.9997} , "vel" : { "maxY": 0.00025, "minY": -0.00025}, "rho":{ "maxY": 1.0003, "minY": 0.9997}} 
+ylim = {"pres":{ "maxY": 1.0003, "minY": 0.9997} , "vel0" : { "maxY": 0.00025, "minY": -0.00025}, "vel1" : { "maxY": 0.00025, "minY": -0.00025}, "rho":{ "maxY": 1.0003, "minY": 0.9997}} 
 #ylim = {"pres":{ "maxY": 1.0003, "minY": 0.9997} , "vel" : { "maxY": 0.00025, "minY": -0.00025}, "rho":{ "maxY": 0.5002, "minY": 0.4998}} 
 #ylim = {"pres":{ "maxY": 1.0003, "minY": 0.9997} , "vel" : { "maxY": 0.00025, "minY": -0.00025}, "rho":{ "maxY": 2.0002, "minY": 1.9998}} 
 #xlim = {"minX" : 0, "maxX" : 4.3}
@@ -34,6 +34,11 @@ def testKeyInDict(key, dictionary):
 		return key in dictionary	
 
 
+
+useColspan = True
+#useColspan = True
+
+
 class VisualPlot:
 
 	#TODO this does not use self
@@ -42,10 +47,13 @@ class VisualPlot:
 			values = vals
 		else:
 			values = vals[..., subplotNumber]
-		if(colspan):
-			ax = plt.subplot2grid((n,2), (i,subplotNumber), colspan=2)
+		if useColspan:
+			if(colspan):
+				ax = plt.subplot2grid((n,2), (i,subplotNumber), colspan=2)
+			else:
+				ax = plt.subplot2grid((n,2), (i,subplotNumber))
 		else:
-			ax = plt.subplot2grid((n,2), (i,subplotNumber))
+			ax = plt.add_subplot(n,1,i)
 		ax.set_xlabel("x")
 		ax.set_ylabel("y")
 		ax.set_title("%s%d"% (title, subplotNumber))
@@ -59,12 +67,19 @@ class VisualPlot:
 		arrayToAppendAxes.append(ax)
 
 	def addProjAxes(self, arrayToAppendAxes, title, vals, n , i, subplotNumber, colspan=False):
+		if(vals.ndim == 2):
+			newtitle = title
+		else:
+			newtitle = "%s%d" % (title, subplotNumber)
 		if hasattr(self, "dim0ProjIndex"):
 			plt.figure(2)
-			if(colspan):
-				ax = plt.subplot2grid((n,2), (i,subplotNumber), colspan=2)
+			if useColspan:
+				if(colspan):
+					ax = plt.subplot2grid((n,2), (i,subplotNumber), colspan=2)
+				else:
+					ax = plt.subplot2grid((n,2), (i,subplotNumber))
 			else:
-				ax = plt.subplot2grid((n,2), (i,subplotNumber))
+				ax = plt.add_subplot(n,1,i)
 			if(vals.ndim == 2):
 				values = vals[self.dim0ProjIndex, :]
 			else:
@@ -73,8 +88,9 @@ class VisualPlot:
 			if(plots["dim0"][1]):
 				markMaxIndex = np.argmax(values)
 				markMaxValue = self.z[0][0][markMaxIndex]
+				#TODO if it works replace this by newtitle
 				self.maxPoints["dim0"]["%s%d" % (title, subplotNumber)] = markMaxValue
-			self.addAxisProj(ax, title, values, markMaxValue)
+			self.addAxisProj(ax, newtitle, values, markMaxValue)
 			arrayToAppendAxes.append(ax)
 		if hasattr(self, "dim1ProjIndex"):
 			if(vals.ndim == 2):
@@ -82,16 +98,19 @@ class VisualPlot:
 			else:
 				values = vals[:,self.dim1ProjIndex, subplotNumber]
 			plt.figure(3)
-			if(colspan):
-				ax = plt.subplot2grid((n,2), (i,subplotNumber), colspan=2)
+			if useColspan:
+				if(colspan):
+					ax = plt.subplot2grid((n,2), (i,subplotNumber), colspan=2)
+				else:
+					ax = plt.subplot2grid((n,2), (i,subplotNumber))
 			else:
-				ax = plt.subplot2grid((n,2), (i,subplotNumber))
+				ax = plt.add_subplot(n,1,i)
 			markMaxValue = None
 			if(plots["dim1"][1]):
 				markMaxIndex = np.argmax(values)
 				markMaxValue = self.z[0][0][markMaxIndex]
 				self.maxPoints["dim1"]["%s%d" % (title, subplotNumber)] = markMaxValue
-			self.addAxisProj(ax, title, values, markMaxValue)
+			self.addAxisProj(ax, newtitle, values, markMaxValue)
 			arrayToAppendAxes.append(ax)
 
 		if hasattr(self, "projMask"):
@@ -100,10 +119,13 @@ class VisualPlot:
 			else:
 				values = vals[self.projMask, subplotNumber]
 			plt.figure(6)
-			if(colspan):
-				ax = plt.subplot2grid((n,2), (i,subplotNumber), colspan=2)
+			if useColspan:
+				if(colspan):
+					ax = plt.subplot2grid((n,2), (i,subplotNumber), colspan=2)
+				else:
+					ax = plt.subplot2grid((n,2), (i,subplotNumber))
 			else:
-				ax = plt.subplot2grid((n,2), (i,subplotNumber))
+				ax = plt.add_subplot(n,1,i)
 			markMaxValue = None
 			linez = np.dstack((self.z[0][self.projMask], self.z[1][self.projMask]))
 			linez = linez[0]	
@@ -120,7 +142,7 @@ class VisualPlot:
 				markMaxIndex = np.argmax(values)
 				markMaxValue = newz[markMaxIndex]
 				self.maxPoints["line"]["%s%d" % (title, subplotNumber)] = markMaxValue
-			self.addAxisProj(ax, title, values, markMaxValue, newz)
+			self.addAxisProj(ax, newtitle, values, markMaxValue, newz)
 			arrayToAppendAxes.append(ax)
 
 		if testKeyInDict("color", plots):
@@ -221,6 +243,12 @@ class VisualPlot:
 					
 		self.axes = {}
 		n = len(titles)
+		if not useColspan:
+			npt = len(titles)
+			for i in range(0, len(titles)):
+				if(iniValues[i].ndim == 3):	
+					npt+=1
+			ipt = 0	
 		for i in range(0, len(titles)):
 			vals = iniValues[i]
 			title = titles[i]
@@ -228,23 +256,40 @@ class VisualPlot:
 				self.axes[title] = []
 				if(plots["3d"]):
 					plt.figure(1)
-					ax = plt.subplot2grid((n,2), (i,0), colspan=2, projection='3d')
+					if useColspan:
+						ax = plt.subplot2grid((n,2), (i,0), colspan=2, projection='3d')
+					else:
+						ipt+=1
+						ax = plt.add_subplot(npt,1,ipt,  projection='3d')
 					self.addAxis(ax, title, vals)
 					self.axes[title].append(ax)
-				self.addProjAxes(self.axes[title], title, vals, n, i, 0,  True)
+				if useColspan:
+					self.addProjAxes(self.axes[title], title, vals, n, i, 0,  True)
+				else:
+					self.addProjAxes(self.axes[title], title, vals, npt, ipt, 0,  True)
+	
 
 			elif(vals.ndim == 3):	
 				self.axes[title] = [[]]
 				if(plots["3d"]):
 					plt.figure(1)
-					ax = plt.subplot2grid((n,2), (i,0), projection='3d')
+					if useColspan:
+						ax = plt.subplot2grid((n,2), (i,0), projection='3d')
+					else:
+						ipt+=1
+						ax = plt.add_subplot(npt,1,ipt)
+
 					self.addAxis(ax, ("%s dim 0" % title), vals[:,:,0])
 					self.axes[title][0].append(ax)
 				self.addProjAxes(self.axes[title][0], title, vals, n, i, 0)
 				self.axes[title].append([])
 				if(plots["3d"]):
 					plt.figure(1)
-					ax2 = plt.subplot2grid((n,2), (i,1), projection='3d')
+					if useColspan:
+						ax2 = plt.subplot2grid((n,2), (i,1), projection='3d')
+					else:
+						ipt+=1
+						ax2 = plt.add_subplot(npt,1,ipt,  projection='3d')
 					self.addAxis(ax2, ("%s dim 1" % title), vals[:,:,1])
 					self.axes[title][1].append(ax2)
 				self.addProjAxes(self.axes[title][1], title, vals, n, i, 1)
@@ -351,6 +396,10 @@ class VisualPlot:
 	def updateProjAxis(self, axesArray, title, vals, index, dt):
 		from common import getSpeedPeriodic0, getSpeedPeriodic1
 		vdim = vals[0].ndim if plotAnalitical else vals.ndim
+		if vdim == 2:
+			newtitle = title
+		else:
+			newtitle = "%s%d" % (title, index)
 		if plots["3d"]:
 			ni=1
 		else:
@@ -368,7 +417,7 @@ class VisualPlot:
 				maxSpeed  = getSpeedPeriodic0(markMaxValue, self.maxPoints["dim0"]["%s%d" % (title, index)], dt)
 				markMaxTitle = "ms= %4.3f" % maxSpeed
 				self.maxPoints["dim0"]["%s%d" % (title, index)] = markMaxValue
-			self.updateAxisProj(axesArray[ni], "%s"% (title), values, markMaxValue, markMaxTitle)
+			self.updateAxisProj(axesArray[ni], newtitle, values, markMaxValue, markMaxTitle)
 			ni+=1
 		if hasattr(self, "dim1ProjIndex"):
 			if(vdim == 2):
@@ -383,17 +432,17 @@ class VisualPlot:
 				maxSpeed = getSpeedPeriodic1(markMaxValue, self.maxPoints["dim1"]["%s%d" % (title, index)], dt)	
 				markMaxTitle = "ms= %4.3f" % maxSpeed
 				self.maxPoints["dim1"]["%s%d" % (title, index)] = markMaxValue
-			self.updateAxisProj(axesArray[ni], "%s" %(title), values, markMaxValue, markMaxTitle)
+			self.updateAxisProj(axesArray[ni], newtitle, values, markMaxValue, markMaxTitle)
 			ni+=1
 
 		if hasattr(self, "projMask"):
 			if(vdim == 2):
 				values =  [vals[0][self.projMask], vals[1][self.projMask]] if plotAnalitical else vals[self.projMask]
-				if not plotAnalitical:	
-					print("MASK UPDATE PROJ AXIS")
-					print(np.max(vals))
-					print("max on values proj")
-					print(np.max(values))
+#				if not plotAnalitical:	
+#					print("MASK UPDATE PROJ AXIS")
+#					print(np.max(vals))
+#					print("max on values proj")
+#					print(np.max(values))
 			else:
 				values = [vals[0][:,:,index][self.projMask], vals[1][:,:,index][self.projMask]]  if plotAnalitical else vals[:,:,index][self.projMask]
 			markMaxValue = None
@@ -409,7 +458,7 @@ class VisualPlot:
 				#maxSpeed = getSpeedPeriodic1(markMaxValue, self.maxPoints["line"]["%s%d" % (title, index)], dt)	
 				#markMaxTitle = "ms= %4.3f" % maxSpeed
 				self.maxPoints["line"]["%s%d" % (title, index)] = markMaxValue
-			self.updateAxisProj(axesArray[ni], "%s" %(title), values, markMaxValue, markMaxTitle, newz)
+			self.updateAxisProj(axesArray[ni], newtitle, values, markMaxValue, markMaxTitle, newz)
 			ni+=1
 
 		if testKeyInDict("color", plots):
@@ -417,10 +466,10 @@ class VisualPlot:
 				values = vals[0] if plotAnalitical else vals
 			else:
 				values = vals[0][:,:,index] if plotAnalitical else vals[:,:, index]
-			self.updateAxisColor(axesArray[ni], title, values)
+			self.updateAxisColor(axesArray[ni], newtitle, values)
 			if(plotAnalitical):
 				values = vals[1] if vdim == 2 else vals[1][:,:,index]
-				self.updateAxisColor(axesArray[ni+1], "%s%d-an" % (title, index), values)
+				self.updateAxisColor(axesArray[ni+1], newtitle + "-an", values)
 
 
 	def updateValues(self, title, vals,dt):

@@ -25,8 +25,22 @@ def recalculateVelPres(rho, uc, ue):
 	#print(uc)
 
 	v = np.dstack((np.divide(uc[:,:,0], rho ), np.divide(uc[:,:,1], rho )  )) #cannot directly divide 3d to 2d array
+			
 	t1 = np.subtract(ue,np.divide(power2Vec(uc), np.multiply(rho, 2.0)))	
+	
 	p = np.multiply((gamma - 1.0), t1)
+
+	n = len(p[0])
+	print("max p hor proj at the middle  %e at index %d" % (np.max(p[n/2,:]) , np.argmax(p[n/2,:])) )
+	print("max t1  hor proj at the middle  %e at index %d " %  (np.max(t1[n/2,:]) , np.argmax(t1[n/2,:]))  )
+	print("max v[0]  hor proj at the middle  %e at index %d" %  (np.max(v[n/2,:,0]) , np.argmax(v[n/2,:,0]))  )
+#	np.set_printoptions(threshold='nan')
+#	print("alg.py: recalculatinf v")
+#	print(v)
+#	print("alg.py: recalculating pres")
+#	print(p)
+#	print("uc is ")
+#	print(uc)
 	#print("vel ")
 	#print(v)
 	return {'vel': v, 'pres': p}
