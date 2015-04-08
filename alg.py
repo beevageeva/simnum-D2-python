@@ -149,7 +149,7 @@ if schemeType == "fg":
 				"""	
 				inline(code, ['u', 'dz0', 'dz1', 'dt', 'res', 'f', 'nint'],type_converters=converters.blitz)
 			elif loopType == "cython":
-				from cython_alg import calc_interm_u_array_2d
+				from cython_alg2 import calc_interm_u_array_2d
 				
 				calc_interm_u_array_2d(res, u,f,nint, dz0, dz1, dt) 
 
@@ -176,7 +176,7 @@ if schemeType == "fg":
 				"""
 				inline(code, ['u', 'dz0', 'dz1', 'dt', 'res', 'f', 'nint'],type_converters=converters.blitz)
 			elif loopType == "cython":
-				from cython_alg import calc_interm_u_array_3d
+				from cython_alg2 import calc_interm_u_array_3d
 				calc_interm_u_array_3d(res, u, f, nint, dz0, dz1, dt) 
 	
 		return res
@@ -209,7 +209,7 @@ if schemeType == "fg":
 				"""
 				inline(code, ['u', 'dz0', 'dz1', 'dt', 'res', 'skip', 'intermF', 'n'],type_converters=converters.blitz)
 			elif loopType == "cython":
-				from cython_alg import calc_final_u_array_2d
+				from cython_alg2 import calc_final_u_array_2d
 				calc_final_u_array_2d(res, u, intermF, n, dz0, dz1, dt, skip) 
 		else:
 			res = np.zeros((n, n, 2))
@@ -234,7 +234,7 @@ if schemeType == "fg":
 				"""
 				inline(code, ['u', 'dz0', 'dz1', 'dt', 'res', 'skip', 'intermF', 'n'],type_converters=converters.blitz)
 			elif loopType == "cython":
-				from cython_alg import calc_final_u_array_3d
+				from cython_alg2 import calc_final_u_array_3d
 				calc_final_u_array_3d(res, u, intermF, n, dz0, dz1, dt, skip) 
 		#no more boundary conditions because intermediate array alreday has nint + 3 points
 		return np.array(res)
@@ -319,7 +319,7 @@ elif schemeType == "lf":
 				"""
 				inline(code, ['u', 'dz0', 'dz1', 'dt', 'res', 'f', 'nint'],type_converters=converters.blitz)
 			elif loopType == "cython":
-				from cython_alg import calc_singlestep_u_array_2d
+				from cython_alg2 import calc_singlestep_u_array_2d
 				calc_singlestep_u_array_2d(res, u,f,nint, lambdaParam) 
 		else:
 			res = np.zeros((nint, nint, 2))
@@ -344,7 +344,7 @@ elif schemeType == "lf":
 				"""
 				inline(code, ['u', 'dz0', 'dz1', 'dt', 'res', 'f', 'nint'],type_converters=converters.blitz)
 			elif loopType == "cython":
-				from cython_alg import calc_singlestep_u_array_3d
+				from cython_alg2 import calc_singlestep_u_array_3d
 				calc_singlestep_u_array_3d(res, u,f,nint, lambdaParam) 
 		#print("calcSingleStep before BC PX")
 		#print(res[0,...])
