@@ -114,7 +114,7 @@ from constants import schemeType, loopType
 
 if loopType == "cython":
 	import pyximport
-	pyximport.install()
+	pyximport.install(setup_args={'include_dirs':[np.get_include()]})
 
 
 
@@ -135,7 +135,7 @@ if schemeType == "fg":
 				for i in range(1, nint+2):
 					for j in range(1, nint+2):
 						#points displaced right +1 
-						res[i-1][j-1]  = 0.25 * (u[i-1][j-1] + u[i-1][j] + u[i][j-1] + u[i][j]) - 0.25 * dt  * ((f[i][j][1] - f[i-1][j][1] + f[i][j-1][1] - f[i-1][j-1][1])/dz1 + (f[i][j][0] - f[i][j-1][0]+f[i-1][j][0] - f[i-1][j-1][0]) / dz0)
+						res[i-1,j-1]  = 0.25 * (u[i-1,j-1] + u[i-1,j] + u[i,j-1] + u[i,j]) - 0.25 * dt  * ((f[i,j,1] - f[i-1,j,1] + f[i,j-1,1] - f[i-1,j-1,1])/dz1 + (f[i,j,0] - f[i,j-1,0]+f[i-1,j,0] - f[i-1,j-1,0]) / dz0)
 			elif loopType == "weave":
 				from scipy.weave import inline, converters
 				dt = float(dt)
@@ -160,8 +160,8 @@ if schemeType == "fg":
 				for i in range(1, nint+2):
 					for j in range(1, nint+2):
 					#points displaced right +1 
-						res[i-1][j-1][0] = 0.25 * (u[i-1][j-1][0] + u[i-1][j][0] + u[i][j-1][0] + u[i][j][0]) - 0.25 * dt  * ((f[i][j][1] - f[i-1][j][1]+f[i][j-1][1] - f[i-1][j-1][1]) / dz1 + (f[i][j][0] - f[i][j-1][0] + f[i-1][j][0] - f[i-1][j-1][0])/dz0 )
-						res[i-1][j-1][1]  = 0.25 * (u[i-1][j-1][1] + u[i-1][j][1] + u[i][j-1][1] + u[i][j][1]) - 0.25 * dt * ((f[i][j][2] - f[i-1][j][2]+f[i][j-1][2] - f[i-1][j-1][2]) / dz1 + (f[i][j][1] - f[i][j-1][1] + f[i-1][j][1] - f[i-1][j-1][1])/dz0)
+						res[i-1,j-1,0] = 0.25 * (u[i-1,j-1,0] + u[i-1,j,0] + u[i,j-1,0] + u[i,j,0]) - 0.25 * dt  * ((f[i,j,1] - f[i-1,j,1]+f[i,j-1,1] - f[i-1,j-1,1]) / dz1 + (f[i,j,0] - f[i,j-1,0] + f[i-1,j,0] - f[i-1,j-1,0])/dz0 )
+						res[i-1,j-1,1]  = 0.25 * (u[i-1,j-1,1] + u[i-1,j,1] + u[i,j-1,1] + u[i,j,1]) - 0.25 * dt * ((f[i,j,2] - f[i-1,j,2]+f[i,j-1,2] - f[i-1,j-1,2]) / dz1 + (f[i,j,1] - f[i,j-1,1] + f[i-1,j,1] - f[i-1,j-1,1])/dz0)
 			elif loopType == "weave":
 				from scipy.weave import inline, converters
 				dt = float(dt)
@@ -195,7 +195,7 @@ if schemeType == "fg":
 			if loopType == "python":
 				for i in range(0, n):
 					for j in range(0, n):
-						res[i][j] = u[i+skip][j+skip] - dt  * 0.5 * ((intermF[i+1][j][1] - intermF[i][j][1] + intermF[i+1][j+1][1] - intermF[i][j+1][1])/dz1 + (intermF[i][j+1][0] - intermF[i][j][0] + intermF[i+1][j+1][0] - intermF[i+1][j][0])/dz0)
+						res[i,j] = u[i+skip,j+skip] - dt  * 0.5 * ((intermF[i+1,j,1] - intermF[i,j,1] + intermF[i+1,j+1,1] - intermF[i,j+1,1])/dz1 + (intermF[i,j+1,0] - intermF[i,j,0] + intermF[i+1,j+1,0] - intermF[i+1,j,0])/dz0)
 			elif loopType == "weave":
 				from scipy.weave import inline, converters
 				dt = float(dt)
@@ -217,8 +217,8 @@ if schemeType == "fg":
 			if loopType == "python":
 				for i in range(0, n):
 					for j in range(0, n):
-						res[i][j][0]  = u[i+skip][j+skip][0] - dt * 0.5 * ((intermF[i+1][j][1] - intermF[i][j][1] + intermF[i+1][j+1][1] - intermF[i][j+1][1])/dz1 + (intermF[i][j+1][0] - intermF[i][j][0] + intermF[i+1][j+1][0] - intermF[i+1][j][0]) / dz0)
-						res[i][j][1]  = u[i+skip][j+skip][1] - dt  * 0.5* ((intermF[i+1][j][2] - intermF[i][j][2] + intermF[i+1][j+1][2] - intermF[i][j+1][2])/dz1 + (intermF[i][j+1][1] - intermF[i][j][1] + intermF[i+1][j+1][1] - intermF[i+1][j][1])/dz0)
+						res[i,j,0]  = u[i+skip,j+skip,0] - dt * 0.5 * ((intermF[i+1,j,1] - intermF[i,j,1] + intermF[i+1,j+1,1] - intermF[i,j+1,1])/dz1 + (intermF[i,j+1,0] - intermF[i,j,0] + intermF[i+1,j+1,0] - intermF[i+1,j,0]) / dz0)
+						res[i,j,1]  = u[i+skip,j+skip,1] - dt  * 0.5* ((intermF[i+1,j,2] - intermF[i,j,2] + intermF[i+1,j+1,2] - intermF[i,j+1,2])/dz1 + (intermF[i,j+1,1] - intermF[i,j,1] + intermF[i+1,j+1,1] - intermF[i+1,j,1])/dz0)
 			elif loopType == "weave":
 				from scipy.weave import inline, converters
 				dt = float(dt)
@@ -304,7 +304,7 @@ elif schemeType == "lf":
 				for i in range(1, nint+1):
 					for j in range(1, nint+1):
 						#averaging on the first term makes the scheme stable (see Appendix: The lax-Fr scheme)
-						res[i-1][j-1] = 0.25 * (u[i][j-1] + u[i][j+1] + u[i+1][j] + u[i-1][j]) - 0.5 * dt * ((f[i+1][j][1] - f[i-1][j][1])/dz1 + (f[i][j+1][0] - f[i][j-1][0])/dz0) 
+						res[i-1,j-1] = 0.25 * (u[i,j-1] + u[i,j+1] + u[i+1,j] + u[i-1,j]) - 0.5 * dt * ((f[i+1,j,1] - f[i-1,j,1])/dz1 + (f[i,j+1,0] - f[i,j-1,0])/dz0) 
 			elif loopType == "weave":
 				from scipy.weave import inline, converters
 				dt = float(dt)
@@ -328,8 +328,8 @@ elif schemeType == "lf":
 			if loopType == "python":
 				for i in range(1, nint+1):
 					for j in range(1, nint+1):
-						res[i-1][j-1][0] = 0.25 * (u[i][j-1][0] + u[i][j+1][0] + u[i+1][j][0] + u[i-1][j][0]) - 0.5 * dt  * ((f[i+1][j][1] - f[i-1][j][1])/dz1 + (f[i][j+1][0] - f[i][j-1][0])/dz0) 
-						res[i-1][j-1][1] = 0.25 * (u[i][j-1][1] + u[i][j+1][1] + u[i+1][j][1] + u[i-1][j][1]) - 0.5 * dt * ((f[i+1][j][2] - f[i-1][j][2])/dz1 + (f[i][j+1][1] - f[i][j-1][1])/dz0) 
+						res[i-1,j-1,0] = 0.25 * (u[i,j-1,0] + u[i,j+1,0] + u[i+1,j,0] + u[i-1,j,0]) - 0.5 * dt  * ((f[i+1,j,1] - f[i-1,j,1])/dz1 + (f[i,j+1,0] - f[i,j-1,0])/dz0) 
+						res[i-1,j-1,1] = 0.25 * (u[i,j-1,1] + u[i,j+1,1] + u[i+1,j,1] + u[i-1,j,1]) - 0.5 * dt * ((f[i+1,j,2] - f[i-1,j,2])/dz1 + (f[i,j+1,1] - f[i,j-1,1])/dz0) 
 			elif loopType == "weave":
 				from scipy.weave import inline, converters
 				dt = float(dt)
