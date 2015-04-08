@@ -105,7 +105,7 @@ def getFunctionFromType(functionType):
 	except ImportError:	
 		print("Function type %s not defined !" % functionType)
 		import sys
-		print sys.exc_info()[0]
+		print(sys.exc_info()[0])
 		sys.exit(0)
 	return w
 

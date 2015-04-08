@@ -55,5 +55,5 @@ elif(mediumType=="inhomog"):
 	def rho0(z):
 		return rho00 + 0.5 * (rho01-rho00) * densFunc(densargFunc(z - getArrayZShape(ze[0], ze[1], len(z[0]))))
 	
-	cs00 = lambda(z): np.sqrt(gamma * p00 / densFunc(densargFunc(z)))
+	cs00 = lambda z: np.sqrt(gamma * p00 / densFunc(densargFunc(z)))
 

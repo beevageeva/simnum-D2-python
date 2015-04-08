@@ -13,13 +13,12 @@ ctypedef np.float_t DTYPE_t
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.nonecheck(False)
-cpdef calc_interm_u_array_2d(np.ndarray[DTYPE_t, ndim=2] res,  np.ndarray[DTYPE_t, ndim=2] u, np.ndarray[DTYPE_t, ndim=2] f, int nint, float dz0, float dz1, float dt):
+cpdef calc_interm_u_array_2d(np.ndarray[DTYPE_t, ndim=2] res,  np.ndarray[DTYPE_t, ndim=2] u, np.ndarray[DTYPE_t, ndim=3] f, int nint, float dz0, float dz1, float dt):
 	cdef int i,j
 	for i in range(1, nint+2):
 		for j in range(1, nint+2):
 			#points displaced right +1 
 			res[i-1][j-1]  = 0.25 * (u[i-1][j-1] + u[i-1][j] + u[i][j-1] + u[i][j]) - 0.25 * dt  * ((f[i][j][1] - f[i-1][j][1] + f[i][j-1][1] - f[i-1][j-1][1])/dz1 + (f[i][j][0] - f[i][j-1][0]+f[i-1][j][0] - f[i-1][j-1][0]) / dz0)
-res[i-1] = 0.5 * (u[i] + u[i-1]) - 0.5 * lambdaParam  * (f[i] - f[i-1])
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -36,7 +35,7 @@ cpdef calc_interm_u_array_3d(np.ndarray[DTYPE_t, ndim=3] res,  np.ndarray[DTYPE_
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.nonecheck(False)
-cpdef calc_final_u_array_2d(np.ndarray[DTYPE_t, ndim=2] res, np.ndarray[DTYPE_t, ndim=2] u, np.ndarray[DTYPE_t, ndim=2] intermF, int n, float dz0, float dz1, float dt, int skip):
+cpdef calc_final_u_array_2d(np.ndarray[DTYPE_t, ndim=2] res, np.ndarray[DTYPE_t, ndim=2] u, np.ndarray[DTYPE_t, ndim=3] intermF, int n, float dz0, float dz1, float dt, int skip):
 	cdef int i,j
 	for i in range(0, n):
 		for j in range(0, n):
@@ -55,7 +54,7 @@ cpdef calc_final_u_array_3d(np.ndarray[DTYPE_t, ndim=3] res, np.ndarray[DTYPE_t,
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.nonecheck(False)
-cpdef calc_singlestep_u_array_2d(np.ndarray[DTYPE_t, ndim=2] res, np.ndarray[DTYPE_t, ndim=2] u, np.ndarray[DTYPE_t, ndim=2] f, int nint, float dz0, float dz1, float dt):
+cpdef calc_singlestep_u_array_2d(np.ndarray[DTYPE_t, ndim=2] res, np.ndarray[DTYPE_t, ndim=2] u, np.ndarray[DTYPE_t, ndim=3] f, int nint, float dz0, float dz1, float dt):
 	cdef int i,j
 	for i in range(1, nint+1):
 		for j in range(1, nint+1):
@@ -65,7 +64,7 @@ cpdef calc_singlestep_u_array_2d(np.ndarray[DTYPE_t, ndim=2] res, np.ndarray[DTY
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.nonecheck(False)
-cpdef calc_singlestep_u_array_3d(np.ndarray[DTYPE_t, ndim=3] res, np.ndarray[DTYPE_t, ndim=2] u, np.ndarray[DTYPE_t, ndim=2] f, int nint, float dz0, float dz1, float dt):
+cpdef calc_singlestep_u_array_3d(np.ndarray[DTYPE_t, ndim=3] res, np.ndarray[DTYPE_t, ndim=3] u, np.ndarray[DTYPE_t, ndim=3] f, int nint, float dz0, float dz1, float dt):
 	cdef int i,j
 	for i in range(1, nint+1):
 		for j in range(1, nint+1):
