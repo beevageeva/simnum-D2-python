@@ -44,7 +44,9 @@ class Model:
 		self.fc = None
 		self.fe = None
 		from notifier_params import notifierType
-		self.notifier = getNotifier(notifierType, self.z, ["pres", "rho", "vel"], [self.pres, self.rho, self.vel])
+		#self.notifier = getNotifier(notifierType, self.z, ["pres", "rho", "vel"], [self.pres, self.rho, self.vel])
+		#self.notifier = getNotifier(notifierType, self.z, ["pres", "rho", "vel", "ue", "uc"], [self.pres, self.rho, self.vel, self.ue, self.uc])
+		self.notifier = getNotifier(notifierType, self.z, ["pres", "rho", "vel", "ue", "uc", "ucr"], [self.pres, self.rho, self.vel, self.ue, self.uc, (self.uc[:,:,0]**2 + self.uc[:,:,1]**2)/ (2*self.rho) ])
 		if(plotVelFFT):
 			self.notifier.addFFTAxis("velFFT0", self.vel[...,0])
 			self.notifier.addFFTAxis("velFFT1", self.vel[...,1])
@@ -195,6 +197,9 @@ class Model:
 				self.notifier.updateValues("rho", [self.rho, anRes["rho"]] if plotAnalitical else self.rho,ndt)
 				self.notifier.updateValues("pres", [self.pres, anRes["pres"]] if plotAnalitical else self.pres,ndt)
 				self.notifier.updateValues("vel", [self.vel, anRes["vel"]] if plotAnalitical else self.vel,ndt)
+				self.notifier.updateValues("ue", self.ue,ndt)
+				self.notifier.updateValues("uc", self.uc,ndt)
+				self.notifier.updateValues("ucr", (self.uc[:,:,0]**2 + self.uc[:,:,1]**2)/ (2*self.rho) ,ndt)
 				if(plotVelFFT):
 					self.notifier.updateFFTAxis("velFFT0", self.vel[...,0])
 					self.notifier.updateFFTAxis("velFFT1", self.vel[...,1])

@@ -25,15 +25,12 @@ def recalculateVelPres(rho, uc, ue):
 	#print(uc)
 
 	v = np.dstack((np.divide(uc[:,:,0], rho ), np.divide(uc[:,:,1], rho )  )) #cannot directly divide 3d to 2d array
-			
-	t1 = np.subtract(ue,np.divide(power2Vec(uc), np.multiply(rho, 2.0)))	
-	
-	p = np.multiply((gamma - 1.0), t1)
+	p = (gamma - 1.0) * (ue - power2Vec(uc) / (2.0 * rho) )
 
-	n = len(p[0])
-	print("max p hor proj at the middle  %e at index %d" % (np.max(p[n/2,:]) , np.argmax(p[n/2,:])) )
-	print("max t1  hor proj at the middle  %e at index %d " %  (np.max(t1[n/2,:]) , np.argmax(t1[n/2,:]))  )
-	print("max v[0]  hor proj at the middle  %e at index %d" %  (np.max(v[n/2,:,0]) , np.argmax(v[n/2,:,0]))  )
+	#n = len(p[0])
+	#print("max p hor proj at the middle  %e at index %d" % (np.max(p[n/2,:]) , np.argmax(p[n/2,:])) )
+	#print("max t1  hor proj at the middle  %e at index %d " %  (np.max(t1[n/2,:]) , np.argmax(t1[n/2,:]))  )
+	#print("max v[0]  hor proj at the middle  %e at index %d" %  (np.max(v[n/2,:,0]) , np.argmax(v[n/2,:,0]))  )
 #	np.set_printoptions(threshold='nan')
 #	print("alg.py: recalculatinf v")
 #	print(v)
@@ -46,6 +43,12 @@ def recalculateVelPres(rho, uc, ue):
 	return {'vel': v, 'pres': p}
 
 def recalculateFluxes(rho, uc, ue, v, p):
+
+  #fc = np.divide(np.power(uc, 2.0), rho) + p
+  #fe = np.multiply((ue + p), v)
+
+
+
 	fm = uc
 	fe1 = ue + p	
 	fe = np.dstack((fe1 * v[:,:,0], fe1 * v[:,:,1] )) #cannot directly multiply 2d and 3d array
@@ -100,12 +103,17 @@ def getTimestep(v, p, rho):
 	#see the following link
 	#smax = np.max(np.concatenate([np.absolute(v[:,:,0] + cs), np.absolute(v[:,:,0] - cs), np.absolute(v[:,:,1] + cs), np.absolute(v[:,:,1] - cs)]))
 	#dt = float(dz * fcfl ) / smax 
-	
+	#TODO	
 	#http://homepage.univie.ac.at/franz.vesely/cp_tut/nol2h/new/c5pd_s1ih.html 
-	smax = np.max(np.concatenate([np.sqrt( (v[:,:,0] + cs) ** 2 + (v[:,:,1] + cs)**2 ), np.sqrt( (v[:,:,0] - cs) ** 2 + (v[:,:,1] - cs)**2 )]))
-	#dt = float( dz  * fcfl ) / (smax *  2 ** (0.5))
-	dt = float( (dz0 ** 2 + dz1 ** 2)**0.5  * fcfl ) / (2 * smax)
-	#print("getTimestep %E" % dt)
+#	smax = np.max(np.concatenate([np.sqrt( (v[:,:,0] + cs) ** 2 + (v[:,:,1] + cs)**2 ), np.sqrt( (v[:,:,0] - cs) ** 2 + (v[:,:,1] - cs)**2 )]))
+#	#dt = float( dz  * fcfl ) / (smax *  2 ** (0.5))
+#	dt = float( (dz0 ** 2 + dz1 ** 2)**0.5  * fcfl ) / (2 * smax)
+#	#print("getTimestep %E" % dt)
+
+	smax0 = np.max(np.concatenate([np.absolute(v[:,:,0] + cs), np.absolute(v[:,:,0] - cs)]))
+	smax1 = np.max(np.concatenate([np.absolute(v[:,:,1] + cs), np.absolute(v[:,:,1] - cs)]))
+	dt = min(float(dz0 * fcfl ) / smax0, float(dz1 * fcfl ) / smax1 )
+
 	return dt
 
 

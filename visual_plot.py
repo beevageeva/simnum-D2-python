@@ -16,8 +16,12 @@ saveImages = True
 #saveImages = False
 
 
+
+plot2dModule = True
+#plot2dModule = False
+
 #ylim = {"pres":{ "maxY": 1.0005, "minY": 0.9995} , "vel" : { "maxY": 0.00035, "minY": -0.00035}, "rho":{ "maxY": 1.0004, "minY": 0.9996}} 
-ylim = {"pres":{ "maxY": 1.0003, "minY": 0.9997} , "vel0" : { "maxY": 0.00025, "minY": -0.00025}, "vel1" : { "maxY": 0.00025, "minY": -0.00025}, "rho":{ "maxY": 1.0003, "minY": 0.9997}} 
+ylim = {"pres":{ "maxY": 1.0003, "minY": 0.9997} , "vel0" : { "maxY": 0.00025, "minY": -0.00025}, "vel1" : { "maxY": 0.00025, "minY": -0.00025}, "rho":{ "maxY": 1.0003, "minY": 0.9997}, "vel" : { "maxY": 0.0005, "minY": -0.0001}} 
 #ylim = {"pres":{ "maxY": 1.0003, "minY": 0.9997} , "vel" : { "maxY": 0.00025, "minY": -0.00025}, "rho":{ "maxY": 0.5002, "minY": 0.4998}} 
 #ylim = {"pres":{ "maxY": 1.0003, "minY": 0.9997} , "vel" : { "maxY": 0.00025, "minY": -0.00025}, "rho":{ "maxY": 2.0002, "minY": 1.9998}} 
 #xlim = {"minX" : 0, "maxX" : 4.3}
@@ -35,8 +39,6 @@ def testKeyInDict(key, dictionary):
 
 
 
-useColspan = True
-#useColspan = True
 
 
 class VisualPlot:
@@ -47,13 +49,10 @@ class VisualPlot:
 			values = vals
 		else:
 			values = vals[..., subplotNumber]
-		if useColspan:
-			if(colspan):
-				ax = plt.subplot2grid((n,2), (i,subplotNumber), colspan=2)
-			else:
-				ax = plt.subplot2grid((n,2), (i,subplotNumber))
+		if(colspan):
+			ax = plt.subplot2grid((n,2), (i,subplotNumber), colspan=2)
 		else:
-			ax = plt.add_subplot(n,1,i)
+			ax = plt.subplot2grid((n,2), (i,subplotNumber))
 		ax.set_xlabel("x")
 		ax.set_ylabel("y")
 		ax.set_title("%s%d"% (title, subplotNumber))
@@ -73,13 +72,10 @@ class VisualPlot:
 			newtitle = "%s%d" % (title, subplotNumber)
 		if hasattr(self, "dim0ProjIndex"):
 			plt.figure(2)
-			if useColspan:
-				if(colspan):
-					ax = plt.subplot2grid((n,2), (i,subplotNumber), colspan=2)
-				else:
-					ax = plt.subplot2grid((n,2), (i,subplotNumber))
+			if(colspan):
+				ax = plt.subplot2grid((n,2), (i,subplotNumber), colspan=2)
 			else:
-				ax = plt.add_subplot(n,1,i)
+				ax = plt.subplot2grid((n,2), (i,subplotNumber))
 			if(vals.ndim == 2):
 				values = vals[self.dim0ProjIndex, :]
 			else:
@@ -98,13 +94,10 @@ class VisualPlot:
 			else:
 				values = vals[:,self.dim1ProjIndex, subplotNumber]
 			plt.figure(3)
-			if useColspan:
-				if(colspan):
-					ax = plt.subplot2grid((n,2), (i,subplotNumber), colspan=2)
-				else:
-					ax = plt.subplot2grid((n,2), (i,subplotNumber))
+			if(colspan):
+				ax = plt.subplot2grid((n,2), (i,subplotNumber), colspan=2)
 			else:
-				ax = plt.add_subplot(n,1,i)
+				ax = plt.subplot2grid((n,2), (i,subplotNumber))
 			markMaxValue = None
 			if(plots["dim1"][1]):
 				markMaxIndex = np.argmax(values)
@@ -119,13 +112,10 @@ class VisualPlot:
 			else:
 				values = vals[self.projMask, subplotNumber]
 			plt.figure(6)
-			if useColspan:
-				if(colspan):
-					ax = plt.subplot2grid((n,2), (i,subplotNumber), colspan=2)
-				else:
-					ax = plt.subplot2grid((n,2), (i,subplotNumber))
+			if(colspan):
+				ax = plt.subplot2grid((n,2), (i,subplotNumber), colspan=2)
 			else:
-				ax = plt.add_subplot(n,1,i)
+				ax = plt.subplot2grid((n,2), (i,subplotNumber))
 			markMaxValue = None
 			linez = np.dstack((self.z[0][self.projMask], self.z[1][self.projMask]))
 			linez = linez[0]	
@@ -166,7 +156,7 @@ class VisualPlot:
 		if(not markMaxValue is None):
 			ax.vlines(markMaxValue, np.min(vals[0]) if plotAnalitical else np.min(vals), np.max(vals[0]) if plotAnalitical else np.max(vals), color='b', label="max")
 			#ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-		if(ylim):
+		if(ylim and testKeyInDict(title, ylim)):
 			ax.set_ylim(ylim[title]["minY"],ylim[title]["maxY"])
 			ax.yaxis.set_major_formatter(FormatStrFormatter('%.4f'))
 			if xlim:
@@ -243,12 +233,11 @@ class VisualPlot:
 					
 		self.axes = {}
 		n = len(titles)
-		if not useColspan:
-			npt = len(titles)
+		if(plot2dModule):	
 			for i in range(0, len(titles)):
 				if(iniValues[i].ndim == 3):	
-					npt+=1
-			ipt = 0	
+					n+=1
+		ii=0
 		for i in range(0, len(titles)):
 			vals = iniValues[i]
 			title = titles[i]
@@ -256,46 +245,45 @@ class VisualPlot:
 				self.axes[title] = []
 				if(plots["3d"]):
 					plt.figure(1)
-					if useColspan:
-						ax = plt.subplot2grid((n,2), (i,0), colspan=2, projection='3d')
-					else:
-						ipt+=1
-						ax = plt.add_subplot(npt,1,ipt,  projection='3d')
+					ax = plt.subplot2grid((n,2), (ii,0), colspan=2, projection='3d')
 					self.addAxis(ax, title, vals)
 					self.axes[title].append(ax)
-				if useColspan:
-					self.addProjAxes(self.axes[title], title, vals, n, i, 0,  True)
-				else:
-					self.addProjAxes(self.axes[title], title, vals, npt, ipt, 0,  True)
+				self.addProjAxes(self.axes[title], title, vals, n, ii, 0,  True)
 	
 
 			elif(vals.ndim == 3):	
 				self.axes[title] = [[]]
 				if(plots["3d"]):
 					plt.figure(1)
-					if useColspan:
-						ax = plt.subplot2grid((n,2), (i,0), projection='3d')
-					else:
-						ipt+=1
-						ax = plt.add_subplot(npt,1,ipt)
+					ax = plt.subplot2grid((n,2), (ii,0), projection='3d')
 
 					self.addAxis(ax, ("%s dim 0" % title), vals[:,:,0])
 					self.axes[title][0].append(ax)
-				self.addProjAxes(self.axes[title][0], title, vals, n, i, 0)
+				self.addProjAxes(self.axes[title][0], title, vals, n, ii, 0)
 				self.axes[title].append([])
 				if(plots["3d"]):
 					plt.figure(1)
-					if useColspan:
-						ax2 = plt.subplot2grid((n,2), (i,1), projection='3d')
-					else:
-						ipt+=1
-						ax2 = plt.add_subplot(npt,1,ipt,  projection='3d')
+					ax2 = plt.subplot2grid((n,2), (ii,1), projection='3d')
 					self.addAxis(ax2, ("%s dim 1" % title), vals[:,:,1])
 					self.axes[title][1].append(ax2)
-				self.addProjAxes(self.axes[title][1], title, vals, n, i, 1)
+				self.addProjAxes(self.axes[title][1], title, vals, n, ii, 1)
+				#module
+				if plot2dModule:
+					ii+=1
+					self.axes[title].append([])
+					modVals = np.sqrt(vals[:,:,0] ** 2 + vals[:,:,1] ** 2)
+					if(plots["3d"]):
+						plt.figure(1)
+						ax3 = plt.subplot2grid((n,2), (ii,0),colspan=2, projection='3d')
+						self.addAxis(ax3, ("%s mod" % title), modVals)
+						self.axes[title][2].append(ax3)
+					self.addProjAxes(self.axes[title][2], title, modVals, n, ii, 0, True)
+
+
 			else:
 				#print("Dim invalid %d" % vals.ndim)
 				sys.exit(0)
+			ii+=1
 		if(plots["3d"]):
 			plt.figure(1)
 			wm = plt.get_current_fig_manager()
@@ -373,7 +361,7 @@ class VisualPlot:
 			ax.vlines(markMaxValue, np.min(vals[0]) if plotAnalitical else np.min(vals), np.max(vals[0]) if plotAnalitical else np.max(vals), color='b', label=maxLegend)
 		ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 		ax.grid(True)
-		if(ylim):
+		if(ylim and testKeyInDict(title, ylim)):
 			ax.set_ylim(ylim[title]["minY"],ylim[title]["maxY"])
 			ax.yaxis.set_major_formatter(FormatStrFormatter('%.4f'))
 			if xlim:
@@ -490,11 +478,21 @@ class VisualPlot:
 				self.updateAxis(ax[0], title, [vals[0], vals[1]] if plotAnalitical else vals)
 			self.updateProjAxis(ax, title, vals,0,dt)
 		else:
+			if plot2dModule:
+				if plotAnalitical:
+					modVals = [np.sqrt(vals[0][:,:,0] ** 2 + vals[0][:,:,1] ** 2),np.sqrt(vals[1][:,:,0] ** 2 + vals[1][:,:,1] ** 2)]
+				else:
+					modVals = np.sqrt(vals[:,:,0] ** 2 + vals[:,:,1] ** 2)
+
 			if(plots["3d"]):
 				self.updateAxis(ax[0][0],  title, [vals[0][...,0], vals[1][...,0]] if plotAnalitical else vals[...,0])
 				self.updateAxis(ax[1][0], title, [vals[0][...,1], vals[1][...,1]] if plotAnalitical else  vals[...,1])
+				if plot2dModule:
+					self.updateAxis(ax[2][0], title, [modVals[0], modVals[1]] if plotAnalitical else  vals[...,1])
 			self.updateProjAxis(ax[0], title, vals, 0, dt)
 			self.updateProjAxis(ax[1], title, vals, 1, dt)
+			if plot2dModule:
+				self.updateProjAxis(ax[2], title, modVals, 0, dt)
 
 			
 		
