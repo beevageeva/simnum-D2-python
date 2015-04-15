@@ -96,6 +96,9 @@ def getFunctionFromType(functionType):
 		elif functionType == "wavepacket":
 			from sound_wave_packet_params import getSoundWaveFunction, k0, zc, W
 			w = getSoundWaveFunction(k0, zc, W)
+		elif functionType == "wavepacket_carton":
+			from sound_wave_packet_carton_params import getSoundWaveFunction, k0, zc, W
+			w = getSoundWaveFunction(k0, zc, W)
 		elif functionType == "hankel":
 			from sound_wave_hankel_params import getSoundWaveFunction
 			from sound_wave_monochr_params import k
