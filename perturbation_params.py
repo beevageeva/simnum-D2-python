@@ -11,7 +11,8 @@ A = 3.0 * 10.0 ** (-4)
 
 waveType = "lineal"
 #waveType = "radial"
-functionType = "wavepacket"
+#functionType = "wavepacket"
+functionType = "wavepacket_carton"
 #functionType = "sine" 
 #functionType = "gauss" 
 #functionType = "hankel" 
@@ -20,9 +21,9 @@ functionType = "wavepacket"
 
 
 if waveType == "lineal":	
-	argType = "x"
+	#argType = "x"
 	#argType = "y"
-	#argType = "d1" 
+	argType = "d1" 
 	
 
 	if(argType == "x"):
@@ -46,10 +47,10 @@ if waveType == "lineal":
 		from common import getDz0, getDz1
 		wl1 = zf[0] - z0[0] + getDz0()
 		wl2 = zf[1] - z0[1] + getDz1()
-		nx= 1.0
-		ny = 1.0	
-		#nx= 3.0
-		#ny = 4.0	
+		#nx= 1.0
+		#ny = 1.0	
+		nx= 2.0
+		ny = 3.0	
 		k1 = nx/wl1
 		k2 = ny/wl2
 		#k1 = nx

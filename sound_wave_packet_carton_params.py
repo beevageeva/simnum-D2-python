@@ -47,7 +47,12 @@ def getSoundWaveGaussFunction(zc, W):
 
 	"""
 	def gaussFunction(z):
-		t2 = np.subtract(z[0],zc[0]) ** 2 + np.subtract(z[1], zc[1]) ** 2
+		from common import getArrayZShape
+		t2 = argFunc((z-getArrayZShape(zc[0], zc[1]))**2)
+		print("t2 shape ")
+		print(t2.shape)
+		print(np.max(t2))	
+		print(np.min(t2))	
 		return np.exp(-np.divide(t2, W**2))	 
 	return gaussFunction
 
@@ -70,8 +75,13 @@ def getSoundWaveFunction(k0, zc, W):
 	"""
 	def gaussPacketFunction(z):
 		from common import getArrayZShape
-
-		return np.multiply(getSoundWaveGaussFunction(zc, W)(z),  np.cos(2.0 * pi * k0 * argFunc(z-getArrayZShape(z0[0], z0[1])) ) )
+		gf = getSoundWaveGaussFunction(zc, W)(z)
+		print("gf shape")
+		print(gf.shape)
+		c =  np.cos(2.0 * pi * k0 * argFunc(z-getArrayZShape(z0[0], z0[1])) )
+		print("c shape")
+		print(c.shape)
+		return np.multiply(gf,  c)
 	return gaussPacketFunction
 
 

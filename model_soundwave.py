@@ -50,7 +50,12 @@ class Model:
 #		self.notifier = getNotifier(notifierType, self.z, ["pres", "rho", "vel", "ue", "uc", "ucr"], [self.pres, self.rho, self.vel, self.ue, self.uc, (self.uc[:,:,0]**2 + self.uc[:,:,1]**2)/ (2*self.rho) ])
 #the following for visual_plot_simple -- I only have 2darrayy -- velocity split
 #		self.notifier = getNotifier(notifierType, self.z, ["pres", "rho", "vel0", "vel1"], [self.pres, self.rho, self.vel[:,:,0], self.vel[:,:,1] ])
-		self.notifier = getNotifier(notifierType, self.z, ["pres", "rho", "vel0", "vel1", "ue", "uc0", "uc1", "ucr"], [self.pres, self.rho, self.vel[:,:,0], self.vel[:,:,1], self.ue, self.uc[:,:,0], self.uc[:,:,1], (self.uc[:,:,0]**2 + self.uc[:,:,1]**2)/ (2*self.rho) ])
+		#self.notifier = getNotifier(notifierType, self.z, ["pres", "rho", "vel0", "vel1", "ue", "uc0", "uc1", "ucr"], [self.pres, self.rho, self.vel[:,:,0], self.vel[:,:,1], self.ue, self.uc[:,:,0], self.uc[:,:,1], (self.uc[:,:,0]**2 + self.uc[:,:,1]**2)/ (2*self.rho) ])
+		
+		self.fe = np.zeros((self.rho.shape[0], self.rho.shape[1], 2))
+		self.fc = np.zeros((self.rho.shape[0], self.rho.shape[1], 3))
+		#self.notifier = getNotifier(notifierType, self.z, ["pres", "rho", "vel0", "vel1", "ue", "uc0", "uc1", "ucr", "fe0", "fe1", "fc0", "fc1", "fc2"], [self.pres, self.rho, self.vel[:,:,0], self.vel[:,:,1], self.ue, self.uc[:,:,0], self.uc[:,:,1], (self.uc[:,:,0]**2 + self.uc[:,:,1]**2)/ (2*self.rho), self.fe[:,:,0],  self.fe[:,:,1],  self.fc[:,:,0],  self.fc[:,:,1],  self.fc[:,:,2] ])
+		self.notifier = getNotifier(notifierType, self.z, ["pres", "rho", "vel0", "vel1", "ue", "uc0", "uc1", "fe0", "fe1", "fc0", "fc1", "fc2"], [self.pres, self.rho, self.vel[:,:,0], self.vel[:,:,1], self.ue, self.uc[:,:,0], self.uc[:,:,1], self.fe[:,:,0],  self.fe[:,:,1],  self.fc[:,:,0],  self.fc[:,:,1],  self.fc[:,:,2] ])
 		if(plotVelFFT):
 			self.notifier.addFFTAxis("velFFT0", self.vel[...,0])
 			self.notifier.addFFTAxis("velFFT1", self.vel[...,1])
@@ -207,7 +212,12 @@ class Model:
 				#self.notifier.updateValues("uc", self.uc,ndt)
 				self.notifier.updateValues("uc0", self.uc[:,:,0], ndt)
 				self.notifier.updateValues("uc1", self.uc[:,:,1], ndt)
-				self.notifier.updateValues("ucr", (self.uc[:,:,0]**2 + self.uc[:,:,1]**2)/ (2*self.rho) ,ndt)
+				#self.notifier.updateValues("ucr", (self.uc[:,:,0]**2 + self.uc[:,:,1]**2)/ (2*self.rho) ,ndt)
+				self.notifier.updateValues("fe0", self.fe[:,:,0] ,ndt)
+				self.notifier.updateValues("fe1", self.fe[:,:,1] ,ndt)
+				self.notifier.updateValues("fc0", self.fc[:,:,0] ,ndt)
+				self.notifier.updateValues("fc1", self.fc[:,:,1] ,ndt)
+				self.notifier.updateValues("fc2", self.fc[:,:,2] ,ndt)
 				if(plotVelFFT):
 					self.notifier.updateFFTAxis("velFFT0", self.vel[...,0])
 					self.notifier.updateFFTAxis("velFFT1", self.vel[...,1])
