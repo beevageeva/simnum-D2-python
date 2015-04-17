@@ -121,126 +121,251 @@ if loopType == "cython":
 
 
 
-if schemeType == "fg":
+if schemeType == "fg" or schemeType == "fg2":
 
 	
-	def calcIntermUArray(u, f, dt):
-		#print("calcIntermU")
-		from common import getDz0, getDz1
-		from constants import nint
-		#no more lambda dz1 may be different from dz0
-		dz0 = getDz0()
-		dz1 = getDz1()
-		if(u.ndim == 2): #case of um and ue that are not vectors
-			res = np.zeros((nint+1, nint+1))
-			#res = np.array(nint+1, nint+1) #TODO do not initialize how?
-			if loopType == "python":
-				for i in range(1, nint+2):
-					for j in range(1, nint+2):
-						#points displaced right +1 
-						res[i-1,j-1]  = 0.25 * (u[i-1,j-1] + u[i-1,j] + u[i,j-1] + u[i,j]) - 0.25 * dt  * ((f[i,j,1] - f[i-1,j,1] + f[i,j-1,1] - f[i-1,j-1,1])/dz1 + (f[i,j,0] - f[i,j-1,0]+f[i-1,j,0] - f[i-1,j-1,0]) / dz0)
-			elif loopType == "weave":
-				from scipy.weave import inline, converters
-				dt = float(dt)
-				code = """
-				for (int i = 1; i< nint+2; i++) {
-					for (int j = 1; j< nint+2; j++) {
-						res(i-1,j-1) = 0.25 * (u(i-1,j-1) + u(i-1,j) + u(i,j-1) + u(i,j)) - 0.25 * dt  * ((f(i,j,1) - f(i-1,j,1) + f(i,j-1,1) - f(i-1,j-1,1))/dz1 + (f(i,j,0) - f(i,j-1,0)+f(i-1,j,0) - f(i-1,j-1,0)) / dz0);
-					}
-				}
-				
-				"""	
-				inline(code, ['u', 'dz0', 'dz1', 'dt', 'res', 'f', 'nint'],type_converters=converters.blitz)
-			elif loopType == "cython":
-				from cython_alg2 import calc_interm_u_array_2d
-				
-				calc_interm_u_array_2d(res, u,f,nint, dz0, dz1, dt) 
+	if schemeType == "fg":
 
-		else:
-			res = np.zeros((nint+1, nint+1, 2))
-			#res = np.array(nint+1, nint+1, 2)
-			if loopType == "python":
-				for i in range(1, nint+2):
-					for j in range(1, nint+2):
-					#points displaced right +1 
-						res[i-1,j-1,0] = 0.25 * (u[i-1,j-1,0] + u[i-1,j,0] + u[i,j-1,0] + u[i,j,0]) - 0.25 * dt  * ((f[i,j,1] - f[i-1,j,1]+f[i,j-1,1] - f[i-1,j-1,1]) / dz1 + (f[i,j,0] - f[i,j-1,0] + f[i-1,j,0] - f[i-1,j-1,0])/dz0 )
-						res[i-1,j-1,1]  = 0.25 * (u[i-1,j-1,1] + u[i-1,j,1] + u[i,j-1,1] + u[i,j,1]) - 0.25 * dt * ((f[i,j,2] - f[i-1,j,2]+f[i,j-1,2] - f[i-1,j-1,2]) / dz1 + (f[i,j,1] - f[i,j-1,1] + f[i-1,j,1] - f[i-1,j-1,1])/dz0)
-			elif loopType == "weave":
-				from scipy.weave import inline, converters
-				dt = float(dt)
-				code = """
-				for(int i = 1;i<nint+2; i++) {
-					for(int j = 1;j<nint+2; j++) {
-						res(i-1,j-1,0) = 0.25 * (u(i-1,j-1,0) + u(i-1,j,0) + u(i,j-1,0) + u(i,j,0)) - 0.25 * dt  * ((f(i,j,1) - f(i-1,j,1)+f(i,j-1,1) - f(i-1,j-1,1)) / dz1 + (f(i,j,0) - f(i,j-1,0) + f(i-1,j,0) - f(i-1,j-1,0))/dz0 );
-						res(i-1,j-1,1) = 0.25 * (u(i-1,j-1,1) + u(i-1,j,1) + u(i,j-1,1) + u(i,j,1)) - 0.25 * dt * ((f(i,j,2) - f(i-1,j,2)+f(i,j-1,2) - f(i-1,j-1,2)) / dz1 + (f(i,j,1) - f(i,j-1,1) + f(i-1,j,1) - f(i-1,j-1,1))/dz0);
+		def calcIntermUArray(u, f, dt):
+			#print("calcIntermU")
+			from common import getDz0, getDz1
+			from constants import nint
+			#no more lambda dz1 may be different from dz0
+			dz0 = getDz0()
+			dz1 = getDz1()
+			if(u.ndim == 2): #case of um and ue that are not vectors
+				res = np.zeros((nint+1, nint+1))
+				#res = np.array(nint+1, nint+1) #TODO do not initialize how?
+				if loopType == "python":
+					for i in range(1, nint+2):
+						for j in range(1, nint+2):
+							#points displaced right +1 
+							res[i-1,j-1]  = 0.25 * (u[i-1,j-1] + u[i-1,j] + u[i,j-1] + u[i,j]) - 0.25 * dt  * ((f[i,j,1] - f[i-1,j,1] + f[i,j-1,1] - f[i-1,j-1,1])/dz1 + (f[i,j,0] - f[i,j-1,0]+f[i-1,j,0] - f[i-1,j-1,0]) / dz0)
+				elif loopType == "weave":
+					from scipy.weave import inline, converters
+					dt = float(dt)
+					code = """
+					for (int i = 1; i< nint+2; i++) {
+						for (int j = 1; j< nint+2; j++) {
+							res(i-1,j-1) = 0.25 * (u(i-1,j-1) + u(i-1,j) + u(i,j-1) + u(i,j)) - 0.25 * dt  * ((f(i,j,1) - f(i-1,j,1) + f(i,j-1,1) - f(i-1,j-1,1))/dz1 + (f(i,j,0) - f(i,j-1,0)+f(i-1,j,0) - f(i-1,j-1,0)) / dz0);
 						}
-					}				
-
-				"""
-				inline(code, ['u', 'dz0', 'dz1', 'dt', 'res', 'f', 'nint'],type_converters=converters.blitz)
-			elif loopType == "cython":
-				from cython_alg2 import calc_interm_u_array_3d
-				calc_interm_u_array_3d(res, u, f, nint, dz0, dz1, dt) 
-	
-		return res
-
-	
-	def calcFinalUArray(u, intermF, dt, skip=0):
-		#print("calcFinalU")
-		from common import getDz0, getDz1
-		from constants import nint
-		dz0 = getDz0()
-		dz1 = getDz1()
-		n = intermF.shape[0] - 1
-		if(u.ndim == 2): #case of um and ue that are not vectors
-			res = np.zeros((n, n))
-			#res = np.array(nint+1, nint+1) #TODO do not initialize how?
-			if loopType == "python":
-				for i in range(0, n):
-					for j in range(0, n):
-						res[i,j] = u[i+skip,j+skip] - dt  * 0.5 * ((intermF[i+1,j,1] - intermF[i,j,1] + intermF[i+1,j+1,1] - intermF[i,j+1,1])/dz1 + (intermF[i,j+1,0] - intermF[i,j,0] + intermF[i+1,j+1,0] - intermF[i+1,j,0])/dz0)
-			elif loopType == "weave":
-				from scipy.weave import inline, converters
-				dt = float(dt)
-				skip = int(skip)
-				code = """
-				for(int i = 0;i<n; i++) {
-					for(int j = 0;j<n; j++) {
-						res(i,j) = u(i+skip,j+skip) - dt  * 0.5 * ((intermF(i+1,j,1) - intermF(i,j,1) + intermF(i+1,j+1,1) - intermF(i,j+1,1))/dz1 + (intermF(i,j+1,0) - intermF(i,j,0) + intermF(i+1,j+1,0) - intermF(i+1,j,0))/dz0);
 					}
-				}
-				"""
-				inline(code, ['u', 'dz0', 'dz1', 'dt', 'res', 'skip', 'intermF', 'n'],type_converters=converters.blitz)
-			elif loopType == "cython":
-				from cython_alg2 import calc_final_u_array_2d
-				calc_final_u_array_2d(res, u, intermF, n, dz0, dz1, dt, skip) 
-		else:
-			res = np.zeros((n, n, 2))
-			#res = np.array(nint+1, nint+1, 2)
-			if loopType == "python":
-				for i in range(0, n):
-					for j in range(0, n):
-						res[i,j,0]  = u[i+skip,j+skip,0] - dt * 0.5 * ((intermF[i+1,j,1] - intermF[i,j,1] + intermF[i+1,j+1,1] - intermF[i,j+1,1])/dz1 + (intermF[i,j+1,0] - intermF[i,j,0] + intermF[i+1,j+1,0] - intermF[i+1,j,0]) / dz0)
-						res[i,j,1]  = u[i+skip,j+skip,1] - dt  * 0.5* ((intermF[i+1,j,2] - intermF[i,j,2] + intermF[i+1,j+1,2] - intermF[i,j+1,2])/dz1 + (intermF[i,j+1,1] - intermF[i,j,1] + intermF[i+1,j+1,1] - intermF[i+1,j,1])/dz0)
-			elif loopType == "weave":
-				from scipy.weave import inline, converters
-				dt = float(dt)
-				skip = int(skip)
-				code = """
-				for(int i = 0;i<n; i++) {
-					for(int j = 0;j<n; j++) {
-						res(i,j,0)  = u(i+skip,j+skip,0) - dt * 0.5 * ((intermF(i+1,j,1) - intermF(i,j,1) + intermF(i+1,j+1,1) - intermF(i,j+1,1))/dz1 + (intermF(i,j+1,0) - intermF(i,j,0) + intermF(i+1,j+1,0) - intermF(i+1,j,0)) / dz0);
-						res(i,j,1) = u(i+skip,j+skip,1) - dt  * 0.5* ((intermF(i+1,j,2) - intermF(i,j,2) + intermF(i+1,j+1,2) - intermF(i,j+1,2))/dz1 + (intermF(i,j+1,1) - intermF(i,j,1) + intermF(i+1,j+1,1) - intermF(i+1,j,1))/dz0);
+					
+					"""	
+					inline(code, ['u', 'dz0', 'dz1', 'dt', 'res', 'f', 'nint'],type_converters=converters.blitz)
+				elif loopType == "cython":
+					from cython_alg2 import calc_interm_u_array_2d
+					
+					calc_interm_u_array_2d(res, u,f,nint, dz0, dz1, dt) 
 	
+			else:
+				res = np.zeros((nint+1, nint+1, 2))
+				#res = np.array(nint+1, nint+1, 2)
+				if loopType == "python":
+					for i in range(1, nint+2):
+						for j in range(1, nint+2):
+						#points displaced right +1 
+							res[i-1,j-1,0] = 0.25 * (u[i-1,j-1,0] + u[i-1,j,0] + u[i,j-1,0] + u[i,j,0]) - 0.25 * dt  * ((f[i,j,1] - f[i-1,j,1]+f[i,j-1,1] - f[i-1,j-1,1]) / dz1 + (f[i,j,0] - f[i,j-1,0] + f[i-1,j,0] - f[i-1,j-1,0])/dz0 )
+							res[i-1,j-1,1]  = 0.25 * (u[i-1,j-1,1] + u[i-1,j,1] + u[i,j-1,1] + u[i,j,1]) - 0.25 * dt * ((f[i,j,2] - f[i-1,j,2]+f[i,j-1,2] - f[i-1,j-1,2]) / dz1 + (f[i,j,1] - f[i,j-1,1] + f[i-1,j,1] - f[i-1,j-1,1])/dz0)
+				elif loopType == "weave":
+					from scipy.weave import inline, converters
+					dt = float(dt)
+					code = """
+					for(int i = 1;i<nint+2; i++) {
+						for(int j = 1;j<nint+2; j++) {
+							res(i-1,j-1,0) = 0.25 * (u(i-1,j-1,0) + u(i-1,j,0) + u(i,j-1,0) + u(i,j,0)) - 0.25 * dt  * ((f(i,j,1) - f(i-1,j,1)+f(i,j-1,1) - f(i-1,j-1,1)) / dz1 + (f(i,j,0) - f(i,j-1,0) + f(i-1,j,0) - f(i-1,j-1,0))/dz0 );
+							res(i-1,j-1,1) = 0.25 * (u(i-1,j-1,1) + u(i-1,j,1) + u(i,j-1,1) + u(i,j,1)) - 0.25 * dt * ((f(i,j,2) - f(i-1,j,2)+f(i,j-1,2) - f(i-1,j-1,2)) / dz1 + (f(i,j,1) - f(i,j-1,1) + f(i-1,j,1) - f(i-1,j-1,1))/dz0);
+							}
+						}				
+	
+					"""
+					inline(code, ['u', 'dz0', 'dz1', 'dt', 'res', 'f', 'nint'],type_converters=converters.blitz)
+				elif loopType == "cython":
+					from cython_alg2 import calc_interm_u_array_3d
+					calc_interm_u_array_3d(res, u, f, nint, dz0, dz1, dt) 
+		
+			return res
+	
+		
+		def calcFinalUArray(u, intermF, dt, skip=0):
+			#print("calcFinalU")
+			from common import getDz0, getDz1
+			from constants import nint
+			dz0 = getDz0()
+			dz1 = getDz1()
+			n = intermF.shape[0] - 1
+			if(u.ndim == 2): #case of um and ue that are not vectors
+				res = np.zeros((n, n))
+				#res = np.array(nint+1, nint+1) #TODO do not initialize how?
+				if loopType == "python":
+					for i in range(0, n):
+						for j in range(0, n):
+							res[i,j] = u[i+skip,j+skip] - dt  * 0.5 * ((intermF[i+1,j,1] - intermF[i,j,1] + intermF[i+1,j+1,1] - intermF[i,j+1,1])/dz1 + (intermF[i,j+1,0] - intermF[i,j,0] + intermF[i+1,j+1,0] - intermF[i+1,j,0])/dz0)
+				elif loopType == "weave":
+					from scipy.weave import inline, converters
+					dt = float(dt)
+					skip = int(skip)
+					code = """
+					for(int i = 0;i<n; i++) {
+						for(int j = 0;j<n; j++) {
+							res(i,j) = u(i+skip,j+skip) - dt  * 0.5 * ((intermF(i+1,j,1) - intermF(i,j,1) + intermF(i+1,j+1,1) - intermF(i,j+1,1))/dz1 + (intermF(i,j+1,0) - intermF(i,j,0) + intermF(i+1,j+1,0) - intermF(i+1,j,0))/dz0);
+						}
 					}
-				}
-				"""
-				inline(code, ['u', 'dz0', 'dz1', 'dt', 'res', 'skip', 'intermF', 'n'],type_converters=converters.blitz)
-			elif loopType == "cython":
-				from cython_alg2 import calc_final_u_array_3d
-				calc_final_u_array_3d(res, u, intermF, n, dz0, dz1, dt, skip) 
-		#no more boundary conditions because intermediate array alreday has nint + 3 points
-		return np.array(res)
+					"""
+					inline(code, ['u', 'dz0', 'dz1', 'dt', 'res', 'skip', 'intermF', 'n'],type_converters=converters.blitz)
+				elif loopType == "cython":
+					from cython_alg2 import calc_final_u_array_2d
+					calc_final_u_array_2d(res, u, intermF, n, dz0, dz1, dt, skip) 
+			else:
+				res = np.zeros((n, n, 2))
+				#res = np.array(nint+1, nint+1, 2)
+				if loopType == "python":
+					for i in range(0, n):
+						for j in range(0, n):
+							res[i,j,0]  = u[i+skip,j+skip,0] - dt * 0.5 * ((intermF[i+1,j,1] - intermF[i,j,1] + intermF[i+1,j+1,1] - intermF[i,j+1,1])/dz1 + (intermF[i,j+1,0] - intermF[i,j,0] + intermF[i+1,j+1,0] - intermF[i+1,j,0]) / dz0)
+							res[i,j,1]  = u[i+skip,j+skip,1] - dt  * 0.5* ((intermF[i+1,j,2] - intermF[i,j,2] + intermF[i+1,j+1,2] - intermF[i,j+1,2])/dz1 + (intermF[i,j+1,1] - intermF[i,j,1] + intermF[i+1,j+1,1] - intermF[i+1,j,1])/dz0)
+				elif loopType == "weave":
+					from scipy.weave import inline, converters
+					dt = float(dt)
+					skip = int(skip)
+					code = """
+					for(int i = 0;i<n; i++) {
+						for(int j = 0;j<n; j++) {
+							res(i,j,0)  = u(i+skip,j+skip,0) - dt * 0.5 * ((intermF(i+1,j,1) - intermF(i,j,1) + intermF(i+1,j+1,1) - intermF(i,j+1,1))/dz1 + (intermF(i,j+1,0) - intermF(i,j,0) + intermF(i+1,j+1,0) - intermF(i+1,j,0)) / dz0);
+							res(i,j,1) = u(i+skip,j+skip,1) - dt  * 0.5* ((intermF(i+1,j,2) - intermF(i,j,2) + intermF(i+1,j+1,2) - intermF(i,j+1,2))/dz1 + (intermF(i,j+1,1) - intermF(i,j,1) + intermF(i+1,j+1,1) - intermF(i+1,j,1))/dz0);
+		
+						}
+					}
+					"""
+					inline(code, ['u', 'dz0', 'dz1', 'dt', 'res', 'skip', 'intermF', 'n'],type_converters=converters.blitz)
+				elif loopType == "cython":
+					from cython_alg2 import calc_final_u_array_3d
+					calc_final_u_array_3d(res, u, intermF, n, dz0, dz1, dt, skip) 
+			#no more boundary conditions because intermediate array alreday has nint + 3 points
+			return np.array(res)
+
+
+	elif schemeType == "fg2":
+		def calcIntermUArray(u, f, dt):
+			#print("calcIntermU")
+			from common import getDz0, getDz1
+			from constants import nint
+			#no more lambda dz1 may be different from dz0
+			dz0 = getDz0()
+			dz1 = getDz1()
+			if(u.ndim == 2): #case of um and ue that are not vectors
+				res = np.zeros((nint+1, nint+1))
+				#res = np.array(nint+1, nint+1) #TODO do not initialize how?
+				if loopType == "python":
+					for i in range(1, nint+2):
+						for j in range(1, nint+2):
+							#points displaced right +1 
+							res[i-1,j-1]  = 0.25 * (u[i-1,j-1] + u[i-1,j] + u[i,j-1] + u[i,j]) - 0.25 * dt  * ((f[i,j,1] - f[i-1,j,1] + f[i,j-1,1] - f[i-1,j-1,1])/dz1 + (f[i,j,0] - f[i,j-1,0]+f[i-1,j,0] - f[i-1,j-1,0]) / dz0)
+				elif loopType == "weave":
+					from scipy.weave import inline, converters
+					dt = float(dt)
+					code = """
+					for (int i = 1; i< nint+2; i++) {
+						for (int j = 1; j< nint+2; j++) {
+							res(i-1,j-1) = 0.25 * (u(i-1,j-1) + u(i-1,j) + u(i,j-1) + u(i,j)) - 0.25 * dt  * ((f(i,j,1) - f(i-1,j,1) + f(i,j-1,1) - f(i-1,j-1,1))/dz1 + (f(i,j,0) - f(i,j-1,0)+f(i-1,j,0) - f(i-1,j-1,0)) / dz0);
+						}
+					}
+					
+					"""	
+					inline(code, ['u', 'dz0', 'dz1', 'dt', 'res', 'f', 'nint'],type_converters=converters.blitz)
+				elif loopType == "cython":
+					from cython_alg2_fg2 import calc_interm_u_array_2d
+					
+					calc_interm_u_array_2d(res, u,f,nint, dz0, dz1, dt) 
+	
+			else:
+				res = np.zeros((nint+1, nint+1, 2))
+				#res = np.array(nint+1, nint+1, 2)
+				if loopType == "python":
+					for i in range(1, nint+2):
+						for j in range(1, nint+2):
+						#points displaced right +1 
+							res[i-1,j-1,0] = 0.25 * (u[i-1,j-1,0] + u[i-1,j,0] + u[i,j-1,0] + u[i,j,0]) - 0.25 * dt  * ((f[i,j,1] - f[i-1,j,1]+f[i,j-1,1] - f[i-1,j-1,1]) / dz1 + (f[i,j,0] - f[i,j-1,0] + f[i-1,j,0] - f[i-1,j-1,0])/dz0 )
+							res[i-1,j-1,1]  = 0.25 * (u[i-1,j-1,1] + u[i-1,j,1] + u[i,j-1,1] + u[i,j,1]) - 0.25 * dt * ((f[i,j,2] - f[i-1,j,2]+f[i,j-1,2] - f[i-1,j-1,2]) / dz1 + (f[i,j,1] - f[i,j-1,1] + f[i-1,j,1] - f[i-1,j-1,1])/dz0)
+				elif loopType == "weave":
+					from scipy.weave import inline, converters
+					dt = float(dt)
+					code = """
+					for(int i = 1;i<nint+2; i++) {
+						for(int j = 1;j<nint+2; j++) {
+							res(i-1,j-1,0) = 0.25 * (u(i-1,j-1,0) + u(i-1,j,0) + u(i,j-1,0) + u(i,j,0)) - 0.25 * dt  * ((f(i,j,1) - f(i-1,j,1)+f(i,j-1,1) - f(i-1,j-1,1)) / dz1 + (f(i,j,0) - f(i,j-1,0) + f(i-1,j,0) - f(i-1,j-1,0))/dz0 );
+							res(i-1,j-1,1) = 0.25 * (u(i-1,j-1,1) + u(i-1,j,1) + u(i,j-1,1) + u(i,j,1)) - 0.25 * dt * ((f(i,j,2) - f(i-1,j,2)+f(i,j-1,2) - f(i-1,j-1,2)) / dz1 + (f(i,j,1) - f(i,j-1,1) + f(i-1,j,1) - f(i-1,j-1,1))/dz0);
+							}
+						}				
+	
+					"""
+					inline(code, ['u', 'dz0', 'dz1', 'dt', 'res', 'f', 'nint'],type_converters=converters.blitz)
+				elif loopType == "cython":
+					from cython_alg2_fg2 import calc_interm_u_array_3d
+					calc_interm_u_array_3d(res, u, f, nint, dz0, dz1, dt) 
+		
+			return res
+	
+		
+		def calcFinalUArray(u, intermF, dt, skip=0):
+			#print("calcFinalU")
+			from common import getDz0, getDz1
+			from constants import nint
+			dz0 = getDz0()
+			dz1 = getDz1()
+			n = intermF.shape[0] - 1
+			if(u.ndim == 2): #case of um and ue that are not vectors
+				res = np.zeros((n, n))
+				#res = np.array(nint+1, nint+1) #TODO do not initialize how?
+				if loopType == "python":
+					for i in range(0, n):
+						for j in range(0, n):
+							res[i,j] = u[i+skip,j+skip] - dt  * 0.5 * ((intermF[i+1,j,1] - intermF[i,j,1] + intermF[i+1,j+1,1] - intermF[i,j+1,1])/dz1 + (intermF[i,j+1,0] - intermF[i,j,0] + intermF[i+1,j+1,0] - intermF[i+1,j,0])/dz0)
+				elif loopType == "weave":
+					from scipy.weave import inline, converters
+					dt = float(dt)
+					skip = int(skip)
+					code = """
+					for(int i = 0;i<n; i++) {
+						for(int j = 0;j<n; j++) {
+							res(i,j) = u(i+skip,j+skip) - dt  * 0.5 * ((intermF(i+1,j,1) - intermF(i,j,1) + intermF(i+1,j+1,1) - intermF(i,j+1,1))/dz1 + (intermF(i,j+1,0) - intermF(i,j,0) + intermF(i+1,j+1,0) - intermF(i+1,j,0))/dz0);
+						}
+					}
+					"""
+					inline(code, ['u', 'dz0', 'dz1', 'dt', 'res', 'skip', 'intermF', 'n'],type_converters=converters.blitz)
+				elif loopType == "cython":
+					from cython_alg2_fg2 import calc_final_u_array_2d
+					calc_final_u_array_2d(res, u, intermF, n, dz0, dz1, dt, skip) 
+			else:
+				res = np.zeros((n, n, 2))
+				#res = np.array(nint+1, nint+1, 2)
+				if loopType == "python":
+					for i in range(0, n):
+						for j in range(0, n):
+							res[i,j,0]  = u[i+skip,j+skip,0] - dt * 0.5 * ((intermF[i+1,j,1] - intermF[i,j,1] + intermF[i+1,j+1,1] - intermF[i,j+1,1])/dz1 + (intermF[i,j+1,0] - intermF[i,j,0] + intermF[i+1,j+1,0] - intermF[i+1,j,0]) / dz0)
+							res[i,j,1]  = u[i+skip,j+skip,1] - dt  * 0.5* ((intermF[i+1,j,2] - intermF[i,j,2] + intermF[i+1,j+1,2] - intermF[i,j+1,2])/dz1 + (intermF[i,j+1,1] - intermF[i,j,1] + intermF[i+1,j+1,1] - intermF[i+1,j,1])/dz0)
+				elif loopType == "weave":
+					from scipy.weave import inline, converters
+					dt = float(dt)
+					skip = int(skip)
+					code = """
+					for(int i = 0;i<n; i++) {
+						for(int j = 0;j<n; j++) {
+							res(i,j,0)  = u(i+skip,j+skip,0) - dt * 0.5 * ((intermF(i+1,j,1) - intermF(i,j,1) + intermF(i+1,j+1,1) - intermF(i,j+1,1))/dz1 + (intermF(i,j+1,0) - intermF(i,j,0) + intermF(i+1,j+1,0) - intermF(i+1,j,0)) / dz0);
+							res(i,j,1) = u(i+skip,j+skip,1) - dt  * 0.5* ((intermF(i+1,j,2) - intermF(i,j,2) + intermF(i+1,j+1,2) - intermF(i,j+1,2))/dz1 + (intermF(i,j+1,1) - intermF(i,j,1) + intermF(i+1,j+1,1) - intermF(i+1,j,1))/dz0);
+		
+						}
+					}
+					"""
+					inline(code, ['u', 'dz0', 'dz1', 'dt', 'res', 'skip', 'intermF', 'n'],type_converters=converters.blitz)
+				elif loopType == "cython":
+					from cython_alg2_fg2 import calc_final_u_array_3d
+					calc_final_u_array_3d(res, u, intermF, n, dz0, dz1, dt, skip) 
+			#no more boundary conditions because intermediate array alreday has nint + 3 points
+			return np.array(res)
+
+
+
 		
 	from constants import bcStep
 	if(bcStep == "interm"):
