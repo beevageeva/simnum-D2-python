@@ -10,7 +10,7 @@ def power2Vec(vfr):
 
 def getInitialUcUe(rho, v , p):
 	uc = np.dstack((rho * v[:,:,0], rho * v[:,:,1] )) #cannot directly multiply 2d and 3d array
-	ue = np.add(np.divide(p,(gamma - 1.0)),0.5 * np.multiply(rho, power2Vec(v)))
+	ue = p / (gamma - 1.0) + 0.5 * rho * power2Vec(v)
 	#print("getInitialUcUe uc_xxPX:")
 	#print(" ".join(map(str, uc[0,:,0])))
 	#print("getInitialUcUe uePX:")
@@ -43,12 +43,6 @@ def recalculateVelPres(rho, uc, ue):
 	return {'vel': v, 'pres': p}
 
 def recalculateFluxes(rho, uc, ue, v, p):
-
-  #fc = np.divide(np.power(uc, 2.0), rho) + p
-  #fe = np.multiply((ue + p), v)
-
-
-
 	fm = uc
 	fe1 = ue + p	
 	fe = np.dstack((fe1 * v[:,:,0], fe1 * v[:,:,1] )) #cannot directly multiply 2d and 3d array
@@ -143,14 +137,14 @@ if schemeType == "fg":
 				for i in range(1, nint+2):
 					for j in range(1, nint+2):
 						#points displaced right +1 
-						res[i-1,j-1]  = 0.25 * (u[i-1,j-1] + u[i-1,j] + u[i,j-1] + u[i,j]) - 0.5 * dt  * ((f[i,j,1] - f[i-1,j,1])/dz1 + (f[i,j,0] - f[i,j-1,0]) / dz0)
+						res[i-1,j-1]  = 0.25 * (u[i-1,j-1] + u[i-1,j] + u[i,j-1] + u[i,j]) - 0.25 * dt  * ((f[i,j,1] - f[i-1,j,1] + f[i,j-1,1] - f[i-1,j-1,1])/dz1 + (f[i,j,0] - f[i,j-1,0]+f[i-1,j,0] - f[i-1,j-1,0]) / dz0)
 			elif loopType == "weave":
 				from scipy.weave import inline, converters
 				dt = float(dt)
 				code = """
 				for (int i = 1; i< nint+2; i++) {
 					for (int j = 1; j< nint+2; j++) {
-						res(i-1,j-1)  = 0.25 * (u(i-1,j-1) + u(i-1,j) + u(i,j-1) + u(i,j)) - 0.5 * dt  * ((f(i,j,1) - f(i-1,j,1))/dz1 + (f(i,j,0) - f(i,j-1,0)) / dz0)
+						res(i-1,j-1) = 0.25 * (u(i-1,j-1) + u(i-1,j) + u(i,j-1) + u(i,j)) - 0.25 * dt  * ((f(i,j,1) - f(i-1,j,1) + f(i,j-1,1) - f(i-1,j-1,1))/dz1 + (f(i,j,0) - f(i,j-1,0)+f(i-1,j,0) - f(i-1,j-1,0)) / dz0);
 					}
 				}
 				
@@ -168,16 +162,16 @@ if schemeType == "fg":
 				for i in range(1, nint+2):
 					for j in range(1, nint+2):
 					#points displaced right +1 
-						res[i-1,j-1,0] = 0.25 * (u[i-1,j-1,0] + u[i-1,j,0] + u[i,j-1,0] + u[i,j,0]) - 0.5 * dt  * ((f[i,j,1] - f[i-1,j,1]) / dz1 + (f[i,j,0] - f[i,j-1,0])/dz0 )
-						res[i-1,j-1,1]  = 0.25 * (u[i-1,j-1,1] + u[i-1,j,1] + u[i,j-1,1] + u[i,j,1]) - 0.5 * dt * ((f[i,j,2] - f[i-1,j,2]) / dz1 + (f[i,j,1] - f[i,j-1,1])/dz0)
+						res[i-1,j-1,0] = 0.25 * (u[i-1,j-1,0] + u[i-1,j,0] + u[i,j-1,0] + u[i,j,0]) - 0.25 * dt  * ((f[i,j,1] - f[i-1,j,1]+f[i,j-1,1] - f[i-1,j-1,1]) / dz1 + (f[i,j,0] - f[i,j-1,0] + f[i-1,j,0] - f[i-1,j-1,0])/dz0 )
+						res[i-1,j-1,1]  = 0.25 * (u[i-1,j-1,1] + u[i-1,j,1] + u[i,j-1,1] + u[i,j,1]) - 0.25 * dt * ((f[i,j,2] - f[i-1,j,2]+f[i,j-1,2] - f[i-1,j-1,2]) / dz1 + (f[i,j,1] - f[i,j-1,1] + f[i-1,j,1] - f[i-1,j-1,1])/dz0)
 			elif loopType == "weave":
 				from scipy.weave import inline, converters
 				dt = float(dt)
 				code = """
 				for(int i = 1;i<nint+2; i++) {
 					for(int j = 1;j<nint+2; j++) {
-						res(i-1,j-1,0) = 0.25 * (u(i-1,j-1,0) + u(i-1,j,0) + u(i,j-1,0) + u(i,j,0)) - 0.5 * dt  * ((f(i,j,1) - f(i-1,j,1)) / dz1 + (f(i,j,0) - f(i,j-1,0))/dz0 )
-						res(i-1,j-1,1)  = 0.25 * (u(i-1,j-1,1) + u(i-1,j,1) + u(i,j-1,1) + u(i,j,1)) - 0.5 * dt * ((f(i,j,2) - f(i-1,j,2)) / dz1 + (f(i,j,1) - f(i,j-1,1))/dz0)
+						res(i-1,j-1,0) = 0.25 * (u(i-1,j-1,0) + u(i-1,j,0) + u(i,j-1,0) + u(i,j,0)) - 0.25 * dt  * ((f(i,j,1) - f(i-1,j,1)+f(i,j-1,1) - f(i-1,j-1,1)) / dz1 + (f(i,j,0) - f(i,j-1,0) + f(i-1,j,0) - f(i-1,j-1,0))/dz0 );
+						res(i-1,j-1,1) = 0.25 * (u(i-1,j-1,1) + u(i-1,j,1) + u(i,j-1,1) + u(i,j,1)) - 0.25 * dt * ((f(i,j,2) - f(i-1,j,2)+f(i,j-1,2) - f(i-1,j-1,2)) / dz1 + (f(i,j,1) - f(i,j-1,1) + f(i-1,j,1) - f(i-1,j-1,1))/dz0);
 						}
 					}				
 
@@ -203,7 +197,7 @@ if schemeType == "fg":
 			if loopType == "python":
 				for i in range(0, n):
 					for j in range(0, n):
-						res[i,j] = u[i+skip,j+skip] - dt  * ((intermF[i+1,j,1] - intermF[i,j,1])/dz1 + (intermF[i,j+1,0] - intermF[i,j,0])/dz0)
+						res[i,j] = u[i+skip,j+skip] - dt  * 0.5 * ((intermF[i+1,j,1] - intermF[i,j,1] + intermF[i+1,j+1,1] - intermF[i,j+1,1])/dz1 + (intermF[i,j+1,0] - intermF[i,j,0] + intermF[i+1,j+1,0] - intermF[i+1,j,0])/dz0)
 			elif loopType == "weave":
 				from scipy.weave import inline, converters
 				dt = float(dt)
@@ -211,7 +205,7 @@ if schemeType == "fg":
 				code = """
 				for(int i = 0;i<n; i++) {
 					for(int j = 0;j<n; j++) {
-						res(i,j) = u(i+skip,j+skip) - dt  * ((intermF(i+1,j,1) - intermF(i,j,1))/dz1 + (intermF(i,j+1,0) - intermF(i,j,0))/dz0)
+						res(i,j) = u(i+skip,j+skip) - dt  * 0.5 * ((intermF(i+1,j,1) - intermF(i,j,1) + intermF(i+1,j+1,1) - intermF(i,j+1,1))/dz1 + (intermF(i,j+1,0) - intermF(i,j,0) + intermF(i+1,j+1,0) - intermF(i+1,j,0))/dz0);
 					}
 				}
 				"""
@@ -225,8 +219,8 @@ if schemeType == "fg":
 			if loopType == "python":
 				for i in range(0, n):
 					for j in range(0, n):
-						res[i,j,0]  = u[i+skip,j+skip,0] - dt *  ((intermF[i+1,j,1] - intermF[i,j,1])/dz1 + (intermF[i,j+1,0] - intermF[i,j,0] ) / dz0)
-						res[i,j,1]  = u[i+skip,j+skip,1] - dt  *  ((intermF[i+1,j,2] - intermF[i,j,2])/dz1 + (intermF[i,j+1,1] - intermF[i,j,1])/dz0)
+						res[i,j,0]  = u[i+skip,j+skip,0] - dt * 0.5 * ((intermF[i+1,j,1] - intermF[i,j,1] + intermF[i+1,j+1,1] - intermF[i,j+1,1])/dz1 + (intermF[i,j+1,0] - intermF[i,j,0] + intermF[i+1,j+1,0] - intermF[i+1,j,0]) / dz0)
+						res[i,j,1]  = u[i+skip,j+skip,1] - dt  * 0.5* ((intermF[i+1,j,2] - intermF[i,j,2] + intermF[i+1,j+1,2] - intermF[i,j+1,2])/dz1 + (intermF[i,j+1,1] - intermF[i,j,1] + intermF[i+1,j+1,1] - intermF[i+1,j,1])/dz0)
 			elif loopType == "weave":
 				from scipy.weave import inline, converters
 				dt = float(dt)
