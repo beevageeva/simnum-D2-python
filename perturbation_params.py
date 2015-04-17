@@ -22,8 +22,8 @@ functionType = "wavepacket_carton"
 
 if waveType == "lineal":	
 	#argType = "x"
-	#argType = "y"
-	argType = "d1" 
+	argType = "y"
+	#argType = "d1" 
 	
 
 	if(argType == "x"):
