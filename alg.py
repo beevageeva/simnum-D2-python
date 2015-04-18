@@ -92,15 +92,15 @@ def getTimestep(v, p, rho):
 		return 0	
 	cs = np.sqrt(gamma *  t1)
 	#the extension of 1D is unstable because on Neumann critrion
-	smax0 = np.max(np.concatenate([np.absolute(v[:,:,0] + cs), np.absolute(v[:,:,0] - cs)]))
-	smax1 = np.max(np.concatenate([np.absolute(v[:,:,1] + cs), np.absolute(v[:,:,1] - cs)]))
-	dt = min(float(dz0 * fcfl ) / smax0, float(dz1 * fcfl ) / smax1 )
+	#smax0 = np.max(np.concatenate([np.absolute(v[:,:,0] + cs), np.absolute(v[:,:,0] - cs)]))
+	#smax1 = np.max(np.concatenate([np.absolute(v[:,:,1] + cs), np.absolute(v[:,:,1] - cs)]))
+	#dt = min(float(dz0 * fcfl ) / smax0, float(dz1 * fcfl ) / smax1 )
 	#see the following link
 	#TODO	
 	#http://homepage.univie.ac.at/franz.vesely/cp_tut/nol2h/new/c5pd_s1ih.html 
 	#http://www.aei.mpg.de/~rezzolla/lnotes/Evolution_Pdes/evolution_pdes_lnotes.pdf pag 59
-	#smax = np.max(np.concatenate([np.sqrt( (v[:,:,0] + cs) ** 2 + (v[:,:,1] + cs)**2 ), np.sqrt( (v[:,:,0] - cs) ** 2 + (v[:,:,1] - cs)**2 )]))
-	#dt = min(dz0, dz1) * fcfl  / (smax *  2 ** (0.5))
+	smax = np.max(np.concatenate([np.sqrt( (v[:,:,0] + cs) ** 2 + (v[:,:,1] + cs)**2 ), np.sqrt( (v[:,:,0] - cs) ** 2 + (v[:,:,1] - cs)**2 )]))
+	dt = min(dz0, dz1) * fcfl  / (smax *  2 ** (0.5))
 #	#print("getTimestep %E" % dt)
 
 	return dt
