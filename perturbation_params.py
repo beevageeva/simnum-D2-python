@@ -38,7 +38,8 @@ if waveType == "lineal":
 	elif argType == "y":
 		from common import getDz1
 		wl = zf[1] - z0[1] + getDz1()
-		ny = 3.0
+		#ny = 3.0
+		ny = 1.0
 		k2 = ny / wl
 		#k2 = ny
 		argFunc = lambda x: k2 * x[1]
