@@ -9,7 +9,7 @@ from sys import exit
 A = 3.0 * 10.0 ** (-4)
 #A = 5.0 * 10.0 ** (-2)
 
-#waveType = "lineal"
+waveType = "lineal"
 #waveType = "radial"
 functionType = "wavepacket"
 #functionType = "wavepacket_carton"
