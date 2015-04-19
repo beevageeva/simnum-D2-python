@@ -12,9 +12,9 @@ A = 3.0 * 10.0 ** (-4)
 waveType = "lineal"
 #waveType = "radial"
 #functionType = "wavepacket"
-functionType = "wavepacket_carton"
+#functionType = "wavepacket_carton"
 #functionType = "sine" 
-#functionType = "gauss" 
+functionType = "gauss" 
 #functionType = "hankel" 
 
 
