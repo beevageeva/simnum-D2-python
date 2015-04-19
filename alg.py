@@ -454,7 +454,7 @@ elif schemeType == "lf":
 				inline(code, ['u', 'dz0', 'dz1', 'dt', 'res', 'f', 'nint'],type_converters=converters.blitz)
 			elif loopType == "cython":
 				from cython_alg2 import calc_singlestep_u_array_2d
-				calc_singlestep_u_array_2d(res, u,f,nint, lambdaParam) 
+				calc_singlestep_u_array_2d(res, u,f,nint, dz0,dz1, dt) 
 		else:
 			res = np.zeros((nint, nint, 2))
 			#print("calcSingleStepU f third comp")
@@ -479,7 +479,7 @@ elif schemeType == "lf":
 				inline(code, ['u', 'dz0', 'dz1', 'dt', 'res', 'f', 'nint'],type_converters=converters.blitz)
 			elif loopType == "cython":
 				from cython_alg2 import calc_singlestep_u_array_3d
-				calc_singlestep_u_array_3d(res, u,f,nint, lambdaParam) 
+				calc_singlestep_u_array_3d(res, u,f,nint, dz0, dz1, dt) 
 		#print("calcSingleStep before BC PX")
 		#print(res[0,...])
 		res = lrBoundaryConditions(res)

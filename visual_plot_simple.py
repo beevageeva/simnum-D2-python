@@ -1,7 +1,8 @@
 import matplotlib
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.ticker import FormatStrFormatter
-useWindow = False
+#useWindow = False
+useWindow = True
 if useWindow:
 	matplotlib.use('TkAgg')
 else:
@@ -14,8 +15,8 @@ from scipy.fftpack import fft,fftfreq#forFourierTransform
 
 from notifier_params import plots, plotAnalitical
 
-saveImages = True
-#saveImages = False
+#saveImages = True
+saveImages = False
 
 
 
