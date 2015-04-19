@@ -21,9 +21,9 @@ functionType = "wavepacket_carton"
 
 
 if waveType == "lineal":	
-	argType = "x"
+	#argType = "x"
 	#argType = "y"
-	#argType = "d1" 
+	argType = "d1" 
 	
 
 	if(argType == "x"):
@@ -50,8 +50,8 @@ if waveType == "lineal":
 		wl2 = zf[1] - z0[1] + getDz1()
 		#nx= 1.0
 		#ny = 1.0	
-		nx= 2.0
-		ny = 3.0	
+		nx= 3.0
+		ny = 4.0	
 		k1 = nx/wl1
 		k2 = ny/wl2
 		#k1 = nx
