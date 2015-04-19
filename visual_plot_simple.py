@@ -1,9 +1,11 @@
 import matplotlib
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.ticker import FormatStrFormatter
-
-
-matplotlib.use('TkAgg')
+useWindow = False
+if useWindow:
+	matplotlib.use('TkAgg')
+else:
+	matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib import cm
 import numpy as np
@@ -107,7 +109,8 @@ class VisualPlot:
 				fig = plt.figure(2)
 				self.dim0ProjIndex = getZIndex0(plots["dim0"][0])
 				fig.suptitle("Dim0 z1=%4.3f" % plots["dim0"][0])
-				plt.get_current_fig_manager().window.wm_geometry("1000x900+50+50")
+				if useWindow:
+					plt.get_current_fig_manager().window.wm_geometry("1000x900+50+50")
 				fig.subplots_adjust(right=0.8)
 				self.figures.append(fig)
 			if testKeyInDict("dim1", plots):
@@ -116,7 +119,8 @@ class VisualPlot:
 				fig = plt.figure(3)
 				fig.suptitle("Dim1 z0=%4.3f" % plots["dim1"][0])
 				self.dim1ProjIndex = getZIndex1(plots["dim1"][0])
-				plt.get_current_fig_manager().window.wm_geometry("1000x900+50+50")
+				if useWindow:
+					plt.get_current_fig_manager().window.wm_geometry("1000x900+50+50")
 				fig.subplots_adjust(right=0.8)
 				self.figures.append(fig)
 			if testKeyInDict("line", plots):
@@ -135,8 +139,8 @@ class VisualPlot:
 #				print(z[0])
 #				print("shape")
 #				print(z[0].shape)
-
-				plt.get_current_fig_manager().window.wm_geometry("1000x900+50+50")
+				if useWindow:
+					plt.get_current_fig_manager().window.wm_geometry("1000x900+50+50")
 				fig.subplots_adjust(right=0.8)
 				self.figures.append(fig)
 			if testKeyInDict("color", plots):
