@@ -12,8 +12,8 @@ from scipy.fftpack import fft,fftfreq#forFourierTransform
 
 from notifier_params import plots, plotAnalitical
 
-saveImages = True
-#saveImages = False
+#saveImages = True
+saveImages = False
 
 
 
@@ -125,7 +125,7 @@ class VisualPlot:
 				fig = plt.figure(6)
 				fig.suptitle("Line %s" % str(plots["line"][0]))
 				n = len(z[0])
-				y,x=np.ogrid[-n / 2: n/2 , -n / 2: n/2 ]
+				x,y=np.ogrid[-n / 2: n/2 , -n / 2: n/2 ]
 				self.projMask = plots["line"][0](x,y)
 #				print("************visual_plot PROJMASK")
 #				print(self.projMask)
@@ -156,7 +156,7 @@ class VisualPlot:
 			self.axes[title] = []
 			if(plots["3d"]):
 				fig = plt.figure(1)
-				ax = fig.add_subplot(n, 1, i+1)
+				ax = fig.add_subplot(n, 1, i+1, projection='3d')
 				ax.set_xlabel("z0")
 				ax.set_ylabel("z1")
 				ax.set_zlabel(title)
@@ -172,7 +172,7 @@ class VisualPlot:
 			if hasattr(self, "dim0ProjIndex"):
 				fig = plt.figure(2)
 				ax = fig.add_subplot(n, 1, i+1)
-				values = vals[self.dim0ProjIndex, :]
+				values = vals[:,self.dim0ProjIndex]
 				markMaxValue = None
 				if(plots["dim0"][1]):
 					markMaxIndex = np.argmax(values)
@@ -182,7 +182,7 @@ class VisualPlot:
 				self.addAxisProj(ax, title, values, markMaxValue)
 				self.axes[title].append(ax)
 			if hasattr(self, "dim1ProjIndex"):
-				values = vals[:,self.dim1ProjIndex]
+				values = vals[self.dim1ProjIndex,:]
 				fig = plt.figure(3)
 				ax = fig.add_subplot(n, 1, i+1)
 				markMaxValue = None
@@ -199,7 +199,7 @@ class VisualPlot:
 				markMaxValue = None
 				linez = np.dstack((self.z[0][self.projMask], self.z[1][self.projMask]))
 				linez = linez[0]	
-				newz = np.sqrt(  (linez[:,0] - linez[0][0])**2 + (linez[:,1] - linez[0][1])**2  )
+				newz = np.sqrt(  (linez[:,0] - linez[0,0])**2 + (linez[:,1] - linez[0,1])**2  )
 	#			print("addProjAxis linez")
 	#			print(linez)
 	#			print("z[0][0]")
@@ -327,7 +327,7 @@ class VisualPlot:
 			ni+1
 		from common import getSpeedPeriodic0, getSpeedPeriodic1
 		if hasattr(self, "dim0ProjIndex"):
-			values = [vals[0][self.dim0ProjIndex, :] , vals[1][self.dim0ProjIndex, :]] if plotAnalitical else vals[self.dim0ProjIndex, :]
+			values = [vals[0][:,self.dim0ProjIndex] , vals[1][:,self.dim0ProjIndex]] if plotAnalitical else vals[:,self.dim0ProjIndex]
 			markMaxValue = None
 			markMaxTitle = None
 			if(plots["dim0"][1]):
@@ -339,7 +339,7 @@ class VisualPlot:
 			self.updateAxisProj(ax[ni], title, values, markMaxValue, markMaxTitle)
 			ni+=1
 		if hasattr(self, "dim1ProjIndex"):
-			values =  [vals[0][:,self.dim1ProjIndex], vals[1][:,self.dim1ProjIndex]] if plotAnalitical else vals[:,self.dim1ProjIndex]
+			values =  [vals[0][self.dim1ProjIndex,:], vals[1][self.dim1ProjIndex,:]] if plotAnalitical else vals[self.dim1ProjIndex,:]
 			markMaxValue = None
 			markMaxTitle = None
 			if(plots["dim1"][1]):
@@ -362,7 +362,7 @@ class VisualPlot:
 			markMaxTitle = None
 			linez = np.dstack((self.z[0][self.projMask], self.z[1][self.projMask]))
 			linez = linez[0]	
-			newz = np.sqrt(  (linez[:,0] - linez[0][0])**2 + (linez[:,1] - linez[0][1])**2  )
+			newz = np.sqrt(  (linez[:,0] - linez[0,0])**2 + (linez[:,1] - linez[0,1])**2  )
 			
 			if(plots["line"][1]):
 				markMaxIndex = np.argmax(values[0]) if plotAnalitical else np.argmax(values)
@@ -423,7 +423,7 @@ class VisualPlot:
 		
 		F0=fftfreq(numPoints, getDz0())
 		F1=fftfreq(numPoints, getDz1())
-		plotX , plotY = np.meshgrid(F0, F1)
+		plotX , plotY = np.meshgrid(F0, F1, indexing="ij")
 		ax.grid(True)
 		ax.plot_wireframe(plotX, plotY , plotVals)
 #		print("plotVals")

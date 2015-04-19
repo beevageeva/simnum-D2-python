@@ -13,7 +13,7 @@ def getZArray():
 	dz1 = getDz1()
 	a = np.linspace(z0[0]-0.5 *dz0, zf[0]+0.5*dz0, nint+2)
 	b = np.linspace(z0[1]-0.5 *dz1, zf[1]+0.5*dz1, nint+2)
-	return np.meshgrid(a, b)
+	return np.meshgrid(a, b, indexing='ij')
 
 
 def getArrayZShape(x0,y0,n=nint+2):
@@ -92,9 +92,9 @@ def derivZ0(f):
 	for i in range(0,n):	
 		for j in range(1,n-1):	
 			#centered
-			res[i][j] = complex(f[i][j+1] - f[i][j-1])/complex(2 * dx)
-		res[i][0] = res[i][1]
-		res[i][n-1] = res[i][n-2]
+			res[i,j] = complex(f[i+1,j] - f[i-1,j])/complex(2 * dx)
+		res[0,i] = res[1,i]
+		res[n-1,i] = res[n-2,i]
 	return res	
 
 def derivZ1(f):
@@ -104,9 +104,9 @@ def derivZ1(f):
 	for j in range(0,n):	
 		for i in range(1,n-1):	
 			#centered
-			res[i][j] = complex(f[i+1][j] - f[i-1][j])/complex(2 * dx)
-		res[0][j] = res[1][j]
-		res[n-1][j] = res[n-2][j]
+			res[i][j] = complex(f[i,j+1] - f[i,j-1])/complex(2 * dx)
+		res[j,0] = res[j,1]
+		res[j,n-1] = res[j,n-2]
 	return res	
 
 
