@@ -9,21 +9,21 @@ from sys import exit
 A = 3.0 * 10.0 ** (-4)
 #A = 5.0 * 10.0 ** (-2)
 
-waveType = "lineal"
+#waveType = "lineal"
 #waveType = "radial"
-#functionType = "wavepacket"
+functionType = "wavepacket"
 #functionType = "wavepacket_carton"
 #functionType = "sine" 
-functionType = "gauss" 
+#functionType = "gauss" 
 #functionType = "hankel" 
 
 
 
 
 if waveType == "lineal":	
-	#argType = "x"
+	argType = "x"
 	#argType = "y"
-	argType = "d1" 
+	#argType = "d1" 
 	
 
 	if(argType == "x"):

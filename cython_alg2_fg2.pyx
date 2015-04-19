@@ -49,7 +49,7 @@ cpdef calc_final_u_array_2d(np.ndarray[DTYPE_t, ndim=2] res, np.ndarray[DTYPE_t,
 	cdef int i,j
 	for i in range(0, n):
 		for j in range(0, n):
-			res[i,j] = u[i+skip,j+skip] - dt * ((intermF1[i+1,j,0] - intermF1[i,j,0])/dz0 + (intermF0[i,j+1,1] - intermF0[i,j,1])/dz0)
+			res[i,j] = u[i+skip,j+skip] - dt * ((intermF0[i+1,j,0] - intermF0[i,j,0])/dz0 + (intermF1[i,j+1,1] - intermF1[i,j,1])/dz0)
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -58,6 +58,6 @@ cpdef calc_final_u_array_3d(np.ndarray[DTYPE_t, ndim=3] res, np.ndarray[DTYPE_t,
 	cdef int i,j
 	for i in range(0, n):
 		for j in range(0, n):
-			res[i,j,0] = u[i+skip,j+skip,0] - dt * ((intermF1[i+1,j,0] - intermF1[i,j,0])/dz0 + (intermF0[i,j+1,1] - intermF0[i,j,1])/dz0)
-			res[i,j,1] = u[i+skip,j+skip,0] - dt * ((intermF1[i+1,j,1] - intermF1[i,j,1])/dz0 + (intermF0[i,j+1,2] - intermF0[i,j,2])/dz0)
+			res[i,j,0] = u[i+skip,j+skip,0] - dt * ((intermF0[i+1,j,0] - intermF0[i,j,0])/dz0 + (intermF1[i,j+1,1] - intermF1[i,j,1])/dz0)
+			res[i,j,1] = u[i+skip,j+skip,0] - dt * ((intermF0[i+1,j,1] - intermF0[i,j,1])/dz0 + (intermF1[i,j+1,2] - intermF1[i,j,2])/dz0)
 
