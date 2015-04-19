@@ -12,8 +12,8 @@ A = 3.0 * 10.0 ** (-4)
 waveType = "lineal"
 #waveType = "radial"
 #functionType = "wavepacket"
-#functionType = "wavepacket_carton"
-functionType = "sine" 
+functionType = "wavepacket_carton"
+#functionType = "sine" 
 #functionType = "gauss" 
 #functionType = "hankel" 
 
@@ -21,9 +21,9 @@ functionType = "sine"
 
 
 if waveType == "lineal":	
-	argType = "x"
+	#argType = "x"
 	#argType = "y"
-	#argType = "d1" 
+	argType = "d1" 
 	
 
 	if(argType == "x"):

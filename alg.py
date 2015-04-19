@@ -294,8 +294,8 @@ if schemeType == "fg" or schemeType == "fg2":
 			dz0 = getDz0()
 			dz1 = getDz1()
 			if(u.ndim == 2): #case of um and ue that are not vectors
-				resx = np.zeros((nint+2, nint+1))
-				resy = np.zeros((nint+1, nint+2))
+				resx = np.zeros((nint+1, nint+2))
+				resy = np.zeros((nint+2, nint+1))
 				#res = np.array(nint+1, nint+1) #TODO do not initialize how?
 				if loopType == "python":
 					from python_alg2_fg2 import calc_interm_u_array_2d
@@ -307,8 +307,8 @@ if schemeType == "fg" or schemeType == "fg2":
 				calc_interm_u_array_2d(resx, resy, u,f,nint, dz0, dz1, dt) 
 	
 			else:
-				resx = np.zeros((nint+2, nint+1, 2))
-				resy = np.zeros((nint+1, nint+2, 2))
+				resx = np.zeros((nint+1, nint+2, 2))
+				resy = np.zeros((nint+2, nint+1, 2))
 				#res = np.array(nint+1, nint+1, 2)
 				if loopType == "python":
 					from python_alg2_fg2 import calc_interm_u_array_3d
@@ -321,35 +321,35 @@ if schemeType == "fg" or schemeType == "fg2":
 			return resx, resy
 	
 		
-			def calcFinalUArray(u, intermF0, intermF1, dt, skip=0):
-				#print("calcFinalU")
-				from common import getDz0, getDz1
-				from constants import nint
-				dz0 = getDz0()
-				dz1 = getDz1()
-				n = intermF0.shape[0] 
-				if(u.ndim == 2): #case of um and ue that are not vectors
-					res = np.zeros((n, n))
-					#res = np.array(nint+1, nint+1) #TODO do not initialize how?
-					if loopType == "python":
-						from python_alg2_fg2 import calc_final_u_array_2d
-					elif loopType == "weave":
-						from weave_alg2_fg2 import calc_final_u_array_2d
-					elif loopType == "cython":
-						from cython_alg2_fg2 import calc_final_u_array_2d
-						calc_final_u_array_2d(res, u, intermF0, intermF1, n, dz0, dz1, dt, skip) 
-				else:
-					res = np.zeros((n, n, 2))
-					#res = np.array(nint+1, nint+1, 2)
-					if loopType == "python":
-						from python_alg2_fg2 import calc_final_u_array_3d
-					elif loopType == "weave":
-						from weave_alg2_fg2 import calc_final_u_array_3d
-					elif loopType == "cython":
-						from cython_alg2_fg2 import calc_final_u_array_3d
-					calc_final_u_array_3d(res, u, intermF0, intermF1, n, dz0, dz1, dt, skip) 
-				#no more boundary conditions because intermediate array alreday has nint + 3 points
-				return np.array(res)
+		def calcFinalUArray(u, intermF0, intermF1, dt, skip=0):
+			#print("calcFinalU")
+			from common import getDz0, getDz1
+			from constants import nint
+			dz0 = getDz0()
+			dz1 = getDz1()
+			n = intermF0.shape[1] 
+			if(u.ndim == 2): #case of um and ue that are not vectors
+				res = np.zeros((n, n))
+				#res = np.array(nint+1, nint+1) #TODO do not initialize how?
+				if loopType == "python":
+					from python_alg2_fg2 import calc_final_u_array_2d
+				elif loopType == "weave":
+					from weave_alg2_fg2 import calc_final_u_array_2d
+				elif loopType == "cython":
+					from cython_alg2_fg2 import calc_final_u_array_2d
+					calc_final_u_array_2d(res, u, intermF0, intermF1, n, dz0, dz1, dt, skip) 
+			else:
+				res = np.zeros((n, n, 2))
+				#res = np.array(nint+1, nint+1, 2)
+				if loopType == "python":
+					from python_alg2_fg2 import calc_final_u_array_3d
+				elif loopType == "weave":
+					from weave_alg2_fg2 import calc_final_u_array_3d
+				elif loopType == "cython":
+					from cython_alg2_fg2 import calc_final_u_array_3d
+				calc_final_u_array_3d(res, u, intermF0, intermF1, n, dz0, dz1, dt, skip) 
+			#no more boundary conditions because intermediate array alreday has nint + 3 points
+			return np.array(res)
 	
 	
 		from constants import bcStep
@@ -359,8 +359,8 @@ if schemeType == "fg" or schemeType == "fg2":
 				#left and right boundary condition  skip one point !!! both right and left the intermediate array will have nint + 3 points see array limits
 				#print("calcIntermStep before bc")
 				#print(res)	
-				resx = lrBoundaryConditions(resx, 1, 'hor')
-				resy = lrBoundaryConditions(resy, 1, 'vert')
+				resx = lrBoundaryConditions(resx, 1, 'vert')
+				resy = lrBoundaryConditions(resy, 1, 'hor')
 				#print("calcIntermStep after bc")
 				#print(res)	
 				return resx, resy

@@ -12,8 +12,8 @@ from scipy.fftpack import fft,fftfreq#forFourierTransform
 
 from notifier_params import plots, plotAnalitical
 
-#saveImages = True
-saveImages = False
+saveImages = True
+#saveImages = False
 
 
 
@@ -65,7 +65,7 @@ class VisualPlot:
 	
 	def addAxisProj(self, ax, title, vals, markMaxValue = None, newz = None):
 		if newz is None:
-			newz = self.z[0][0]
+			newz = self.z[1][0]
 		ax.set_xlabel("z")
 		ax.set_ylabel(title)
 		ax.grid(True)
@@ -176,7 +176,7 @@ class VisualPlot:
 				markMaxValue = None
 				if(plots["dim0"][1]):
 					markMaxIndex = np.argmax(values)
-					markMaxValue = self.z[0][0][markMaxIndex]
+					markMaxValue = self.z[1][0][markMaxIndex]
 					#TODO if it works replace this by newtitle
 					self.maxPoints["dim0"][title] = markMaxValue
 				self.addAxisProj(ax, title, values, markMaxValue)
@@ -188,7 +188,7 @@ class VisualPlot:
 				markMaxValue = None
 				if(plots["dim1"][1]):
 					markMaxIndex = np.argmax(values)
-					markMaxValue = self.z[0][0][markMaxIndex]
+					markMaxValue = self.z[1][0][markMaxIndex]
 					self.maxPoints["dim1"][title] = markMaxValue
 				self.addAxisProj(ax, title, values, markMaxValue)
 				self.axes[title].append(ax)
@@ -267,7 +267,7 @@ class VisualPlot:
 
 	def updateAxisProj(self, ax, title, vals, markMaxValue = None, maxLegend = None, newz = None):
 		if newz is None:
-			newz =  self.z[0][0]	
+			newz =  self.z[1][0]	
 		ax.cla()
 		ax.set_xlabel("z")
 		ax.set_ylabel(title)

@@ -39,8 +39,8 @@ timeEnd = 1.0 #if not set as program argument it's taken from here
 
 
 #schemeType = "lf"  # scheme type may be lf(Lax - Fr) or fg (first generation)
-schemeType = "fg" 
-#schemeType = "fg2" 
+#schemeType = "fg" 
+schemeType = "fg2" 
 #loopType = "python" 
 #loopType = "weave" 
 loopType = "cython" 
