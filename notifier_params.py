@@ -23,5 +23,5 @@ if waveType == "lineal":
 plotVelFFT = False
 #plotVelFFT = True
 
-plotAnalitical = True
-#plotAnalitical = False
+#plotAnalitical = True
+plotAnalitical = False
