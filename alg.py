@@ -359,8 +359,8 @@ if schemeType == "fg" or schemeType == "fg2":
 				#left and right boundary condition  skip one point !!! both right and left the intermediate array will have nint + 3 points see array limits
 				#print("calcIntermStep before bc")
 				#print(res)	
-				resx = lrBoundaryConditions(resx, 1, 'vert')
-				resy = lrBoundaryConditions(resy, 1, 'hor')
+				resx = lrBoundaryConditions(resx, 1)
+				resy = lrBoundaryConditions(resy, 1)
 				#print("calcIntermStep after bc")
 				#print(res)	
 				return resx, resy
