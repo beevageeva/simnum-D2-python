@@ -59,7 +59,7 @@ cpdef calc_singlestep_u_array_2d(np.ndarray[DTYPE_t, ndim=2] res, np.ndarray[DTY
 	for i in range(1, nint+1):
 		for j in range(1, nint+1):
 			#averaging on the first term makes the scheme stable (see Appendix: The lax-Fr scheme)
-			res[i-1,j-1] = 0.25 * (u[i,j-1] + u[i,j+1] + u[i+1,j] + u[i-1,j]) - 0.5 * dt * ((f[i+1,j,1] - f[i-1,j,1])/dz1 + (f[i,j+1,0] - f[i,j-1,0])/dz0) 
+			res[i-1,j-1] = 0.25 * (u[i,j-1] + u[i,j+1] + u[i+1,j] + u[i-1,j]) - 0.5 * dt * ((f[i+1,j,0] - f[i-1,j,0])/dz0 + (f[i,j+1,1] - f[i,j-1,1])/dz1) 
 
 @cython.boundscheck(False)
 @cython.wraparound(False)

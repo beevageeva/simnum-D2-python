@@ -51,8 +51,9 @@ class VisualPlot:
 		#ax = fig.add_subplot(n , 1, i)
 		from math import ceil
 		ax = fig.add_subplot(ceil(n/3.0) , 3, i)
-		ax.set_xlabel("x")
-		ax.set_ylabel("y")
+		ax.set_xlabel("y")
+		ax.set_ylabel("x")
+		ax.axis("off")
 		ax.set_title(title)
 		ax.grid(True)
 		#np.set_printoptions(threshold='nan')
@@ -308,8 +309,9 @@ class VisualPlot:
 
 	def updateAxisColor(self, ax, title, vals):	
 		ax.cla()
-		ax.set_xlabel("x")
-		ax.set_ylabel("y")
+		ax.set_xlabel("y")
+		ax.set_ylabel("x")
+		ax.axis("off")
 		ax.set_title(title)
 		ax.imshow(vals)
 
