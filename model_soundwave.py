@@ -4,7 +4,7 @@ from constants import gamma
 
 import initcond_soundwave as initcond
 
-from notifier_params import plotVelFFT
+from notifier_params import plotVelFFT, plotPresFFT
 
 #showErr = True
 showErr = False
@@ -58,6 +58,8 @@ class Model:
 		if(plotVelFFT):
 			self.notifier.addFFTAxis("velFFT0", self.vel[...,0])
 			self.notifier.addFFTAxis("velFFT1", self.vel[...,1])
+		if(plotPresFFT):
+			self.notifier.addFFTAxis("presFFT", self.pres)
 		self.notifier.afterInit()
 
 
@@ -220,6 +222,8 @@ class Model:
 				if(plotVelFFT):
 					self.notifier.updateFFTAxis("velFFT0", self.vel[...,0])
 					self.notifier.updateFFTAxis("velFFT1", self.vel[...,1])
+				if(plotPresFFT):
+					self.notifier.updateFFTAxis("presFFT", self.pres)
 				ndt = 0
 				self.notifier.afterUpdateValues(time)
 		self.notifier.finish()

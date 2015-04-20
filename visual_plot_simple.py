@@ -11,19 +11,18 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 import numpy as np
 import sys, os
-from scipy.fftpack import fft,fftfreq#forFourierTransform
 
 from notifier_params import plots, plotAnalitical
 
-saveImages = True
-#saveImages = False
+#saveImages = True
+saveImages = False
 
 
 
 #homog
 #ylim = {"pres":{ "maxY": 1.0005, "minY": 0.9995} , "vel0" : { "maxY": 0.00035, "minY": -0.00035}, "vel1" : { "maxY": 0.00035, "minY": -0.00035},"rho":{ "maxY": 1.0004, "minY": 0.9996}} 
 #inhomog: no limit in rho
-ylim = {"pres":{ "maxY": 1.0005, "minY": 0.9995} , "vel0" : { "maxY": 0.0002, "minY": -0.0002}, "vel1" : { "maxY": 0.0002, "minY": -0.0002}} 
+ylim = {"pres":{ "maxY": 1.0005, "minY": 0.9995} , "vel0" : { "maxY": 0.00035, "minY": -0.00035}, "vel1" : { "maxY": 0.0002, "minY": -0.0002}} 
 #ylim = {"pres":{ "maxY": 1.00035, "minY": 0.99975} , "vel0" : { "maxY": 0.00025, "minY": -0.00025}, "vel1" : { "maxY": 0.00025, "minY": -0.00025}, "rho":{ "maxY": 1.0003, "minY": 0.9997}, "vel" : { "maxY": 0.0005, "minY": -0.0001}} 
 #ylim = {"pres":{ "maxY": 1.0003, "minY": 0.9997} , "vel" : { "maxY": 0.00025, "minY": -0.00025}, "rho":{ "maxY": 0.5002, "minY": 0.4998}} 
 #ylim = {"pres":{ "maxY": 1.0003, "minY": 0.9997} , "vel" : { "maxY": 0.00025, "minY": -0.00025}, "rho":{ "maxY": 2.0002, "minY": 1.9998}} 
@@ -429,16 +428,27 @@ class VisualPlot:
 
 	def fftplot(self, ax, vals):
 		from common import getDz1, getDz0, nint
+		from scipy.fftpack import fft2,fftfreq,fftshift #forFourierTransform
 		
 		numPoints = nint+2
-		Y=fft(vals)/(numPoints)
-		plotVals = np.absolute(Y)
+		Y=fft2(vals)/(numPoints)
+		#The mean is Y[0,0]
+		Y[0,0] = 0
+		#plotVals = np.absolute(Y)
+		plotVals = np.absolute(fftshift(Y))
 		
-		F0=fftfreq(numPoints, getDz0())
-		F1=fftfreq(numPoints, getDz1())
-		plotX , plotY = np.meshgrid(F0, F1, indexing="ij")
-		ax.grid(True)
-		ax.plot_wireframe(plotX, plotY , plotVals)
+		#F0=fftfreq(numPoints, getDz0())
+		#F1=fftfreq(numPoints, getDz1())
+		#plotX , plotY = np.meshgrid(F0, F1, indexing="ij")
+		#ax.grid(True)
+		#ax.plot_wireframe(plotX, plotY , plotVals)
+
+		ax.imshow(plotVals)
+		
+
+
+
+
 #		print("plotVals")
 #		np.set_printoptions(threshold='nan')
 #		print(plotVals)
@@ -447,7 +457,9 @@ class VisualPlot:
 
 	def addFFTAxis(self, title, vals):
 		fig = plt.figure()
-		ax = fig.add_subplot(111, projection="3d")
+		ax = fig.add_subplot(111)
+		#ax = fig.add_subplot(111, projection="3d")
+		#ax.view_init(0, 30)
 		ax.set_title(title)
 		self.axes[title] = ax
 		self.fftplot(ax, vals)
