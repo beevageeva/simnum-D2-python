@@ -13,9 +13,9 @@ from perturbation_params import argFunc
 
 k0 = 60.0
 #k0 = 15.0
-#W = 0.05
-#W = 0.025
 W = 0.1
+#W = 0.025
+#W = 0.1
 
 from medium_params import mediumType
 if mediumType == "homog":

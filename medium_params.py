@@ -37,18 +37,17 @@ elif(mediumType=="inhomog"):
 	#I have to apply func (argument function) before applying tanh: see initcond_soundwave
 	densFunc = lambda z: 1 + np.tanh(z /we)
 	from common import getArrayZShape
-	#like in old?
-	from perturbation_params import argFunc, waveType
-	if waveType == "lineal":
-		from perturbation_params import argType
-		if argType == "d1":
-			from perturbation_params import k1,k2,modk
-			densargFunc = lambda x: k1/modk * x[0] + k2/modk * x[1]	
-	
-	
-	#just argFunc delete above 
-	#densargFunc = argFunc
-	#densargFunc = lambda z: z[0] #horrizontal
+
+	#define densargfunc here!
+	#like argFunc:
+#	densargFunc = argFunc
+	#diagonal
+#	k1 = 1.0
+#	k2 = 1.0
+#	modk = (k1**2 + k2**2)**0.5
+#	densargFunc = lambda x: k1/modk * x[0] + k2/modk * x[1]	
+	#vertical
+	densargFunc = lambda z: z[0] 
 	
 
 	

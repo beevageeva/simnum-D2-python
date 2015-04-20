@@ -114,309 +114,266 @@ if loopType == "cython":
 	pyximport.install(setup_args={'include_dirs':[np.get_include()]})
 
 
+	
+if schemeType == "fg":
 
-if schemeType == "fg" or schemeType == "fg2":
+	def calcIntermUArray(u, f, dt):
+		#print("calcIntermU")
+		from common import getDz0, getDz1
+		from constants import nint
+		#no more lambda dz1 may be different from dz0
+		dz0 = getDz0()
+		dz1 = getDz1()
+		if(u.ndim == 2): #case of um and ue that are not vectors
+			res = np.zeros((nint+1, nint+1))
+			#res = np.array(nint+1, nint+1) #TODO do not initialize how?
+
+			if loopType == "python":
+				from python_alg2_fg import calc_interm_u_array_2d
+			elif loopType == "weave":
+				from weave_alg2_fg import calc_interm_u_array_2d
+			elif loopType == "cython":
+				from cython_alg2_fg import calc_interm_u_array_2d
+			calc_interm_u_array_2d(res, u, f, nint, dz0, dz1, dt) 
+
+
+		else:
+			res = np.zeros((nint+1, nint+1, 2))
+			if loopType == "python":
+				from python_alg2_fg import calc_interm_u_array_3d
+			elif loopType == "weave":
+				from weave_alg2_fg import calc_interm_u_array_3d
+			elif loopType == "cython":
+				from cython_alg2_fg import calc_interm_u_array_3d
+			calc_interm_u_array_3d(res, u, f, nint, dz0, dz1, dt) 
+	
+		return res
 
 	
-	if schemeType == "fg":
+	def calcFinalUArray(u, intermF, dt, skip=0):
+		#print("calcFinalU")
+		from common import getDz0, getDz1
+		from constants import nint
+		dz0 = getDz0()
+		dz1 = getDz1()
+		n = intermF.shape[0] - 1
+		if(u.ndim == 2): #case of um and ue that are not vectors
+			res = np.zeros((n, n))
+			#res = np.array(nint+1, nint+1) #TODO do not initialize how?
 
-		def calcIntermUArray(u, f, dt):
-			#print("calcIntermU")
-			from common import getDz0, getDz1
-			from constants import nint
-			#no more lambda dz1 may be different from dz0
-			dz0 = getDz0()
-			dz1 = getDz1()
-			if(u.ndim == 2): #case of um and ue that are not vectors
-				res = np.zeros((nint+1, nint+1))
-				#res = np.array(nint+1, nint+1) #TODO do not initialize how?
-				if loopType == "python":
-					for i in range(1, nint+2):
-						for j in range(1, nint+2):
-							#points displaced right +1 
-							res[i-1,j-1]  = 0.25 * (u[i-1,j-1] + u[i-1,j] + u[i,j-1] + u[i,j]) - 0.25 * dt  * ((f[i,j,1] - f[i-1,j,1] + f[i,j-1,1] - f[i-1,j-1,1])/dz1 + (f[i,j,0] - f[i,j-1,0]+f[i-1,j,0] - f[i-1,j-1,0]) / dz0)
-				elif loopType == "weave":
-					from scipy.weave import inline, converters
-					dt = float(dt)
-					code = """
-					for (int i = 1; i< nint+2; i++) {
-						for (int j = 1; j< nint+2; j++) {
-							res(i-1,j-1) = 0.25 * (u(i-1,j-1) + u(i-1,j) + u(i,j-1) + u(i,j)) - 0.25 * dt  * ((f(i,j,1) - f(i-1,j,1) + f(i,j-1,1) - f(i-1,j-1,1))/dz1 + (f(i,j,0) - f(i,j-1,0)+f(i-1,j,0) - f(i-1,j-1,0)) / dz0);
-						}
-					}
-					
-					"""	
-					inline(code, ['u', 'dz0', 'dz1', 'dt', 'res', 'f', 'nint'],type_converters=converters.blitz)
-				elif loopType == "cython":
-					from cython_alg2 import calc_interm_u_array_2d
-					
-					calc_interm_u_array_2d(res, u,f,nint, dz0, dz1, dt) 
-	
-			else:
-				res = np.zeros((nint+1, nint+1, 2))
-				#res = np.array(nint+1, nint+1, 2)
-				if loopType == "python":
-					for i in range(1, nint+2):
-						for j in range(1, nint+2):
-						#points displaced right +1 
-							res[i-1,j-1,0] = 0.25 * (u[i-1,j-1,0] + u[i-1,j,0] + u[i,j-1,0] + u[i,j,0]) - 0.25 * dt  * ((f[i,j,1] - f[i-1,j,1]+f[i,j-1,1] - f[i-1,j-1,1]) / dz1 + (f[i,j,0] - f[i,j-1,0] + f[i-1,j,0] - f[i-1,j-1,0])/dz0 )
-							res[i-1,j-1,1]  = 0.25 * (u[i-1,j-1,1] + u[i-1,j,1] + u[i,j-1,1] + u[i,j,1]) - 0.25 * dt * ((f[i,j,2] - f[i-1,j,2]+f[i,j-1,2] - f[i-1,j-1,2]) / dz1 + (f[i,j,1] - f[i,j-1,1] + f[i-1,j,1] - f[i-1,j-1,1])/dz0)
-				elif loopType == "weave":
-					from scipy.weave import inline, converters
-					dt = float(dt)
-					code = """
-					for(int i = 1;i<nint+2; i++) {
-						for(int j = 1;j<nint+2; j++) {
-							res(i-1,j-1,0) = 0.25 * (u(i-1,j-1,0) + u(i-1,j,0) + u(i,j-1,0) + u(i,j,0)) - 0.25 * dt  * ((f(i,j,1) - f(i-1,j,1)+f(i,j-1,1) - f(i-1,j-1,1)) / dz1 + (f(i,j,0) - f(i,j-1,0) + f(i-1,j,0) - f(i-1,j-1,0))/dz0 );
-							res(i-1,j-1,1) = 0.25 * (u(i-1,j-1,1) + u(i-1,j,1) + u(i,j-1,1) + u(i,j,1)) - 0.25 * dt * ((f(i,j,2) - f(i-1,j,2)+f(i,j-1,2) - f(i-1,j-1,2)) / dz1 + (f(i,j,1) - f(i,j-1,1) + f(i-1,j,1) - f(i-1,j-1,1))/dz0);
-							}
-						}				
-	
-					"""
-					inline(code, ['u', 'dz0', 'dz1', 'dt', 'res', 'f', 'nint'],type_converters=converters.blitz)
-				elif loopType == "cython":
-					from cython_alg2 import calc_interm_u_array_3d
-					calc_interm_u_array_3d(res, u, f, nint, dz0, dz1, dt) 
-		
+			if loopType == "python":
+				from python_alg2_fg import calc_final_u_array_2d
+			elif loopType == "weave":
+				from weave_alg2_fg import calc_final_u_array_2d
+			elif loopType == "cython":
+				from cython_alg2_fg import calc_final_u_array_2d
+			calc_final_u_array_2d(res, u, intermF, n, dz0, dz1, dt, skip) 
+
+		else:
+			res = np.zeros((n, n, 2))
+
+			if loopType == "python":
+				from python_alg2_fg import calc_final_u_array_3d
+			elif loopType == "weave":
+				from weave_alg2_fg import calc_final_u_array_3d
+			elif loopType == "cython":
+				from cython_alg2_fg import calc_final_u_array_3d
+			calc_final_u_array_3d(res, u, intermF, n, dz0, dz1, dt, skip) 
+
+		#no more boundary conditions because intermediate array alreday has nint + 3 points
+		return res
+
+	from constants import bcStep
+	if(bcStep == "interm"):
+		def calcIntermU(u, f, dt):
+			res = calcIntermUArray(u, f, dt)
+			#left and right boundary condition  skip one point !!! both right and left the intermediate array will have nint + 3 points see array limits
+			#print("calcIntermStep before bc")
+			#print(res)	
+			res = lrBoundaryConditions(res, 1)
+			#print("calcIntermStep after bc")
+			#print(res)	
 			return res
 	
+		#no more boundary conditions because intermediate array alreday has nint + 3 points
+		calcFinalU = calcFinalUArray	
 		
-		def calcFinalUArray(u, intermF, dt, skip=0):
-			#print("calcFinalU")
-			from common import getDz0, getDz1
-			from constants import nint
-			dz0 = getDz0()
-			dz1 = getDz1()
-			n = intermF.shape[0] - 1
-			if(u.ndim == 2): #case of um and ue that are not vectors
-				res = np.zeros((n, n))
-				#res = np.array(nint+1, nint+1) #TODO do not initialize how?
-				if loopType == "python":
-					for i in range(0, n):
-						for j in range(0, n):
-							res[i,j] = u[i+skip,j+skip] - dt  * 0.5 * ((intermF[i+1,j,1] - intermF[i,j,1] + intermF[i+1,j+1,1] - intermF[i,j+1,1])/dz1 + (intermF[i,j+1,0] - intermF[i,j,0] + intermF[i+1,j+1,0] - intermF[i+1,j,0])/dz0)
-				elif loopType == "weave":
-					from scipy.weave import inline, converters
-					dt = float(dt)
-					skip = int(skip)
-					code = """
-					for(int i = 0;i<n; i++) {
-						for(int j = 0;j<n; j++) {
-							res(i,j) = u(i+skip,j+skip) - dt  * 0.5 * ((intermF(i+1,j,1) - intermF(i,j,1) + intermF(i+1,j+1,1) - intermF(i,j+1,1))/dz1 + (intermF(i,j+1,0) - intermF(i,j,0) + intermF(i+1,j+1,0) - intermF(i+1,j,0))/dz0);
-						}
-					}
-					"""
-					inline(code, ['u', 'dz0', 'dz1', 'dt', 'res', 'skip', 'intermF', 'n'],type_converters=converters.blitz)
-				elif loopType == "cython":
-					from cython_alg2 import calc_final_u_array_2d
-					calc_final_u_array_2d(res, u, intermF, n, dz0, dz1, dt, skip) 
-			else:
-				res = np.zeros((n, n, 2))
-				#res = np.array(nint+1, nint+1, 2)
-				if loopType == "python":
-					for i in range(0, n):
-						for j in range(0, n):
-							res[i,j,0]  = u[i+skip,j+skip,0] - dt * 0.5 * ((intermF[i+1,j,1] - intermF[i,j,1] + intermF[i+1,j+1,1] - intermF[i,j+1,1])/dz1 + (intermF[i,j+1,0] - intermF[i,j,0] + intermF[i+1,j+1,0] - intermF[i+1,j,0]) / dz0)
-							res[i,j,1]  = u[i+skip,j+skip,1] - dt  * 0.5* ((intermF[i+1,j,2] - intermF[i,j,2] + intermF[i+1,j+1,2] - intermF[i,j+1,2])/dz1 + (intermF[i,j+1,1] - intermF[i,j,1] + intermF[i+1,j+1,1] - intermF[i+1,j,1])/dz0)
-				elif loopType == "weave":
-					from scipy.weave import inline, converters
-					dt = float(dt)
-					skip = int(skip)
-					code = """
-					for(int i = 0;i<n; i++) {
-						for(int j = 0;j<n; j++) {
-							res(i,j,0)  = u(i+skip,j+skip,0) - dt * 0.5 * ((intermF(i+1,j,1) - intermF(i,j,1) + intermF(i+1,j+1,1) - intermF(i,j+1,1))/dz1 + (intermF(i,j+1,0) - intermF(i,j,0) + intermF(i+1,j+1,0) - intermF(i+1,j,0)) / dz0);
-							res(i,j,1) = u(i+skip,j+skip,1) - dt  * 0.5* ((intermF(i+1,j,2) - intermF(i,j,2) + intermF(i+1,j+1,2) - intermF(i,j+1,2))/dz1 + (intermF(i,j+1,1) - intermF(i,j,1) + intermF(i+1,j+1,1) - intermF(i+1,j,1))/dz0);
-		
-						}
-					}
-					"""
-					inline(code, ['u', 'dz0', 'dz1', 'dt', 'res', 'skip', 'intermF', 'n'],type_converters=converters.blitz)
-				elif loopType == "cython":
-					from cython_alg2 import calc_final_u_array_3d
-					calc_final_u_array_3d(res, u, intermF, n, dz0, dz1, dt, skip) 
-			#no more boundary conditions because intermediate array alreday has nint + 3 points
-			return np.array(res)
-		from constants import bcStep
-		if(bcStep == "interm"):
-			def calcIntermU(u, f, dt):
-				res = calcIntermUArray(u, f, dt)
-				#left and right boundary condition  skip one point !!! both right and left the intermediate array will have nint + 3 points see array limits
-				#print("calcIntermStep before bc")
-				#print(res)	
-				res = lrBoundaryConditions(res, 1)
-				#print("calcIntermStep after bc")
-				#print(res)	
-				return res
-		
-			#no more boundary conditions because intermediate array alreday has nint + 3 points
-			calcFinalU = calcFinalUArray	
-			
-		elif(bcStep == "final"):
-			#boundary conditions in final step
-				#left and right boundary condition  skip one point !!! both right and left the intermediate array will have nint + 1 points see array limits
-			calcIntermU = calcIntermUArray
-			def calcFinalU(u, f, dt):
-				res = calcFinalUArray(u, f, dt,1)
-				#print("final bc array before bc")
-				#print(res)
-				res = lrBoundaryConditions(res)
-				#print("final bc array after bc")
-				#print(res)
-				return res
-		
-		def recalculateU(rho, uc, ue, fm, fc ,fe, dt):
-			global lrBoundaryConditions
-			lrBoundaryConditions = lrBoundaryConditionsPresRho
-			#print("recalculateU ")
-			intermRho = calcIntermU(rho, fm , dt)	
-			intermUe = calcIntermU(ue, fe , dt)
-			lrBoundaryConditions = lrBoundaryConditionsVel
-			intermUc = calcIntermU(uc, fc , dt)	
-			intermVelPres = recalculateVelPres(intermRho, intermUc, intermUe)
-			intermVel = intermVelPres["vel"]
-			intermPres = intermVelPres["pres"]
-			intermFluxes = recalculateFluxes(intermRho, intermUc, intermUe, intermVel, intermPres)
-			lrBoundaryConditions = lrBoundaryConditionsPresRho
-			finalRho = calcFinalU(rho, intermFluxes["fm"], dt)	
-			finalUe = calcFinalU(ue, intermFluxes["fe"], dt)
-			lrBoundaryConditions = lrBoundaryConditionsVel
-			finalUc = calcFinalU(uc, intermFluxes["fc"], dt)	
-			return {"rho": finalRho, "uc": finalUc, "ue": finalUe}
-
-
-	elif schemeType == "fg2":
-		def calcIntermUArray(u, f, dt):
-			#print("calcIntermU")
-			from common import getDz0, getDz1
-			from constants import nint
-			#no more lambda dz1 may be different from dz0
-			dz0 = getDz0()
-			dz1 = getDz1()
-			if(u.ndim == 2): #case of um and ue that are not vectors
-				resx = np.zeros((nint+1, nint+2))
-				resy = np.zeros((nint+2, nint+1))
-				#res = np.array(nint+1, nint+1) #TODO do not initialize how?
-				if loopType == "python":
-					from python_alg2_fg2 import calc_interm_u_array_2d
-				elif loopType == "weave":
-					from weave_alg2_fg2 import calc_interm_u_array_2d
-				elif loopType == "cython":
-					from cython_alg2_fg2 import calc_interm_u_array_2d
-					
-				calc_interm_u_array_2d(resx, resy, u,f,nint, dz0, dz1, dt) 
+	elif(bcStep == "final"):
+		#boundary conditions in final step
+			#left and right boundary condition  skip one point !!! both right and left the intermediate array will have nint + 1 points see array limits
+		calcIntermU = calcIntermUArray
+		def calcFinalU(u, f, dt):
+			res = calcFinalUArray(u, f, dt,1)
+			#print("final bc array before bc")
+			#print(res)
+			res = lrBoundaryConditions(res)
+			#print("final bc array after bc")
+			#print(res)
+			return res
 	
-			else:
-				resx = np.zeros((nint+1, nint+2, 2))
-				resy = np.zeros((nint+2, nint+1, 2))
-				#res = np.array(nint+1, nint+1, 2)
-				if loopType == "python":
-					from python_alg2_fg2 import calc_interm_u_array_3d
-				elif loopType == "weave":
-					from weave_alg2_fg2 import calc_interm_u_array_3d
-				elif loopType == "cython":
-					from cython_alg2_fg2 import calc_interm_u_array_3d
-				calc_interm_u_array_3d(resx, resy, u, f, nint, dz0, dz1, dt) 
-		
+	def recalculateU(rho, uc, ue, fm, fc ,fe, dt):
+		global lrBoundaryConditions
+		lrBoundaryConditions = lrBoundaryConditionsPresRho
+		#print("recalculateU ")
+		intermRho = calcIntermU(rho, fm , dt)	
+		intermUe = calcIntermU(ue, fe , dt)
+		lrBoundaryConditions = lrBoundaryConditionsVel
+		intermUc = calcIntermU(uc, fc , dt)	
+		intermVelPres = recalculateVelPres(intermRho, intermUc, intermUe)
+		intermVel = intermVelPres["vel"]
+		intermPres = intermVelPres["pres"]
+		intermFluxes = recalculateFluxes(intermRho, intermUc, intermUe, intermVel, intermPres)
+		lrBoundaryConditions = lrBoundaryConditionsPresRho
+		finalRho = calcFinalU(rho, intermFluxes["fm"], dt)	
+		finalUe = calcFinalU(ue, intermFluxes["fe"], dt)
+		lrBoundaryConditions = lrBoundaryConditionsVel
+		finalUc = calcFinalU(uc, intermFluxes["fc"], dt)	
+		return {"rho": finalRho, "uc": finalUc, "ue": finalUe}
+
+
+elif schemeType == "fg2":
+	def calcIntermUArray(u, f, dt):
+		#print("calcIntermU")
+		from common import getDz0, getDz1
+		from constants import nint
+		#no more lambda dz1 may be different from dz0
+		dz0 = getDz0()
+		dz1 = getDz1()
+		if(u.ndim == 2): #case of um and ue that are not vectors
+			resx = np.zeros((nint+1, nint))
+			resy = np.zeros((nint, nint+1))
+			#res = np.array(nint+1, nint+1) #TODO do not initialize how?
+			if loopType == "python":
+				from python_alg2_fg2 import calc_interm_u_array_2d
+			elif loopType == "weave":
+				from weave_alg2_fg2 import calc_interm_u_array_2d
+			elif loopType == "cython":
+				from cython_alg2_fg2 import calc_interm_u_array_2d
+				
+			calc_interm_u_array_2d(resx, resy, u,f,nint, dz0, dz1, dt) 
+
+		else:
+			resx = np.zeros((nint+1, nint, 2))
+			resy = np.zeros((nint, nint+1, 2))
+			#res = np.array(nint+1, nint+1, 2)
+			if loopType == "python":
+				from python_alg2_fg2 import calc_interm_u_array_3d
+			elif loopType == "weave":
+				from weave_alg2_fg2 import calc_interm_u_array_3d
+			elif loopType == "cython":
+				from cython_alg2_fg2 import calc_interm_u_array_3d
+			calc_interm_u_array_3d(resx, resy, u, f, nint, dz0, dz1, dt) 
+	
+		return resx, resy
+
+	
+	def calcFinalUArray(u, intermF0, intermF1, dt, skip=0):
+		#print("calcFinalU")
+		from common import getDz0, getDz1
+		from constants import nint
+		dz0 = getDz0()
+		dz1 = getDz1()
+		n = intermF0.shape[1]  #use as shape index the dimension d which is = other dim - 1
+		print("final fg2 array n = %d" % n) 
+		if(u.ndim == 2): #case of um and ue that are not vectors
+			res = np.zeros((n, n))
+			#res = np.array(nint+1, nint+1) #TODO do not initialize how?
+			if loopType == "python":
+				from python_alg2_fg2 import calc_final_u_array_2d
+			elif loopType == "weave":
+				from weave_alg2_fg2 import calc_final_u_array_2d
+			elif loopType == "cython":
+				from cython_alg2_fg2 import calc_final_u_array_2d
+				calc_final_u_array_2d(res, u, intermF0, intermF1, n, dz0, dz1, dt, skip) 
+		else:
+			res = np.zeros((n, n, 2))
+			#res = np.array(nint+1, nint+1, 2)
+			if loopType == "python":
+				from python_alg2_fg2 import calc_final_u_array_3d
+			elif loopType == "weave":
+				from weave_alg2_fg2 import calc_final_u_array_3d
+			elif loopType == "cython":
+				from cython_alg2_fg2 import calc_final_u_array_3d
+			calc_final_u_array_3d(res, u, intermF0, intermF1, n, dz0, dz1, dt, skip) 
+		#no more boundary conditions because intermediate array alreday has nint + 3 points
+		return np.array(res)
+
+
+	from constants import bcStep
+	if(bcStep == "interm"):
+		def calcIntermU(u, f, dt):
+			resx, resy = calcIntermUArray(u, f, dt)
+			#left and right boundary condition  skip one point !!! both right and left the intermediate array will have nint + 3 points see array limits
+			#print("calcIntermStep before bc")
+			#print(res)	
+			resx = lrBoundaryConditions(resx, 1)
+			resy = lrBoundaryConditions(resy, 1)
+			#print("calcIntermStep after bc")
+			#print(res)	
 			return resx, resy
 	
+		#no more boundary conditions because intermediate array alreday has nint + 3 points
+		calcFinalU = calcFinalUArray	
 		
-		def calcFinalUArray(u, intermF0, intermF1, dt, skip=0):
-			#print("calcFinalU")
-			from common import getDz0, getDz1
-			from constants import nint
-			dz0 = getDz0()
-			dz1 = getDz1()
-			n = intermF0.shape[1] 
-			if(u.ndim == 2): #case of um and ue that are not vectors
-				res = np.zeros((n, n))
-				#res = np.array(nint+1, nint+1) #TODO do not initialize how?
-				if loopType == "python":
-					from python_alg2_fg2 import calc_final_u_array_2d
-				elif loopType == "weave":
-					from weave_alg2_fg2 import calc_final_u_array_2d
-				elif loopType == "cython":
-					from cython_alg2_fg2 import calc_final_u_array_2d
-					calc_final_u_array_2d(res, u, intermF0, intermF1, n, dz0, dz1, dt, skip) 
-			else:
-				res = np.zeros((n, n, 2))
-				#res = np.array(nint+1, nint+1, 2)
-				if loopType == "python":
-					from python_alg2_fg2 import calc_final_u_array_3d
-				elif loopType == "weave":
-					from weave_alg2_fg2 import calc_final_u_array_3d
-				elif loopType == "cython":
-					from cython_alg2_fg2 import calc_final_u_array_3d
-				calc_final_u_array_3d(res, u, intermF0, intermF1, n, dz0, dz1, dt, skip) 
-			#no more boundary conditions because intermediate array alreday has nint + 3 points
-			return np.array(res)
+	elif(bcStep == "final"):
+		#boundary conditions in final step
+			#left and right boundary condition  skip one point !!! both right and left the intermediate array will have nint + 1 points see array limits
+		calcIntermU = calcIntermUArray
+		def calcFinalU(u, fx, fy, dt):
+			res = calcFinalUArray(u, fx, fy, dt,1)
+			#print("final bc array before bc")
+			#print(res)
+			res = lrBoundaryConditions(res)
+			#print("final bc array after bc")
+			#print(res)
+			return res
 	
-	
-		from constants import bcStep
-		if(bcStep == "interm"):
-			def calcIntermU(u, f, dt):
-				resx, resy = calcIntermUArray(u, f, dt)
-				#left and right boundary condition  skip one point !!! both right and left the intermediate array will have nint + 3 points see array limits
-				#print("calcIntermStep before bc")
-				#print(res)	
-				resx = lrBoundaryConditions(resx, 1)
-				resy = lrBoundaryConditions(resy, 1)
-				#print("calcIntermStep after bc")
-				#print(res)	
-				return resx, resy
-		
-			#no more boundary conditions because intermediate array alreday has nint + 3 points
-			calcFinalU = calcFinalUArray	
-			
-		elif(bcStep == "final"):
-			#boundary conditions in final step
-				#left and right boundary condition  skip one point !!! both right and left the intermediate array will have nint + 1 points see array limits
-			calcIntermU = calcIntermUArray
-			def calcFinalU(u, fx, fy, dt):
-				res = calcFinalUArray(u, fx, fy, dt,1)
-				#print("final bc array before bc")
-				#print(res)
-				res = lrBoundaryConditions(res)
-				#print("final bc array after bc")
-				#print(res)
-				return res
-		
-		def recalculateU(rho, uc, ue, fm, fc ,fe, dt):
-			global lrBoundaryConditions
-			lrBoundaryConditions = lrBoundaryConditionsPresRho
-			#print("recalculateU ")
-			print("------------before interm u 2d----------")
-			intermRho0, intermRho1 = calcIntermU(rho, fm , dt)	
-			#print("------------intermrho0----------")
-			#print(intermRho0)
-			#print(intermRho1)
-			#print("------------irho0end----------")
-			intermUe0, intermUe1 = calcIntermU(ue, fe , dt)
-			lrBoundaryConditions = lrBoundaryConditionsVel
-			print("------------before interm u 3d----------")
-			intermUc0, intermUc1 = calcIntermU(uc, fc , dt)	
-			intermVelPres = recalculateVelPres(intermRho0, intermUc0, intermUe0)
-			intermVel0 = intermVelPres["vel"]
-			intermPres0 = intermVelPres["pres"]
-			intermVelPres = recalculateVelPres(intermRho1, intermUc1, intermUe1)
-			intermVel1 = intermVelPres["vel"]
-			intermPres1 = intermVelPres["pres"]
-			intermFluxes0 = recalculateFluxes(intermRho0, intermUc0, intermUe0, intermVel0, intermPres0)
-			intermFluxes1 = recalculateFluxes(intermRho1, intermUc1, intermUe1, intermVel1, intermPres1)
-			lrBoundaryConditions = lrBoundaryConditionsPresRho
-			print("------------before final u 2d----------")
-			finalRho = calcFinalU(rho, intermFluxes0["fm"], intermFluxes1["fm"], dt)	
-			finalUe = calcFinalU(ue, intermFluxes0["fe"], intermFluxes1["fe"], dt)
-			lrBoundaryConditions = lrBoundaryConditionsVel
-			print("------------before final u 3d----------")
-			finalUc = calcFinalU(uc, intermFluxes0["fc"], intermFluxes1["fc"], dt)	
-			#print("------------FINAL SHAPES----------")
-			#print(finalRho.shape)
-			#print(finalUc.shape)
-			#print(finalUe.shape)
-			#print("------------FINAL SHAPES-END---------")
-	
-			return {"rho": finalRho, "uc": finalUc, "ue": finalUe}
+	def recalculateU(rho, uc, ue, fm, fc ,fe, dt):
+		global lrBoundaryConditions
+		lrBoundaryConditions = lrBoundaryConditionsPresRho
+		#print("recalculateU ")
+		print("------------before interm u 2d----------")
+		intermRho0, intermRho1 = calcIntermU(rho, fm , dt)	
+		#print("------------intermrho0----------")
+		#print(intermRho0)
+		#print(intermRho1)
+		#print("------------irho0end----------")
+		intermUe0, intermUe1 = calcIntermU(ue, fe , dt)
+		lrBoundaryConditions = lrBoundaryConditionsVel
+		print("------------before interm u 3d----------")
+		intermUc0, intermUc1 = calcIntermU(uc, fc , dt)	
+#		print("------------INTERM SHAPES0----------")
+#		print(intermRho0.shape)
+#		print(intermUe0.shape)
+#		print(intermUc0.shape)
+#		print("------------INTERM SHAPES0-END---------")
+#		print("------------INTERM SHAPES1----------")
+#		print(intermRho1.shape)
+#		print(intermUe1.shape)
+#		print(intermUc1.shape)
+#		print("------------INTERM SHAPES1-END---------")
+		intermVelPres = recalculateVelPres(intermRho0, intermUc0, intermUe0)
+		intermVel0 = intermVelPres["vel"]
+		intermPres0 = intermVelPres["pres"]
+		intermVelPres = recalculateVelPres(intermRho1, intermUc1, intermUe1)
+		intermVel1 = intermVelPres["vel"]
+		intermPres1 = intermVelPres["pres"]
+		intermFluxes0 = recalculateFluxes(intermRho0, intermUc0, intermUe0, intermVel0, intermPres0)
+		intermFluxes1 = recalculateFluxes(intermRho1, intermUc1, intermUe1, intermVel1, intermPres1)
+		lrBoundaryConditions = lrBoundaryConditionsPresRho
+		print("------------before final u 2d----------")
+		finalRho = calcFinalU(rho, intermFluxes0["fm"], intermFluxes1["fm"], dt)	
+		finalUe = calcFinalU(ue, intermFluxes0["fe"], intermFluxes1["fe"], dt)
+		lrBoundaryConditions = lrBoundaryConditionsVel
+		print("------------before final u 3d----------")
+		finalUc = calcFinalU(uc, intermFluxes0["fc"], intermFluxes1["fc"], dt)	
+#		print("------------FINAL SHAPES----------")
+#		print(finalRho.shape)
+#		print(finalUc.shape)
+#		print(finalUe.shape)
+#		print("------------FINAL SHAPES-END---------")
+
+		return {"rho": finalRho, "uc": finalUc, "ue": finalUe}
 
 		
 	
@@ -435,51 +392,21 @@ elif schemeType == "lf":
 		if(u.ndim == 2): #case of um and ue that are not vectors
 			res = np.zeros((nint, nint))
 			if loopType == "python":
-				for i in range(1, nint+1):
-					for j in range(1, nint+1):
-						#averaging on the first term makes the scheme stable (see Appendix: The lax-Fr scheme)
-						res[i-1,j-1] = 0.25 * (u[i,j-1] + u[i,j+1] + u[i+1,j] + u[i-1,j]) - 0.5 * dt * ((f[i+1,j,1] - f[i-1,j,1])/dz1 + (f[i,j+1,0] - f[i,j-1,0])/dz0) 
+				from python_alg2_lf import calc_singlestep_u_array_2d
 			elif loopType == "weave":
-				from scipy.weave import inline, converters
-				dt = float(dt)
-				code = """
-				for(int i = 1;i<nint+1; i++) {
-					for(int j = 1;j<nint+1; j++) {
-						res(i-1,j-1) = 0.25 * (u(i,j-1) + u(i,j+1) + u(i+1,j) + u(i-1,j)) - 0.5 * dt * ((f(i+1,j,1) - f(i-1,j,1))/dz1 + (f(i,j+1,0) - f(i,j-1,0))/dz0); 
-
-					}
-				}
-				
-				"""
-				inline(code, ['u', 'dz0', 'dz1', 'dt', 'res', 'f', 'nint'],type_converters=converters.blitz)
+				from weave_alg2_lf import calc_singlestep_u_array_2d
 			elif loopType == "cython":
-				from cython_alg2 import calc_singlestep_u_array_2d
-				calc_singlestep_u_array_2d(res, u,f,nint, dz0,dz1, dt) 
+				from cython_alg2_lf import calc_singlestep_u_array_2d
+			calc_singlestep_u_array_2d(res, u,f,nint, dz0,dz1, dt) 
 		else:
 			res = np.zeros((nint, nint, 2))
-			#print("calcSingleStepU f third comp")
-			#print(f[:,:,2])
 			if loopType == "python":
-				for i in range(1, nint+1):
-					for j in range(1, nint+1):
-						res[i-1,j-1,0] = 0.25 * (u[i,j-1,0] + u[i,j+1,0] + u[i+1,j,0] + u[i-1,j,0]) - 0.5 * dt  * ((f[i+1,j,1] - f[i-1,j,1])/dz1 + (f[i,j+1,0] - f[i,j-1,0])/dz0) 
-						res[i-1,j-1,1] = 0.25 * (u[i,j-1,1] + u[i,j+1,1] + u[i+1,j,1] + u[i-1,j,1]) - 0.5 * dt * ((f[i+1,j,2] - f[i-1,j,2])/dz1 + (f[i,j+1,1] - f[i,j-1,1])/dz0) 
+				from python_alg2_lf import calc_singlestep_u_array_3d
 			elif loopType == "weave":
-				from scipy.weave import inline, converters
-				dt = float(dt)
-				code = """
-				for(int i = 1;i<nint+1; i++) {
-					for(int j = 1;j<nint+1; j++) {
-						res(i-1,j-1,0) = 0.25 * (u(i,j-1,0) + u(i,j+1,0) + u(i+1,j,0) + u(i-1,j,0)) - 0.5 * dt  * ((f(i+1,j,1) - f(i-1,j,1))/dz1 + (f(i,j+1,0) - f(i,j-1,0))/dz0); 
-						res(i-1,j-1,1) = 0.25 * (u(i,j-1,1) + u(i,j+1,1) + u(i+1,j,1) + u(i-1,j,1)) - 0.5 * dt * ((f(i+1,j,2) - f(i-1,j,2))/dz1 + (f(i,j+1,1) - f(i,j-1,1))/dz0); 
-				
-					}
-				}
-				"""
-				inline(code, ['u', 'dz0', 'dz1', 'dt', 'res', 'f', 'nint'],type_converters=converters.blitz)
+				from weave_alg2_lf import calc_singlestep_u_array_3d
 			elif loopType == "cython":
-				from cython_alg2 import calc_singlestep_u_array_3d
-				calc_singlestep_u_array_3d(res, u,f,nint, dz0, dz1, dt) 
+				from cython_alg2_lf import calc_singlestep_u_array_3d
+			calc_singlestep_u_array_3d(res, u,f,nint, dz0,dz1, dt) 
 		#print("calcSingleStep before BC PX")
 		#print(res[0,...])
 		res = lrBoundaryConditions(res)

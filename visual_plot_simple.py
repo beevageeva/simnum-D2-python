@@ -1,8 +1,8 @@
 import matplotlib
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.ticker import FormatStrFormatter
-useWindow = False
-#useWindow = True
+#useWindow = False
+useWindow = True
 if useWindow:
 	matplotlib.use('TkAgg')
 else:
@@ -20,10 +20,10 @@ saveImages = True
 
 
 
-plot2dModule = True
-#plot2dModule = False
-
-ylim = {"pres":{ "maxY": 1.0005, "minY": 0.9995} , "vel0" : { "maxY": 0.00035, "minY": -0.00035}, "vel1" : { "maxY": 0.00035, "minY": -0.00035},"rho":{ "maxY": 1.0004, "minY": 0.9996}} 
+#homog
+#ylim = {"pres":{ "maxY": 1.0005, "minY": 0.9995} , "vel0" : { "maxY": 0.00035, "minY": -0.00035}, "vel1" : { "maxY": 0.00035, "minY": -0.00035},"rho":{ "maxY": 1.0004, "minY": 0.9996}} 
+#inhomog: no limit in rho
+ylim = {"pres":{ "maxY": 1.0005, "minY": 0.9995} , "vel0" : { "maxY": 0.0002, "minY": -0.0002}, "vel1" : { "maxY": 0.0002, "minY": -0.0002}} 
 #ylim = {"pres":{ "maxY": 1.00035, "minY": 0.99975} , "vel0" : { "maxY": 0.00025, "minY": -0.00025}, "vel1" : { "maxY": 0.00025, "minY": -0.00025}, "rho":{ "maxY": 1.0003, "minY": 0.9997}, "vel" : { "maxY": 0.0005, "minY": -0.0001}} 
 #ylim = {"pres":{ "maxY": 1.0003, "minY": 0.9997} , "vel" : { "maxY": 0.00025, "minY": -0.00025}, "rho":{ "maxY": 0.5002, "minY": 0.4998}} 
 #ylim = {"pres":{ "maxY": 1.0003, "minY": 0.9997} , "vel" : { "maxY": 0.00025, "minY": -0.00025}, "rho":{ "maxY": 2.0002, "minY": 1.9998}} 
@@ -40,7 +40,7 @@ def testKeyInDict(key, dictionary):
 	else:
 		return key in dictionary	
 
-
+colorInRow = 2
 
 
 
@@ -50,7 +50,7 @@ class VisualPlot:
 	def addAxisColor(self, fig, arrayToAppendAxes, title, vals, n, i):
 		#ax = fig.add_subplot(n , 1, i)
 		from math import ceil
-		ax = fig.add_subplot(ceil(n/3.0) , 3, i)
+		ax = fig.add_subplot(ceil(n/float(colorInRow)) , colorInRow, i)
 		ax.set_xlabel("y")
 		ax.set_ylabel("x")
 		ax.axis("off")
@@ -59,10 +59,13 @@ class VisualPlot:
 		#np.set_printoptions(threshold='nan')
 		#print("addAxisColor: values")
 		#print(values)
-		ax.imshow(vals)
+		if(ylim and testKeyInDict(title, ylim)):
+			ax.imshow(vals, vmin=ylim[title]["minY"], vmax=ylim[title]["maxY"])
+		else:
+			ax.imshow(vals)
 		ax.relim()
 		ax.autoscale_view(True,True,True)
-		fig.tight_layout()
+		fig.tight_layout(pad=0.2, w_pad=0.2, h_pad=0.2)
 		arrayToAppendAxes.append(ax)
 
 
@@ -313,7 +316,10 @@ class VisualPlot:
 		ax.set_ylabel("x")
 		ax.axis("off")
 		ax.set_title(title)
-		ax.imshow(vals)
+		if(ylim and testKeyInDict(title, ylim)):
+			ax.imshow(vals, vmin=ylim[title]["minY"], vmax=ylim[title]["maxY"])
+		else:
+			ax.imshow(vals)
 
 	#TODO make a function for every projection
 

@@ -4,12 +4,12 @@ import numpy as np
 from sound_wave_monochr_params import k
 
 
-smoothInterp = False
-#smoothInterp = True
-withWindow = False
-#withWindow = True
-#useAnDer = True
-useAnDer = False
+#smoothInterp = False
+smoothInterp = True
+#withWindow = False
+withWindow = True
+useAnDer = True
+#useAnDer = False
 
 """
 	returns the sondWaveFunction
@@ -57,7 +57,7 @@ def smoothInterpCl(z, res):
 	#n = len(z[0]) - 1
 	#y,x=np.ogrid[-n / 2: n/2 + 1, -n / 2: n/2 + 1]
 	n = len(z[0]) 
-	y,x=np.ogrid[-n / 2: n/2 , -n / 2: n/2 ]
+	x,y=np.ogrid[-n / 2: n/2 , -n / 2: n/2 ]
 	mask = x**2+y**2 < RI**2
 	print("MASK")
 	print(mask)
