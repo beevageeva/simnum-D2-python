@@ -11,9 +11,11 @@ from constants import z0, zf
 from math import pi,sqrt
 from perturbation_params import argFunc
 
-k0 = 60.0
+#k0 = 60.0
+k0 = 30.0
 #k0 = 15.0
-W = 0.1
+#W = 0.05
+W = 0.25
 #W = 0.025
 #W = 0.1
 
@@ -21,18 +23,9 @@ from medium_params import mediumType
 if mediumType == "homog":
 	zc = [0.5 * (z0[0]+ zf[0]), 0.5 * (z0[1] + zf[1])] #in the middle
 elif mediumType == "inhomog":
-	from medium_params import inhomogSubtype
-	if inhomogSubtype == 1:
-		zc = [z0[0] + 0.2 * (zf[0] - z0[0]), z0[1] + 0.2 * (zf[1] - z0[1])]
-	
-	elif inhomogSubtype == 2:
-		#change 	
-		k0 = 15.0 #second exp of inhom
-		#zc = z0 + 0.2 * (zf - z0) homog
-		#zc = z0 + 0.3 * (zf - z0)
-		zc = [z0[0] + (3.0/20.0)*(zf[0] - z0[0]), z0[1] + (3.0/20.0)*(zf[1] - z0[1])  ]#second exp of inhom and first new
-		#W = 0.01
-		W = 0.25 #second exp of inhom
+	zc = [z0[0] + 0.2 * (zf[0] - z0[0]), z0[1] + 0.2 * (zf[1] - z0[1])]
+
+#zc = [0.65 * (z0[0]+ zf[0]), 0.65 * (z0[1] + zf[1])] #at the end to test reflection
 
 def getSoundWaveGaussFunction(zc, W):
 	"""

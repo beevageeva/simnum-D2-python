@@ -88,6 +88,7 @@ def getTimestep(v, p, rho):
 		#print(p[p<0])
 		#print("rho<0")
 		#print(rho[rho<0])
+		print(np.where(t1 < 0)[0])
 
 		return 0	
 	cs = np.sqrt(gamma *  t1)
@@ -306,8 +307,8 @@ elif schemeType == "fg2":
 			#left and right boundary condition  skip one point !!! both right and left the intermediate array will have nint + 3 points see array limits
 			#print("calcIntermStep before bc")
 			#print(res)	
-			resx = lrBoundaryConditions(resx, 1)
-			resy = lrBoundaryConditions(resy, 1)
+			resx = lrBoundaryConditions(resx, 2)
+			resy = lrBoundaryConditions(resy, 2)
 			#print("calcIntermStep after bc")
 			#print(res)	
 			return resx, resy

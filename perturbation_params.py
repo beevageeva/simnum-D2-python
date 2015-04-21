@@ -48,10 +48,10 @@ if waveType == "lineal":
 		from common import getDz0, getDz1
 		wl1 = zf[0] - z0[0] + getDz0()
 		wl2 = zf[1] - z0[1] + getDz1()
-		nx= 1.0
-		ny = 1.0	
-		#nx= 3.0
-		#ny = 4.0	
+		#nx= 1.0
+		#ny = 1.0	
+		nx= 4.0/7.0
+		ny = 3.0/7.0	
 		k1 = nx/wl1
 		k2 = ny/wl2
 		#k1 = nx

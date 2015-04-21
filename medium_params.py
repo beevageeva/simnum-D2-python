@@ -18,14 +18,17 @@ if(mediumType=="homog"):
 	cs00 = math.sqrt(gamma * p00 / rho00)
 
 elif(mediumType=="inhomog"):
-	inhomogSubtype = 1
-	#inhomogSubtype = 2
+	#inhomogSubtype = 1
+	inhomogSubtype = 2
 	if inhomogSubtype == 1:
 		rho00 = 1.0
 		rho01 = 0.01
 	elif inhomogSubtype == 2:
-		rho00 = 0.3
-		rho01 = 1.2
+		#rho00 = 0.3
+		#rho01 = 1.2
+		#rho01 = 1.0
+		rho00 = 1.0
+		rho01 = 2.0
 	
 	#rho00 = 0.3  #second exp of inhom
 	#rho01 = 1.2#second exp of inhom

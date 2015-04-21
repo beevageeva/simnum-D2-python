@@ -1,8 +1,8 @@
 import matplotlib
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.ticker import FormatStrFormatter
-#useWindow = False
-useWindow = True
+useWindow = False
+#useWindow = True
 if useWindow:
 	matplotlib.use('TkAgg')
 else:
@@ -14,21 +14,24 @@ import sys, os
 
 from notifier_params import plots, plotAnalitical
 
-#saveImages = True
-saveImages = False
+saveImages = True
+#saveImages = False
 
 
 
 #homog
 #ylim = {"pres":{ "maxY": 1.0005, "minY": 0.9995} , "vel0" : { "maxY": 0.00035, "minY": -0.00035}, "vel1" : { "maxY": 0.00035, "minY": -0.00035},"rho":{ "maxY": 1.0004, "minY": 0.9996}} 
-#inhomog: no limit in rho
-ylim = {"pres":{ "maxY": 1.0005, "minY": 0.9995} , "vel0" : { "maxY": 0.00035, "minY": -0.00035}, "vel1" : { "maxY": 0.0002, "minY": -0.0002}} 
+#no need to specify maxY and minY if set useFirstYLim to true
+#ylim = {"pres":{"maxY": 1.0005, "minY": 0.9995} , "vel0" : {"maxY": 0.00035, "minY": -0.00035}, "vel1" : {"maxY": 0.0002, "minY": -0.0002}} 
 #ylim = {"pres":{ "maxY": 1.00035, "minY": 0.99975} , "vel0" : { "maxY": 0.00025, "minY": -0.00025}, "vel1" : { "maxY": 0.00025, "minY": -0.00025}, "rho":{ "maxY": 1.0003, "minY": 0.9997}, "vel" : { "maxY": 0.0005, "minY": -0.0001}} 
 #ylim = {"pres":{ "maxY": 1.0003, "minY": 0.9997} , "vel" : { "maxY": 0.00025, "minY": -0.00025}, "rho":{ "maxY": 0.5002, "minY": 0.4998}} 
 #ylim = {"pres":{ "maxY": 1.0003, "minY": 0.9997} , "vel" : { "maxY": 0.00025, "minY": -0.00025}, "rho":{ "maxY": 2.0002, "minY": 1.9998}} 
 #xlim = {"minX" : 0, "maxX" : 4.3}
-#ylim = None
+#ylim = {"pres":{"useFirstYLim": True} , "vel0" : {"useFirstYLim": True}, "vel1" : {"useFirstYLim": True}, "rho" : {"useFirstYLim" :  True}} 
+ylim = None
 xlim = None
+
+
 
 	
 #because methods are different in python3 and python2
@@ -128,12 +131,17 @@ class VisualPlot:
 				fig.subplots_adjust(right=0.8)
 				self.figures.append(fig)
 			if testKeyInDict("line", plots):
-				if plots["line"][1]:
+				if plots["line"][2]:
 					self.maxPoints["line"] = {}
 				fig = plt.figure(6)
 				fig.suptitle("Line %s" % str(plots["line"][0]))
 				n = len(z[0])
-				x,y=np.ogrid[-n / 2: n/2 , -n / 2: n/2 ]
+				pointLine = plots["line"][1]
+				from common import getZIndex0, getZIndex1
+				#x,y=np.ogrid[-n / 2: n/2 , -n / 2: n/2 ] this was passing by the middle
+				a = getZIndex0(pointLine[0])
+				b = getZIndex1(pointLine[1])
+				x,y=np.ogrid[-a: n-a , -b: n-b ]
 				self.projMask = plots["line"][0](x,y)
 #				print("************visual_plot PROJMASK")
 #				print(self.projMask)
@@ -162,6 +170,11 @@ class VisualPlot:
 			vals = iniValues[i]
 			title = titles[i]
 			self.axes[title] = []
+			#set ylim if useFirstYlim = True
+			if(ylim and testKeyInDict(title, ylim) and testKeyInDict("useFirstYLim" , ylim[title]) and  ylim[title]["useFirstYLim"]):
+				ylim[title]["maxY"] = np.max(vals)
+				ylim[title]["minY"] = np.min(vals)
+				print("set ylim for %s max = %2.4f min = %2.4f" % (title, ylim[title]["maxY"],  ylim[title]["minY"]))
 			if(plots["3d"]):
 				fig = plt.figure(1)
 				ax = fig.add_subplot(n, 1, i+1, projection='3d')
@@ -216,7 +229,7 @@ class VisualPlot:
 	#			print("newz")
 	#			print(newz)
 	#			print(newz.shape)
-				if(plots["line"][1]):
+				if(plots["line"][2]):
 					markMaxIndex = np.argmax(values)
 					markMaxValue = newz[markMaxIndex]
 					self.maxPoints["line"][title] = markMaxValue
@@ -229,6 +242,7 @@ class VisualPlot:
 				plt.draw()
 				if plotAnalitical:
 					fig = plt.figure(5)
+					#first values will be numerical values!
 					self.addAxisColor(fig, self.axes[title], ("%s-an" % title), vals, n , i+1)
 	
 
@@ -316,6 +330,7 @@ class VisualPlot:
 		ax.axis("off")
 		ax.set_title(title)
 		if(ylim and testKeyInDict(title, ylim)):
+			#print("in updateAxis color using  ylim for %s max = %2.4f min = %2.4f" % (title, ylim[title]["maxY"],  ylim[title]["minY"]))
 			ax.imshow(vals, vmin=ylim[title]["minY"], vmax=ylim[title]["maxY"])
 		else:
 			ax.imshow(vals)
@@ -376,7 +391,7 @@ class VisualPlot:
 			linez = linez[0]	
 			newz = np.sqrt(  (linez[:,0] - linez[0,0])**2 + (linez[:,1] - linez[0,1])**2  )
 			
-			if(plots["line"][1]):
+			if(plots["line"][2]):
 				markMaxIndex = np.argmax(values[0]) if plotAnalitical else np.argmax(values)
 				markMaxValue = newz[markMaxIndex]
 				#TODO speed periodic for line
