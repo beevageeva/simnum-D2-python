@@ -84,7 +84,7 @@ def getRadialAnalitic(z, t):
 
 
 
-def getFunctionFromType(functionType):
+def getFunctionFromType(argFunc, functionType):
 	try:
 		if functionType == "sine":
 			import sound_wave_sine_params
@@ -95,7 +95,7 @@ def getFunctionFromType(functionType):
 			w = getSoundWaveFunction(R)
 		elif functionType == "wavepacket":
 			from sound_wave_packet_params import getSoundWaveFunction, k0, zc, W
-			w = getSoundWaveFunction(k0, zc, W)
+			w = getSoundWaveFunction(argFunc, k0, zc, W)
 		elif functionType == "wavepacket_carton":
 			from sound_wave_packet_carton_params import getSoundWaveFunction, k0, zc, W
 			w = getSoundWaveFunction(k0, zc, W)
@@ -117,10 +117,13 @@ def getInitialPresRhoVel(z):
 	from perturbation_params import A,  functionType, waveType
 	from constants import z0, zf
 	if(waveType == "lineal"):
-		w = getFunctionFromType(functionType)
-		#I have already argFunc called in the function definition
-		f = w(z)
-		from perturbation_params import argFunc, velFunc
+		from perturbation_params import argFunc, velFunc, argType
+		if argType == "2d1":
+			#I have already argFunc called in the function definition
+			f = getFunctionFromType(argFunc[0], functionType)(z) +  getFunctionFromType(argFunc[1], functionType)(z)
+		else:
+			f = getFunctionFromType(argFunc, functionType)(z)
+	
 		if mediumType == "homog":
 			cs0 = cs00
 			rho0 = rho00
@@ -129,7 +132,11 @@ def getInitialPresRhoVel(z):
 			cs0 = cs00(z)
 			rho0 = rho0(z)
 		v1 = v00 + cs0 * A* f
-		vel = np.dstack(velFunc(v1))
+		if argType == "2d1":
+			vfunc = velFunc[0](v1) + velFunc[1](v1)
+		else:
+			vfunc = velFunc(v1)
+		vel = np.dstack(vfunc)
 		return {'pres': p00 + gamma * p00 * A* f  , 'rho': rho0 + rho0 *A* f , 'vel': vel }
 	elif(waveType == "radial"):
 		return getRadialAnalitic(z, 0)

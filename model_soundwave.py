@@ -9,6 +9,10 @@ from notifier_params import plotVelFFT, plotPresFFT
 #showErr = True
 showErr = False
 
+
+drawPacket = True
+
+
 def getNotifier(notifierType, z, titles, iniValues):
 	if(notifierType=="visual"):
 		#this can be any other class implementing corresponding methods
@@ -18,9 +22,15 @@ def getNotifier(notifierType, z, titles, iniValues):
 		from save_to_file import SaveToFile 
 		return SaveToFile(z, titles, iniValues)
 
+
+
+
+
+
 class Model:
 	
-	def __init__(self):
+	def __init__(self, timeEnd):
+		self.timeEnd=timeEnd
 		from common import getZArray
 		from alg import getInitialUcUe
 		self.z = getZArray()
@@ -60,6 +70,18 @@ class Model:
 			self.notifier.addFFTAxis("velFFT1", self.vel[...,1])
 		if(plotPresFFT):
 			self.notifier.addFFTAxis("presFFT", self.pres)
+
+		from perturbation_params import functionType
+		if functionType == "wavepacket" and drawPacket:
+			from sound_wave_packet_params import getTrajectory
+			watchPacket = getTrajectory(self.z, timeEnd)
+			self.notifier.addTrajAxis(watchPacket)
+			#print("WATCH PACKET")
+			#print(self.watchPacket)
+			#import time
+			#time.sleep(10)
+
+
 		self.notifier.afterInit()
 
 
@@ -147,13 +169,13 @@ class Model:
 
 
 
-	def mainLoop(self, timeEnd):
+	def mainLoop(self):
 		import datetime
 		from alg import recalculateFluxes, getTimestep, recalculateU, recalculateVelPres,getInitialUcUe
 		time = 0.0
 		nstep = 0
 		ndt = 0
-		while(time<timeEnd):
+		while(time<self.timeEnd):
 			r = recalculateFluxes(self.rho, self.uc, self.ue, self.vel, self.pres)
 			self.fm = r['fm']
 			self.fc = r['fc']
@@ -184,6 +206,9 @@ class Model:
 			r = recalculateVelPres(self.rho, self.uc, self.ue)
 			self.vel = r["vel"]	
 			self.pres = r["pres"]
+
+
+
 			##print("NSTEP %d" % nstep)
 			#if time>0.08:
 			#	print("VARS after recalculate at time %4.3f" % time)
@@ -219,6 +244,7 @@ class Model:
 #				self.notifier.updateValues("fc0", self.fc[:,:,0] ,ndt)
 #				self.notifier.updateValues("fc1", self.fc[:,:,1] ,ndt)
 #				self.notifier.updateValues("fc2", self.fc[:,:,2] ,ndt)
+					
 				if(plotVelFFT):
 					self.notifier.updateFFTAxis("velFFT0", self.vel[...,0])
 					self.notifier.updateFFTAxis("velFFT1", self.vel[...,1])

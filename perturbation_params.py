@@ -23,7 +23,8 @@ functionType = "wavepacket"
 if waveType == "lineal":	
 	#argType = "x"
 	#argType = "y"
-	argType = "d1" 
+	#argType = "d1" 
+	argType = "2d1" 
 	
 
 	if(argType == "x"):
@@ -32,6 +33,7 @@ if waveType == "lineal":
 		wl = zf[0] - z0[0] + getDz0()
 		k1 = nx / wl
 		#k1 = nx 
+		k2 = 0
 		argFunc = lambda x: k1 * x[0]
 		velFunc = lambda x: (x,np.zeros(x.shape))
 		
@@ -40,6 +42,7 @@ if waveType == "lineal":
 		wl = zf[1] - z0[1] + getDz1()
 		#ny = 3.0
 		ny = 1.0
+		k1=0
 		k2 = ny / wl
 		#k2 = ny
 		argFunc = lambda x: k2 * x[1]
@@ -60,6 +63,24 @@ if waveType == "lineal":
 		argFunc = lambda x: k1 * x[0] + k2 * x[1]
 		velFunc = lambda x: (k1/modk * x ,k2/modk * x)
 
+	#TODO implem general superpositoin
+	elif argType == "2d1":
+		from common import getDz0, getDz1
+		wl1 = zf[0] - z0[0] + getDz0()
+		wl2 = zf[1] - z0[1] + getDz1()
+		nx= 1.0
+		ny = 1.0	
+		#nx= 4.0/7.0
+		#ny = 3.0/7.0	
+		k1o = nx/wl1
+		k2o = ny/wl2
+		k1 = [k1o,-k1o]
+		k2 = [k2o,k2o]
+		#k1 = nx
+		#k2 = ny
+		modk = math.sqrt(k1o**2 + k2o**2)
+		argFunc = [lambda x: k1o * x[0] + k2o * x[1], lambda x: -k1o * x[0] + k2o * x[1] ]
+		velFunc = [lambda x: (k1o/modk * x ,k2o/modk * x) , lambda x: (-k1o/modk * x ,k2o/modk * x)]
 
 elif waveType == "radial":
 	argFunc = lambda x: np.sqrt(x[0]**2+x[1]**2)

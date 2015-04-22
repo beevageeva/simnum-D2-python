@@ -25,8 +25,8 @@ for o, a in opts:
 		usage()
 if timeEnd is None:
 	from constants import timeEnd
-m = Model()
-m.mainLoop(timeEnd)
+m = Model(timeEnd)
+m.mainLoop()
 import time
 time.sleep(5)
 

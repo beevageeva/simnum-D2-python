@@ -85,14 +85,38 @@ def createFolder(dirname_base="out"):
 	return dirname
 
 #centered
+#def derivZ0(f):
+#	dx = getDz0()
+#	n = len(f)
+#	res = np.zeros((n, n), dtype=complex )
+#	for i in range(0,n):	
+#		for j in range(1,n-1):	
+#			#centered
+#			res[i,j] = complex(f[i+1,j] - f[i-1,j])/complex(2 * dx)
+#		res[0,i] = res[1,i]
+#		res[n-1,i] = res[n-2,i]
+#	return res	
+#
+#def derivZ1(f):
+#	dx = getDz1()
+#	n = len(f)
+#	res = np.zeros((n, n), dtype=complex )
+#	for j in range(0,n):	
+#		for i in range(1,n-1):	
+#			#centered
+#			res[i][j] = complex(f[i,j+1] - f[i,j-1])/complex(2 * dx)
+#		res[j,0] = res[j,1]
+#		res[j,n-1] = res[j,n-2]
+#	return res	
+
 def derivZ0(f):
 	dx = getDz0()
 	n = len(f)
-	res = np.zeros((n, n), dtype=complex )
-	for i in range(0,n):	
-		for j in range(1,n-1):	
+	res = np.zeros((n, n))
+	for i in range(1,n-1):	
+		for j in range(0,n):	
 			#centered
-			res[i,j] = complex(f[i+1,j] - f[i-1,j])/complex(2 * dx)
+			res[i,j] = (f[i+1,j] - f[i-1,j])/(2 * dx)
 		res[0,i] = res[1,i]
 		res[n-1,i] = res[n-2,i]
 	return res	
@@ -100,14 +124,13 @@ def derivZ0(f):
 def derivZ1(f):
 	dx = getDz1()
 	n = len(f)
-	res = np.zeros((n, n), dtype=complex )
-	for j in range(0,n):	
-		for i in range(1,n-1):	
+	res = np.zeros((n, n))
+	for i in range(0,n):	
+		for j in range(1,n-1):	
 			#centered
-			res[i][j] = complex(f[i,j+1] - f[i,j-1])/complex(2 * dx)
+			res[i][j] = (f[i,j+1] - f[i,j-1])/(2 * dx)
 		res[j,0] = res[j,1]
 		res[j,n-1] = res[j,n-2]
 	return res	
-
 
 

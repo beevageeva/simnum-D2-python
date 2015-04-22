@@ -19,6 +19,8 @@ saveImages = False
 
 
 
+plotSeparateTraj = False
+
 #homog
 #ylim = {"pres":{ "maxY": 1.0005, "minY": 0.9995} , "vel0" : { "maxY": 0.00035, "minY": -0.00035}, "vel1" : { "maxY": 0.00035, "minY": -0.00035},"rho":{ "maxY": 1.0004, "minY": 0.9996}} 
 #no need to specify maxY and minY if set useFirstYLim to true
@@ -334,6 +336,9 @@ class VisualPlot:
 			ax.imshow(vals, vmin=ylim[title]["minY"], vmax=ylim[title]["maxY"])
 		else:
 			ax.imshow(vals)
+		if(hasattr(self,"traj")):
+			ax.imshow(self.traj, cmap=cm.gray)
+
 
 	#TODO make a function for every projection
 
@@ -469,6 +474,16 @@ class VisualPlot:
 #		print(plotVals)
 #		ax.imshow(plotVals)			
 
+	def addTrajAxis(self, vals):
+		if plotSeparateTraj:
+			fig = plt.figure()
+			ax = fig.add_subplot(111)
+			ax.imshow(vals)
+			plt.draw()
+			plt.show(block=False)
+		else:
+			masked_data = np.ma.masked_where(vals==1 , vals)
+			self.traj = masked_data	
 
 	def addFFTAxis(self, title, vals):
 		fig = plt.figure()
