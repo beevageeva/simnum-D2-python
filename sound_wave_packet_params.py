@@ -12,10 +12,13 @@ from math import pi,sqrt
 from perturbation_params import argFunc
 
 #k0 = 60.0
-k0 = 30.0
+#k0 = 30.0
+k0 = 50.0
 #k0 = 15.0
 #W = 0.05
-W = 0.25
+#W = 0.25
+W = 0.15
+
 #W = 0.025
 #W = 0.1
 

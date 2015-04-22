@@ -27,8 +27,8 @@ saveImages = True
 #ylim = {"pres":{ "maxY": 1.0003, "minY": 0.9997} , "vel" : { "maxY": 0.00025, "minY": -0.00025}, "rho":{ "maxY": 0.5002, "minY": 0.4998}} 
 #ylim = {"pres":{ "maxY": 1.0003, "minY": 0.9997} , "vel" : { "maxY": 0.00025, "minY": -0.00025}, "rho":{ "maxY": 2.0002, "minY": 1.9998}} 
 #xlim = {"minX" : 0, "maxX" : 4.3}
-#ylim = {"pres":{"useFirstYLim": True} , "vel0" : {"useFirstYLim": True}, "vel1" : {"useFirstYLim": True}, "rho" : {"useFirstYLim" :  True}} 
-ylim = None
+ylim = {"pres":{"useFirstYLim": True} , "vel0" : {"useFirstYLim": True}, "vel1" : {"useFirstYLim": True}, "rho" : {"useFirstYLim" :  True}} 
+#ylim = None
 xlim = None
 
 
