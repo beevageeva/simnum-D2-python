@@ -33,7 +33,11 @@ elif mediumType == "inhomog":
 	if rhoType == 4:
 		zc = [z0[0] + 0.5 * (zf[0] - z0[0]), z0[1] + 0.15 * (zf[1] - z0[1])]
 	else:
-		zc = [z0[0] + 0.2 * (zf[0] - z0[0]), z0[1] + 0.2 * (zf[1] - z0[1])]
+		from medium_params import  inhomogSubtype
+		if inhomogSubtype == 1:
+			zc = [z0[0] + 0.2 * (zf[0] - z0[0]), z0[1] + 0.2 * (zf[1] - z0[1])]
+		else:
+			zc = [z0[0] + 0.8 * (zf[0] - z0[0]), z0[1] + 0.2 * (zf[1] - z0[1])]
 
 #zc = [0.65 * (z0[0]+ zf[0]), 0.65 * (z0[1] + zf[1])] #at the end to test reflection
 
@@ -108,7 +112,7 @@ def getTrajectory(z, time):
 		gradCs = np.gradient(cs00(z), getDz0(), getDz1())
 	for i in range(len(k1)):
 		print("k1=%e,k2=%e" % (k1[i],k2[i]))	
-		lastk = [np.float128(2.0* pi *k1[i]* k0), np.float128(2.0* pi *k2[i]* k0)]
+		lastk = [2.0* pi *k1[i]* k0, 2.0* pi *k2[i]* k0]
 		#DO NOT SET LASTX TO zc changing lastx will change zc(same object reference)!  (do not assign:  lastx = zc)
 		lastx = [zc[0],zc[1]]
 		print("%e %e SET LASTX" % (lastx[0], lastx[1])	)
@@ -138,8 +142,8 @@ def getTrajectory(z, time):
 	
 			lastx[0]+=dt*cs*lastk[0]/modlastk
 			lastx[1]+=dt*cs*lastk[1]/modlastk
-			lastk[0]+=dt* np.float128(-modlastk * gcs0)
-			lastk[1]+=dt*np.float128(-modlastk * gcs1)
+			lastk[0]-=dt*modlastk * gcs0
+			lastk[1]-=dt*modlastk * gcs1
 			from os import system
 			#system("echo \"%d %d %e %e %e %e %e %e  \" >> traj " % (indLastX0, indLastX1, gcs0, gcs1, lastk[0], lastk[1], dt* np.float128(-modlastk * gcs0),dt*np.float128(-modlastk * gcs1) ))
 			if lastx[0] <= z0[0] + lat * dz0 or  lastx[0] >= zf[0] - lat * dz0 or  lastx[1] <= z0[1] + lat * dz0 or lastx[1] >= zf[1] - lat * dz1:

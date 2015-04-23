@@ -5,11 +5,11 @@ from common import getArrayZShape
 from sys import exit
 
 
-p00 = 10.0
+p00 = 1.0
 v00 = 0.0
 
-#mediumType = "homog"
-mediumType = "inhomog"  #variable density rho00 to test with wave packet
+mediumType = "homog"
+#mediumType = "inhomog"  #variable density rho00 to test with wave packet
 
 if(mediumType=="homog"):
 	#rho00 = 2.0
@@ -38,9 +38,15 @@ elif(mediumType=="inhomog"):
 	densargFunc = lambda z: z[0] 
 
 	if rhoType == 1:
-		rho00 = 1.0
-		rho01 = 0.01
-		
+		inhomogSubtype =1
+		#inhomogSubtype =2
+		if inhomogSubtype == 1:
+			rho00 = 1.0
+			rho01 = 0.01
+		else:
+			rho00 = 0.01
+			rho01 = 1.0
+
 		#rho00 = 0.3  #second exp of inhom
 		#rho01 = 1.2#second exp of inhom
 		ze = [0.5*(z0[0] + zf[0]),0.5*(z0[1] + zf[1])]

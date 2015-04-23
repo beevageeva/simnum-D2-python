@@ -27,9 +27,10 @@ def getGradientFunctionSym(functionType):
 
 
 def getRadialAnalitic(z, t):
-	from perturbation_params import A,  functionType, waveType
+	from perturbation_params import A,  functionType, waveType, argFunc
 	from medium_params import p00, v00, cs00, rho00,  mediumType
-	w = getFunctionFromType(functionType)
+
+	w = getFunctionFromType(argFunc, functionType)
 	#I have already argFunc called in the function definition
 	f = w(z)
 	#now w is the velocity potential # gradient

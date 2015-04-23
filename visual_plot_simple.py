@@ -1,8 +1,8 @@
 import matplotlib
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.ticker import FormatStrFormatter
-useWindow = False
-#useWindow = True
+#useWindow = False
+useWindow = True
 if useWindow:
 	matplotlib.use('TkAgg')
 else:
@@ -14,8 +14,8 @@ import sys, os
 
 from notifier_params import plots, plotAnalitical
 
-saveImages = True
-#saveImages = False
+#saveImages = True
+saveImages = False
 
 
 
@@ -159,6 +159,8 @@ class VisualPlot:
 				self.figures.append(fig)
 			if testKeyInDict("color", plots):
 				fig = plt.figure(4)
+				if useWindow:
+					plt.get_current_fig_manager().window.wm_geometry("1000x900+50+50")
 				fig.suptitle("color")
 				self.figures.append(fig)
 				if(plotAnalitical):

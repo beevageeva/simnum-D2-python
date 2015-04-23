@@ -4,12 +4,12 @@ import numpy as np
 from sound_wave_monochr_params import k
 
 
-#smoothInterp = False
-smoothInterp = True
+smoothInterp = False
+#smoothInterp = True
 #withWindow = False
 withWindow = True
-useAnDer = True
-#useAnDer = False
+#useAnDer = True
+useAnDer = False
 
 """
 	returns the sondWaveFunction
