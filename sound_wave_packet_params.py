@@ -92,7 +92,8 @@ def getTrajectory(z, time):
 	from common import getZIndex0, getZIndex1, getDz0, getDz1
 	from perturbation_params import k1,k2
 	#TODO this is a crap!
-	useMirror = False
+	
+	useMirror = True
 	if not hasattr(k1, "__len__"):
 		k1 = [k1]
 		k2 = [k2]
