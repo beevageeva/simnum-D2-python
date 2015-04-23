@@ -30,8 +30,8 @@ if mediumType == "homog":
 	zc = [0.5 * (z0[0]+ zf[0]), 0.5 * (z0[1] + zf[1])] #in the middle
 elif mediumType == "inhomog":
 	from medium_params import rhoType
-	if rhoType == 3:
-		zc = [z0[0] + 0.5 * (zf[0] - z0[0]), z0[1] + 0.2 * (zf[1] - z0[1])]
+	if rhoType == 4:
+		zc = [z0[0] + 0.5 * (zf[0] - z0[0]), z0[1] + 0.15 * (zf[1] - z0[1])]
 	else:
 		zc = [z0[0] + 0.2 * (zf[0] - z0[0]), z0[1] + 0.2 * (zf[1] - z0[1])]
 
