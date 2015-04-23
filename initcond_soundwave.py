@@ -120,7 +120,8 @@ def getInitialPresRhoVel(z):
 		from perturbation_params import argFunc, velFunc, argType
 		if argType == "2d1":
 			#I have already argFunc called in the function definition
-			f = getFunctionFromType(argFunc[0], functionType)(z) +  getFunctionFromType(argFunc[1], functionType)(z)
+			f1 = getFunctionFromType(argFunc[0], functionType)(z) 
+			f2 = getFunctionFromType(argFunc[1], functionType)(z) 
 		else:
 			f = getFunctionFromType(argFunc, functionType)(z)
 	
@@ -131,12 +132,19 @@ def getInitialPresRhoVel(z):
 			from medium_params import rho0
 			cs0 = cs00(z)
 			rho0 = rho0(z)
-		v1 = v00 + cs0 * A* f
 		if argType == "2d1":
-			vfunc = velFunc[0](v1) + velFunc[1](v1)
+			v1 = v00 + cs0 * A* f1
+			v2 = v00 + cs0 * A* f2
+			vfunc1 = velFunc[0](v1) 
+			vfunc2 = velFunc[1](v2) 
+			vel1 = np.dstack(vfunc1)
+			vel2 = np.dstack(vfunc2)
+			vel = vel1 + vel2
+			f = f1+f2
 		else:
+			v1 = v00 + cs0 * A* f
 			vfunc = velFunc(v1)
-		vel = np.dstack(vfunc)
+			vel = np.dstack(vfunc)
 		return {'pres': p00 + gamma * p00 * A* f  , 'rho': rho0 + rho0 *A* f , 'vel': vel }
 	elif(waveType == "radial"):
 		return getRadialAnalitic(z, 0)

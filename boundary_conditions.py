@@ -1,7 +1,7 @@
 import numpy as np
 
-#periodicType = "repeat"  #used for moving plane 
-periodicType = "refl"   #use it with wave packet
+periodicType = "repeat"  #used for moving plane 
+#periodicType = "refl"   #use it with wave packet
 #periodicType = "diff"  #tried to use it with hankel
 		
 if periodicType == "repeat":

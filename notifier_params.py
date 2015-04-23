@@ -16,7 +16,7 @@ if waveType == "lineal":
 	from perturbation_params import argType
 	if argType == "d1":
 		from perturbation_params import nx, ny
-		plots["line"] = [lambda x,y : ny*x-ny*y==0, zc, False] 	
+		plots["line"] = [lambda x,y : nx*x-ny*y==0, zc, False] 	
 
 #plots = {"3d": True, "dim0": [0.5 * (zf[0] + z0[0]), False], "dim1": [0.5 * (zf[1] + z0[1]), False], "color": True}
 #plots = {"3d": False, "color": True}

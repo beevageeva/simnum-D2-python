@@ -23,8 +23,8 @@ functionType = "wavepacket"
 if waveType == "lineal":	
 	#argType = "x"
 	#argType = "y"
-	#argType = "d1" 
-	argType = "2d1" 
+	argType = "d1" 
+	#argType = "2d1" 
 	
 
 	if(argType == "x"):
@@ -55,7 +55,7 @@ if waveType == "lineal":
 		ny = 1.0	
 		#nx= 4.0/7.0
 		#ny = 3.0/7.0	
-		k1 = nx/wl1
+		k1 = -nx/wl1
 		k2 = ny/wl2
 		#k1 = nx
 		#k2 = ny

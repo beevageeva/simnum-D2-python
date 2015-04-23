@@ -137,9 +137,7 @@ con  $p_0, \rho_0, c_s$  monótonas, variando bastante lentamente en el espacio 
 \item $\frac{1}{c_s^{2}} \frac{\partial^{2} p\prime}{\partial t^{2}} = \nabla^{2} p\prime    $
 \item $\frac{1}{c_s^{2}} \frac{\partial^{2} \rho\prime}{\partial t^{2}} = \nabla^{2} \rho\prime    $
 \item $\frac{1}{c_s^{2}} \frac{\partial^{2} \Phi}{\partial t^{2}} = \nabla^{2} \Phi    $
-\item En 2d (o 3d) no hay una solución general como en el caso 1d (cuando cualquier solución se podía escribir de  forma $F(x+c_s t) + G(x-c_s t)$ o - por la T. Fourier - como una superposisión de ondas harmónicas viajano a la derecha o izquierda)
-\item Pero $F(k \cdot x - \omega t)$ donde $\omega ^2 = c_s^2 k^2$ es una solución (el cartón) 
-\item Ondas esféricas, cilindricas que no son planas 
+\item En 2d  la solución general es como en el caso 1d de forma $F(x+c_s t) + G(x-c_s t)$ o - por la T. Fourier - como una superposición de ondas harmónicas 
 
 \end{description}  
 
@@ -204,10 +202,11 @@ y reemplazando en las ecuaciones de arriba obtenemos  las ecuaciones diferencial
 \begin{description}  
 \item Las caracteristicas:
 $\frac{dx_i}{dt} = c_s \frac{k_i}{\sqrt{k_0^2 + k_1^2}} $,  $i \in 0,1$
-\item Consideramos el caso inhomogeneo solo en una dirección: (considerando la dirección $e_1$, pero se puede generalizar fácil para una dirección arbitraria, $c_s(x) = c_s(x_1) $)
+\item Consideramos el caso inhomogeneo solo en una dirección: (considerando la dirección $e_0$, y es lo mismo para una dirección arbitraria cambiando el sistema de coordenadas, $c_s(x) = c_s(x_0) $)
 
-\item $\frac{dk_0}{dt} = 0 $
-\item $\frac{dk_1}{dt} = -\frac{\partial c_s}{\partial x_1} |k| $
+\item $\frac{d\omega}{dt} = 0 $
+\item $\frac{dk_1}{dt} = 0 $
+\item $\frac{dk_0}{dt} = -\frac{\partial c_s}{\partial x_0} |k| $
 
 \end{description}
 
@@ -215,16 +214,9 @@ $\frac{dx_i}{dt} = c_s \frac{k_i}{\sqrt{k_0^2 + k_1^2}} $,  $i \in 0,1$
 al largo del rayo
 Las ecuaciones ahora no tienen mas derivadas parciales (solo dependen de t) y se pueden integrar más fácil.
 \begin{description}
-\item De la primera se obtiene:  
 \item $ \omega(x_p(t), t)  = constant $
-\end{description}
-Haciendo unos cálculos:
-\begin{description}  
-\item $\frac{dc_s}{dt} =  \frac{\partial c_s}{\partial x} \frac{\partial x}{\partial t} = \frac{\partial c_s}{\partial x}  c_s\implies
-\frac{dk}{dt} = -k  \frac{1}{c_s} \frac{dc_s}{dt} \implies$
-\item $\frac{dln(k)}{dt} = - \frac{dln(c_s)}{dt} \implies $
-\item $ k(x_p(t), t)  c_s(x_p(t)) = constant $
-\item de forma similar $ E(x_p(t), t)  c_s(x_p(t)) = constant $ 
+\item $\phi(x_p(t),t) = constant$
+\item $k_1(x_p(t),t) = constant$
 \end{description}
 
 \textbf{Relación entre las amplitudes} de las variables $p, \rho, v$ 
@@ -401,55 +393,21 @@ f_{m_{i+1,j+1},1} - f_{m_{i,j+1},1} )  +  \frac{1}{dz_1}
 \end{description}
 
 
-\begin{description}  
-
-\item De las relaciones entre las amplitudes $ \implies \frac{\rho_0 |V|^{2}}{2} = \frac{|P|^{2}} {2 \rho_0 c_s^{2}} $
-\item $E = \frac{|P|^{2}}{\rho_0 c_s^2} $ (la suma de las 2)
-\item $\implies |P(x_p(t),t)|^2 \rho_0^{-1}(x_p(t))c_s^{-1}(x_p(t)) = constant $
-\item Suponemos que podemos escribir para los puntos al largo del rayo $x_p(t)$ :
-\item $|P| = c_s^{k} \rho_0^{l} p_0^{m} C_{p_P}$
-\item $|R| = c_s^{k} \rho_0^{l_1} p_0^{m_1} C_{p_R}$
-\item $|V| = c_s^{k} \rho_0^{l_2} p_0^{m_2} C_{p_V}$
-\item con $C_{p_P}, C_{p_R} y C_{p_V}$ constantes (que dependen del punto $x_p$)
-\item de la ecuación de conservación de energía al largo del rayo $x_p(t)$:
- $|P(x_p(t),t)| = const * c_s^{\frac{1}{2}}(x_p(t)) \rho_0^{\frac{1}{2}}(x_p(t)) \implies$
-\item  existen las relaciones: $ k = 2l - \frac{1}{2} = \frac{1}{2} - 2m$ y $2m + 2l = 1$
-
-\item k se puede dejar como parámetro ya que $\gamma = const = c_s^{2} \rho_0^{-1} p_0^{-1} $ y multiplicando las ecuaciones con $\gamma^{p}$ 
-el parámetro $k\rightarrow k+2p$ 
-\item elegimos $k = l = \frac{1}{2}$ , $m = 0$ 
-\item de las relaciones entre las amplitudes de arriba 
-\item $\frac{|P|}{|R|} = c_s^2 = \rho_0^{l-l_1} p_0^{m-m_1} \frac{C_{P}}{C_{R}}$
-\item Escribimos $c_s^2 = \gamma p_0 \rho_0^{-1}$ y la relación de arriba se tiene que cumplir $\forall x$ (porque consideramos $c_s, \rho_0 y p_0 $ dependiendo de x)
-\item $\implies m - m_1 = 0$, $l-l_1 = 0$ y $\frac{C_P}{C_R} = \gamma$
-\item $\frac{|P|}{|V|} = c_s \rho_0 = \gamma^{-\frac{1}{2}} p_0^{\frac{1}{2}} \rho_0^{\frac{1}{2}} = \rho_0^{l-l_2} p_0^{m-m_2} \frac{C_P}{C_V}$
-\item $\implies  \frac{C_P}{C_V} =  \gamma^{-\frac{1}{2}}, l-l_2=\frac{1}{2}. m-m_2 = \frac{1}{2} $
-\item $\implies m_1=-1, l_1 = \frac{3}{2}, l_2 = 0, m_2 = -\frac{1}{2}$
-\item En conclusión: al largo del rayo $x_p(t)$ 
-\item $|P| = c_s^{\frac{1}{2}} \rho_0^{\frac{1}{2}}  C_{P}$
-\item $|R| = c_s^{\frac{1}{2}} \rho_0^{\frac{3}{2}} p_0^{-1} \gamma^{-1} C_{P}$
-\item $|V| = c_s^{\frac{1}{2}}  p_0^{-\frac{1}{2}} \gamma^{\frac{1}{2}} C_{P}$
-
-\item con $C_P$ constante que depende de $x_p$ ($C_P = |P(x_p,0)|  c_s^{-\frac{1}{2}} \rho_0^{-\frac{1}{2}}$ donde $|P(x_p,0)|$
-es el valor de la amplitud de la perturbación de la presión en el momento t = 0 y el punto $x_p$ )
-
-\end{description}
 
 \section{Práctica}
 \begin{description}
-\item Definimos una amplitud A(en soundwave\_perturbation\_params.py) muy pequeña y una función periodica h en el intervalo $[x_0, x_f]$ (estos están en constants.py) con amplitud máxima 1 y creeamos las perturbaciones para que cumplan las relaciones entre las amplitudes de arriba:
-\item  $p\prime(x,0) = \gamma p_0 h(x) $ 
-\item  $\rho\prime(x,0) = \rho_0 h(x) $
-\item  $v(x, t) =  c_s h(x) $
-\item h periodica $\implies$ h se puede escribir como una superposición de ondas sinusoidales (componentes Fourier) que viajan a la derecha
-\item Se pueden también definir superposiciones de funciones periodicas que pueden viajar en los 2 sentidos para generar las perturbaciones (condiciones iniciales) 
-(definiendo A, csSign como se explicó arriba y el tipo de función para cada una  : en soundwave\_perturbation\_params.py)
+\item Definimos una amplitud A(en soundwave\_perturbation\_params.py) muy pequeña y una función periodica h en el intervalo $[x0_0, xf_0] x [x0_1, xf_1]$ (estos están en constants.py) con amplitud máxima 1 y creeamos las perturbaciones para que cumplan las relaciones entre las amplitudes de arriba y considerando una onda que empieza a propagarse en la dirección definida por la recta $n_x x - n_y y = 0$
+\item definimos $ k_0 = \frac{n_x}{xf_0 - x0_0}, k_1 =  \frac{n_y}{xf_1 - x0_1}$ 
+\item  $p\prime(x,0) = A \gamma p_0 h(x) $ 
+\item  $\rho\prime(x,0) = A \rho_0 h(x) $
+\item  $v(x, 0) =  A c_s h(x) (\frac{k_0}{|k|} , \frac{k_1}{|k|}) $ donde $|k| = \sqrt{k_0^2 + k_1^2} $
+\item para el paquete de ondas (para el caso de propagación diagonal):
+\begin{center}
+\item $h(x) = e^{- \frac{(x_0-xc_0)^2 + (x_1 - xc_1)^2 }{W^2}} cos\big[2 \pi  K_0 (k_0(x_0 - x0_0) +  k_1(x_1 - x0_1)) \big] $
+\end{center}
 \end{description}
 
-\paragraph{Wave packet} Elegimos functionType = "wave\_packet" in soundwave\_perturbation\_params.py  (gauss wave packet: los parámetros $z_0,z_c,W$ definidos en sound\_wave\_packet\_params.py))
-\begin{center}
- $h(x) = e^{- \frac{(x-x_c)^2}{W^2}} cos(2 \pi  k_0 \frac{x - x_0}{x_f - x_0}) $
-\end{center}
+\paragraph{Wave packet} Elegimos functionType = "wavepacket" en perturbation\_params.py  (gauss wave packet: los parámetros $z_0,z_c,W$ definidos en sound\_wave\_packet\_params.py))
 
 \subsection{Medio homogéneo}
 

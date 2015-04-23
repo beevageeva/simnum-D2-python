@@ -101,7 +101,7 @@ def getTrajectory(z, time):
 	for i in range(len(k1)):
 		print("k1=%e,k2=%e" % (k1[i],k2[i]))	
 		lastk = [np.float128(2.0* pi *k1[i]* k0), np.float128(2.0* pi *k2[i]* k0)]
-		#DO NOT SET LASTX TO zc changing lastx will change zc!  (do not assign:  lastz = zc)
+		#DO NOT SET LASTX TO zc changing lastx will change zc(same object reference)!  (do not assign:  lastx = zc)
 		lastx = [zc[0],zc[1]]
 		print("%e %e SET LASTX" % (lastx[0], lastx[1])	)
 	

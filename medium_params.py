@@ -18,13 +18,12 @@ if(mediumType=="homog"):
 	cs00 = math.sqrt(gamma * p00 / rho00)
 
 elif(mediumType=="inhomog"):
-	inhomogSubtype = 1
-	#inhomogSubtype = 2
 
 	#rhoType = 1
-	#rhoType = 2
 	rhoType = 4
+	#TODO not used	
 	#rhoType = 3
+	#rhoType = 2
 
 
 	#define densargfunc here!
@@ -39,15 +38,8 @@ elif(mediumType=="inhomog"):
 	densargFunc = lambda z: z[0] 
 
 	if rhoType == 1:
-		if inhomogSubtype == 1:
-			rho00 = 1.0
-			rho01 = 0.01
-		elif inhomogSubtype == 2:
-			rho00 = 0.3
-			rho01 = 1.2
-			#rho01 = 1.0
-			#rho00 = 1.0
-			#rho01 = 2.0
+		rho00 = 1.0
+		rho01 = 0.01
 		
 		#rho00 = 0.3  #second exp of inhom
 		#rho01 = 1.2#second exp of inhom
@@ -63,7 +55,7 @@ elif(mediumType=="inhomog"):
 		
 		def rho0(z):
 			from common import getArrayZShape
-			if hasattr(z, "__len__") and 'numpy' in str(type(z[0]))  :	
+			if hasattr(z, "__len__") and hasattr(z[0], "__len__")  :	
 				zarg = z - getArrayZShape(ze[0], ze[1], len(z[0]))
 			else:
 				zarg = [z[0] - ze[0], z[1] - ze[1]]
@@ -101,7 +93,7 @@ elif(mediumType=="inhomog"):
 				return rho01 + 0.5 * (rho00-rho01) * densFunc(densargFunc([z[0] - ze[0], z[1] - ze[1]]))
 
 	
-
+	#TODO the following not used
 	elif rhoType == 2:
 		#c of form -xi + A
 		rho00 = 1.0
