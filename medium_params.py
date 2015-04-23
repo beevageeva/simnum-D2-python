@@ -75,7 +75,7 @@ elif(mediumType=="inhomog"):
 		ze = [0.4*(z0[0] + zf[0]),0.4*(z0[1] + zf[1])]
 		rho00 = 0.01
 		rho01 = 1.0
-		we = 0.4
+		we = 1.0
 		#we = 0.5#second exp of inhom
 		#I have to apply func (argument function) before applying tanh: see initcond_soundwave
 		densFunc = lambda z: 1 + np.tanh(z /we)

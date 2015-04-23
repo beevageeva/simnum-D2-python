@@ -1,8 +1,8 @@
 import matplotlib
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.ticker import FormatStrFormatter
-#useWindow = False
-useWindow = True
+useWindow = False
+#useWindow = True
 if useWindow:
 	matplotlib.use('TkAgg')
 else:
@@ -14,12 +14,14 @@ import sys, os
 
 from notifier_params import plots, plotAnalitical
 
-#saveImages = True
-saveImages = False
+saveImages = True
+#saveImages = False
 
 
 
-plotSeparateTraj = False
+#plotSeparateTraj = False
+plotSeparateTraj = True
+
 
 #homog
 #ylim = {"pres":{ "maxY": 1.0005, "minY": 0.9995} , "vel0" : { "maxY": 0.00035, "minY": -0.00035}, "vel1" : { "maxY": 0.00035, "minY": -0.00035},"rho":{ "maxY": 1.0004, "minY": 0.9996}} 
@@ -483,6 +485,8 @@ class VisualPlot:
 			ax.imshow(vals)
 			plt.draw()
 			plt.show(block=False)
+			if saveImages:	
+				fig.savefig(os.path.join(self.dirname,  "Trajectory"))
 		else:
 			masked_data = np.ma.masked_where(vals==1 , vals)
 			self.traj = masked_data	
