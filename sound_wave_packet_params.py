@@ -91,11 +91,17 @@ def getTrajectory(z, time):
 	from medium_params import cs00
 	from common import getZIndex0, getZIndex1, getDz0, getDz1
 	from perturbation_params import k1,k2
+	#TODO this is a crap!
+	useMirror = False
 	if not hasattr(k1, "__len__"):
 		k1 = [k1]
 		k2 = [k2]
+	if  hasattr(k1, "__len__"):
+		indexK = 1
+	#	k1 = k1[indexK]
+	#	k2 = k2[indexK]
+		useMirror = True
 	newz = np.ones(z[0].shape)	
-	tt = 0
 	dt = 0.01
 	dz0 = getDz0()
 	dz1 = getDz1()
@@ -110,7 +116,9 @@ def getTrajectory(z, time):
 		#gradCs0 = derivZ0(cs00z)
 		#gradCs1 = derivZ1(cs00z)
 		gradCs = np.gradient(cs00(z), getDz0(), getDz1())
+	#TODO this is a crap!
 	for i in range(len(k1)):
+		tt = 0
 		print("k1=%e,k2=%e" % (k1[i],k2[i]))	
 		lastk = [2.0* pi *k1[i]* k0, 2.0* pi *k2[i]* k0]
 		#DO NOT SET LASTX TO zc changing lastx will change zc(same object reference)!  (do not assign:  lastx = zc)

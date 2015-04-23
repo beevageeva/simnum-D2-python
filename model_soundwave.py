@@ -63,6 +63,7 @@ class Model:
 		from medium_params import mediumType
 		if mediumType == "inhomog":
 			from perturbation_params import A
+			from medium_params import rho0
 			rhoIni = rho0(self.z)	
 			self.notifier = getNotifier(notifierType, self.z, ["pres", "rho", "vel0", "vel1", "rhoCurve"], [self.pres, self.rho, self.vel[:,:,0], self.vel[:,:,1], (self.rho - rhoIni)/(rhoIni * A) ])
 		else:

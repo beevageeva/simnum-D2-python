@@ -28,5 +28,5 @@ plotPresFFT = True
 #plotVelFFT = True
 plotVelFFT = False
 
-plotAnalitical = True
-#plotAnalitical = False
+#plotAnalitical = True
+plotAnalitical = False
