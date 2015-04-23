@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.6-1.40.14 (TeX Live 2014/dev) (format=pdflatex 2015.4.20)  23 APR 2015 10:50
+This is pdfTeX, Version 3.1415926-2.6-1.40.14 (TeX Live 2014/dev) (format=pdflatex 2015.4.20)  23 APR 2015 13:01
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -882,84 +882,76 @@ S/cmsy/m/n/10 ^^@ \OML/cmm/m/it/10 f[] \OT1/cmr/m/n/10 + \OML/cmm/m/it/10 f[] \
 OMS/cmsy/m/n/10 ^^@
  []
 
-[5] [6] <mainhom.png, id=76, 2525.435pt x 1688.3075pt>
-File: mainhom.png Graphic file (type png)
- <use mainhom.png>
-Package pdftex.def Info: mainhom.png used on input line 427.
-(pdftex.def)             Requested size: 505.07806pt x 337.65552pt.
-
-[7 <./mainhom.png>] [8] <gauss.png, id=90, 586.8324pt x 442.2924pt>
-File: gauss.png Graphic file (type png)
-
-<use gauss.png>
-Package pdftex.def Info: gauss.png used on input line 497.
-(pdftex.def)             Requested size: 293.41548pt x 221.14566pt.
- <fourhom.png, id=92, 1646.15pt x 1244.65pt>
-File: fourhom.png Graphic file (type png)
- <use fourhom.png>
-Package pdftex.def Info: fourhom.png used on input line 510.
-(pdftex.def)             Requested size: 329.22417pt x 248.92558pt.
-
-<reflhom.png, id=93, 2525.435pt x 1688.3075pt>
+[5] [6] <reflhom.png, id=75, 2525.435pt x 1688.3075pt>
 File: reflhom.png Graphic file (type png)
  <use reflhom.png>
-Package pdftex.def Info: reflhom.png used on input line 526.
+Package pdftex.def Info: reflhom.png used on input line 436.
 (pdftex.def)             Requested size: 505.07806pt x 337.65552pt.
- [9 <./gauss.png>] [10 <./fourhom.png> <./reflhom.png>] [11] [12] [13]
-Overfull \hbox (9.09715pt too wide) in paragraph at lines 601--603
+
+[7] [8 <./reflhom.png>] [9]
+Overfull \hbox (9.09715pt too wide) in paragraph at lines 511--513
 []\OT1/cmr/m/n/10 De la ex-presi^^Son de la trans-for-maci^^Son fourier es-per-
 abamos tener una relaci^^Son de pro-por-cional-i-dad in-versa en-tre width(pack
 et)
  []
 
-[14] [15]
-Overfull \hbox (12.36948pt too wide) in paragraph at lines 656--657
+[10] [11]
+Overfull \hbox (12.36948pt too wide) in paragraph at lines 566--567
 [][]\OT1/cmr/m/n/10 http://www.awi.de/fileadmin/user[]upload/Research/Research[
 ]Divisions/Climate[]Sciences/Projekt/1[]to[]3[][]WO[]waves.pdf[] 
  []
 
 
-Overfull \hbox (75.0974pt too wide) in paragraph at lines 666--668
+Overfull \hbox (75.0974pt too wide) in paragraph at lines 576--578
 []\OT1/cmr/m/n/10 Si no quiere usar git tambi^^Sen hay un archivo com-prim-ido 
 de los ficheros *.py en: []https://github.com/beevageeva/simnum/blob/master/D1-
 
  []
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 699.
-[16]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 699.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 609.
+[12]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 609.
  (./doc.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 699.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 699.
-Package rerunfilecheck Info: File `doc.out' has not changed.
-(rerunfilecheck)             Checksum: 9D75C5FA0A3F7432F107776D85EF909E;358.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 699.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 609.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 609.
+
+
+Package rerunfilecheck Warning: File `doc.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `doc.out':
+(rerunfilecheck)             Before: 9D75C5FA0A3F7432F107776D85EF909E;358
+(rerunfilecheck)             After:  5AAA6B13AAD0B69CCBCDDECFA5DC1E2C;291.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 609.
  ) 
 Here is how much of TeX's memory you used:
- 14992 strings out of 493310
- 262060 string characters out of 6140051
- 342563 words of memory out of 5000000
- 18127 multiletter control sequences out of 15000+600000
+ 14969 strings out of 493310
+ 261782 string characters out of 6140051
+ 343563 words of memory out of 5000000
+ 18115 multiletter control sequences out of 15000+600000
  9827 words of font info for 38 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
  56i,9n,55p,556b,765s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
-r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/shar
-e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texl
-ive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/te
-xmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/texlive/texmf-dis
-t/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texlive/texmf-dist/fonts
-/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/
-public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/a
-msfonts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/
-cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmt
-i10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pf
-b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb
->
-Output written on doc.pdf (16 pages, 673076 bytes).
+pdfTeX warning (dest): name{subsection.2.4} has been referenced but does not 
+exist, replaced by a fixed one
+
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/
+share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/
+texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texliv
+e/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/texlive/texmf-dist/
+fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texlive/texmf-dist/fonts/t
+ype1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/ams
+fonts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm
+/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti1
+0.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on doc.pdf (12 pages, 367958 bytes).
 PDF statistics:
- 200 PDF objects out of 1000 (max. 8388607)
- 162 compressed objects within 2 object streams
- 45 named destinations out of 1000 (max. 500000)
- 81 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 173 PDF objects out of 1000 (max. 8388607)
+ 143 compressed objects within 2 object streams
+ 37 named destinations out of 1000 (max. 500000)
+ 66 words of extra memory for PDF output out of 10000 (max. 10000000)
 

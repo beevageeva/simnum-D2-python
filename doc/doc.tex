@@ -407,114 +407,24 @@ f_{m_{i+1,j+1},1} - f_{m_{i,j+1},1} )  +  \frac{1}{dz_1}
 \end{center}
 \end{description}
 
-\paragraph{Wave packet} Elegimos functionType = "wavepacket" en perturbation\_params.py  (gauss wave packet: los parámetros $z_0,z_c,W$ definidos en sound\_wave\_packet\_params.py))
-
-\subsection{Medio homogéneo}
-
-\paragraph{Evolución en el tiempo de las variables}
-\begin{description}
-\item $A = 3e-4$
-\item Como las 3 variables: $p\prime, \rho\prime, v$  cumplen las mismas ecuaciones diferenciales consideramos $h_2(x,t)$ solución de la ecuación genérica:   
- $\frac{1}{c_s^{2}} \frac{\partial^{2} h_2}{\partial t^{2}} = \frac{ \partial^{2} h_2}{\partial x^2}   $ con $c_s$ constante  y condición inicial $h_2(x,0) = h(x)$
-y luego la solución de las 3 variables es multiplcar esta con los valores correspondientes para que cumplan las relaciones entre las amplitudes de arriba
-
-\item La solución analítica  es
-$h_2(x,t) = h(x - c_s t)$
-\item el gráfico de la  funcion inicial (en este caso el paquete de ondas gaussian) no cambia de forma solo se traslada a la derecha con la velocidad $c_s$
-
-\begin{figure}[!ht]
- \centering
- \includegraphics[scale=0.2]{mainhom.png}
- \caption{\emph{El paquete de ondas en medio homogeneo en varios instantes del tiempo: boundary conditions: repeat}}
-\end{figure}
-
-\item si la resolución no es buena la amplitud calculada de forma numérica puede crecer. En este caso he tomado nint = 2048 (definido en constants.py)
-y parece que la solución analítica dibujada por encima de la numérica no se desvía mucho de ella.
-\end{description}
-
-
 \paragraph{Fourier}
-\textbf{Equivalencias de las definiciones}:
 
 \begin{description}
-\item La transformada Fourier de la función h se define  (omitiendo dominios):
-$F_h(k) = \int_{- \infty}^{\infty}{h(x) e^{-i k x} dx } $
- 
-\item para $h(x)$ definida arriba
+\item para el caso 1d $h(x) = e^{-\frac{(x-x_0)^2}{W^2} } cos(k_0(x-x_0)) $ 
 
-\item calculo con mathematica (de forma analítica) la siguiente integral
-$f_1(k)=F_h(\frac{2\pi k}{x_f - x_0} ) = \int_{- \infty}^{\infty}{h(x) e^{-\frac{2 \pi i k x }{x_f - x_0}} dx } $
-
-\item calculo con mathematica (de forma analítica) la transformada fourier de h con FourierTransform usando FourierParameters $0, -2\pi$  y obtengo $f_2(k)$
-\item Compruebo de forma numerica y analítica que
-$f_1(k) = f_2(\frac{k}{x_f - x_0})$
-
-\item \color{red}calculo con mathematica (de forma analítica) la transformada fourier de h con FourierTransform sin especificar FourierParameters que por defecto son  $0, 1$  y obtengo $f_3(k)$. De la documentación de mathematica y también se puede comprobar de forma analítica y numérica $f_3(k) = \sqrt{\frac{1}{2 \pi}} \int_{- \infty}^{\infty}{h(x) e^{i k x}} = \frac{1}{\sqrt{2 \pi}} f_1(\frac{(x_f - x_0)k}{-2 \pi})$ 
-\color{black}
-
-\item De la teoria sé que si defino los coeficientes: $c(k) = \frac{1}{x_f - x_0} f_1(k) $
-\item  puedo escribir $f(x) = \sum_{k=-\infty}^{\infty} c_k e^{2 \pi i k \frac{x-x_0}{x_f - x_0}}$
-\item observo que en python los coeficientes calculados (de forma numérica) con scipy.fft son  \color{red} $cp_n =\frac{1}{x_f - x_0}  f_1(k_n)$ 
-donde $k_n = \frac{n}{x_f - x_0}, n = -N/2..N/2$ (el array se obtiene con fftfreq(N,dz))
- \color{black} asi que 
-
-\item \textbf{quiero representar de forma analítica y numeríca} $f_1(k) = c(k)  (x_f-x_0)$
-\item \textbf{de forma analítica}: \color{red} calculo de forma analítica en mathematica $f_1(k)$ (calculando la integral de forma explícita o  obtengo $f2(k)$ con FourierTransform y calculo  $f_2(\frac{k}{x_f - x_0})$), luego calculo los valores $f_1(k_n)$
-\item \textbf{de forma numérica}: calculo en python con scipy.fft $cp_n$, luego los valores $cp_n  (x_f - x_0)$  
-\item los represento frente a n ($=k_n (x_f - x_0)$)
-
-\item \textbf{quiero representar de forma analítica y numeríca} $f_3(k)$
-\item $f_3(-2 \pi k_n) =\frac{1}{\sqrt{2 \pi}} f_1(n) \implies $ el gráfico es equivalente al gráfico de $ \frac{1}{\sqrt{2 \pi}} (x_f - x_0) cp_n$ frente a n
-\item \textbf{de forma analítica}: calculo de forma analítica en mathematica $f_3(k)$ (calculando la integral de forma explícita o con FourierTransform y calculo, luego calculo los valores $f_3(-2 \pi k_n)$
-\item \textbf{de forma numérica}: calculo en python con scipy.fft $cp_n$, luego los valores $cp_n \frac{x_f - x_0}{\sqrt{2 \pi}}$  
-\item los represento frente a ($2 \pi k_n$)
-\color{black} 
-\end{description}
-
-\textbf{Resultado analítico}:
-\begin{description}
-\item después de hacer unos cálculos llego a 
-\item $f_1(k) = \frac{W \sqrt{\pi}}{2} (g_1(k) + g_2(k)) $ con
-\item $g_1(k) =  e^{-\frac{\pi \big[ \pi  W^2 (k + k_0)^2   + 2  i x_c(x_f - x_0)(k+ k_0)   - 2 k_0 i x_0 (x_f-x_0) \big]}{(x_f-x_0)^2}}$
-\item $g_2(k) = e^{-\frac{\pi \big[\pi  W^2 (k - k_0)^2  +2 i x_c(x_f - x_0)(k - k_0)  + 2 k_0 i x_0 (x_f-x_0)\big]}{(x_f - x_0)^2}} $
-
-\color{red}
-
-\item para calcular $f_3(k)$ reemplazo en la expresión de $f_1(k)$ k por $\frac{(x_f - x_0)k}{-2 \pi}$ y $k_0$ por $\frac{k_0 (x_f - x_0)}{2 \pi} $
-la multiplico con $ \frac{1}{\sqrt{2 \pi}}$ y despues de hacer unos cálculos:
+\item calculo con mathematica (de forma analítica) la transformada fourier de h con FourierTransform sin especificar FourierParameters que por defecto son  $0, 1$  y obtengo $f_3(k)$. De la documentación de mathematica y también se puede comprobar de forma analítica y numérica $f_3(k) = \sqrt{\frac{1}{2 \pi}} \int_{- \infty}^{\infty}{h(x) e^{i k x}} $ 
+\item después de hacer unos cálculos:
 \item $f_3(k) = \frac{W}{2 \sqrt{2}}  e^{-i  k  x_c}  (u_1(k) + u_2(k)) $
 \item $u_1(k) = e^{-\frac{W^2}{4}  (k+k_0)^2} e^{-i  k_0 (x_0-x_c)} $ 
 \item $u_2(k) = e^{-\frac{W^2}{4}  (k-k_0)^2} e^{i  k_0 (x_0-x_c)} $ 
 
-\color{black}
-\item Considerando $x_c$ = 0 las exponenciales $g_1$ y $g_2$ son  gaussianas  con w = $\frac{x_f - x_0}{\pi W}$ la primera centrada en $-k_0$ y la segunda en $k_0$
-\item si calculamos el módulo de cada una  el modulo las constantes $ abs(exp( - 2 k_0 i x_0 (x_f-x_0))) = abs(exp( 2 k_0 i x_0 (x_f-x_0)))  = 1$
-(corresponden al desplazamiento de fase por la elección de $x_c$(el centro de la función gauss) y $x_0$(el centro de la función cos ))
-\item la amplitud  máxima de cada una es $\frac{W \sqrt{\pi}}{2}$ igual que se ve en el gráfico por estar bien separadas (con valores :  z0=3.100, zf = 7.400, k0 = 60, zc = 3.745, W = 0.050) : con rojo había hecho el plot de la función entera y con verde y azul de las 2 partes 
-
-\item \begin{figure}[!ht] 
- \centering 
- \includegraphics[scale=0.5]{gauss.png} 
-\end{figure} 
-
+\item \textbf{quiero representar de forma analítica y numeríca} $f_3(k)$
+\item \textbf{de forma numérica}: calculo en python con scipy.fft $cp_n$, luego los valores $cp_n \frac{x_f - x_0}{\sqrt{2 \pi}}$  
+y  $k_n = \frac{n}{x_f - x_0}, n = -N/2..N/2$ (el array se obtiene con fftfreq(N,dz))
+\item \textbf{de forma analítica}: calculo de forma analítica en mathematica $f_3(k)$ (calculando la integral de forma explícita o con FourierTransform y calculo, luego calculo los valores $f_3(-2 \pi k_n)$ 
+\item los represento frente a ($2 \pi k_n$)
 \end{description}
-\textbf{Evolución de $f_1(k)$ en el tiempo}  $c_k * (x_f - x_0)$
-\begin{description}
-\item Si escribimos   $h_2(x,0) = h(x) = \sum_{k=-\infty}^{\infty}c_k e^{2 \pi i k \frac{x-x_0}{x_f-x_0}}$ 
-\item $h_2(x,t) = h(x-c_s t) = \sum_{k=-\infty}^{\infty}c_k e^{2 \pi i k \frac{x-c_s t-x_0}{x_f-x_0}}$ 
-\item $h_2(x,t)  = \sum_{k=-\infty}^{\infty}c\prime_k e^{2 \pi i k \frac{x-x_0}{x_f-x_0}}$
-\item $c_s$ constante $\implies c_k = c\prime_k$  
 
-\item \begin{figure}[!ht]
- \centering
- \includegraphics[scale=0.2]{fourhom.png}
- \caption{\emph{evolución de f1(k)}}
-\end{figure}
-\item Igual que se ve en el gráfico $f_1(k) $ casi no varía en el tiempo (se representó tambien la solución analítica para hacer la comparación).
-La pequeña variación se debe a la resolución (nint = 2048) (la solución numérica decrece un poco)
-
-
-\end{description}
 
 \paragraph{Condiciones de contorno: reflexión}
 
