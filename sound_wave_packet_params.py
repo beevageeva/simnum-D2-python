@@ -99,12 +99,13 @@ def getTrajectory(z, time):
 	ind1 = getZIndex0(zc[1])
 	newz[ind0,ind1] = 0
 	from medium_params import mediumType
-	if mediumType == "homog":
-		from common import getArrayZShape
-		cs00z = getArrayZShape(cs00,cs00)	
-	else:
-		cs00z = cs00(z)
-	gradCs = np.gradient(cs00z, getDz0(), getDz1())
+	if mediumType == "inhomog":
+		#dont use numpy gradient	
+		#cs00z = cs00(z)
+		#from common import derivZ0, derivZ1
+		#gradCs0 = derivZ0(cs00z)
+		#gradCs1 = derivZ1(cs00z)
+		gradCs = np.gradient(cs00(z), getDz0(), getDz1())
 	for i in range(len(k1)):
 		print("k1=%e,k2=%e" % (k1[i],k2[i]))	
 		lastk = [np.float128(2.0* pi *k1[i]* k0), np.float128(2.0* pi *k2[i]* k0)]
@@ -112,9 +113,6 @@ def getTrajectory(z, time):
 		lastx = [zc[0],zc[1]]
 		print("%e %e SET LASTX" % (lastx[0], lastx[1])	)
 	
-		#from common import derivZ0, derivZ1
-		#gradCs0 = derivZ0(cs00z)
-		#gradCs1 = derivZ1(cs00z)
 	
 		stop = False	
 		#np.set_printoptions(threshold='nan')
@@ -123,15 +121,20 @@ def getTrajectory(z, time):
 		lat = 2
 		while(tt<time and not stop):	
 			modlastk = (lastk[0]**2 + lastk[1]**2)**0.5
-			cs = cs00(lastx)
 			indLastX0 = getZIndex0(lastx[0])	
 			indLastX1 = getZIndex1(lastx[1])
+			if mediumType == "homog":
+				cs = cs00
+				gcs0 = 0
+				gcs1 = 0
+			else:
+				cs = cs00(lastx)
+				gcs0 = gradCs[0][indLastX0,indLastX1]
+				gcs1 = gradCs[1][indLastX0,indLastX1]
+				#gcs0 = gradCs0[indLastX0,indLastX1]
+				#gcs1 = gradCs1[indLastX0,indLastX1]
 			
 			#print("%e %e %d %d" % (lastx[0], lastx[1],indLastX0, indLastX1))	
-			gcs0 = gradCs[0][indLastX0,indLastX1]
-			gcs1 = gradCs[1][indLastX0,indLastX1]
-			#gcs0 = gradCs0[indLastX0,indLastX1]
-			#gcs1 = gradCs1[indLastX0,indLastX1]
 	
 			lastx[0]+=dt*cs*lastk[0]/modlastk
 			lastx[1]+=dt*cs*lastk[1]/modlastk
