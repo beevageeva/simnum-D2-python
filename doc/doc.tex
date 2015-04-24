@@ -189,14 +189,14 @@ f_{m_{i+1,j+1},1} - f_{m_{i,j+1},1} )  +  \frac{1}{dz_1}
 \end{description}
 \paragraph{Visualización}
 \begin{description}
-\item los valores de las  variables que quiero representar (p, \rho , v) son ahora arrays 2D y la velocidad tiene 2 componentes. Los dibujo como imagen y también puedo representar proyecciones de los valores en las 2 direcciones o en una dirección cualquiera
-\item en el caso "wavepacket" dibujo la trayectoria por encima de la imagen actual o también la puedo mostrar aparte (util por si está mal calculada! y luego no tengo que rehacer todo el calculo numérico )
+\item los valores de las  variables que quiero representar (p, $\rho$ , v) son ahora arrays 2D y la velocidad tiene 2 componentes. Los dibujo como imagen y también puedo representar proyecciones de los valores en las 2 direcciones o en una dirección cualquiera
+\item en el caso "wavepacket" dibujo la trayectoria calculada de forma analítica por encima de la imagen actual o también la puedo mostrar aparte (util por si está mal calculada! y luego no tengo que rehacer todo el calculo numérico )
 \end{description}
 	
 \subsection{Tests}
 
 \begin{description}
-\item waveType = "lineal": el cartón en la dirección horizontal(argType="y"), vertical(argType="x"), diagonal(argType="d1") con functionType="sine"|"ggauss"|"wavepacket\_carton"  y "wavepacket"
+\item waveType = "lineal": el cartón en la dirección horizontal(argType="y"), vertical(argType="x"), diagonal(argType="d1") con functionType="sine" , "gauss" , "wavepacket\_carton"  y "wavepacket"
 \item Intenté waveType="radial" con functionType="hankel" pero no salió muy bien
 \end{description}
 
@@ -393,8 +393,18 @@ e^{-\frac{W^2}{4}(n+k_1)^2} e^{-i  (k_0 x_0 + k_1 x0_1 - k_0 xc_0 - k_1 xc_1)}+ 
 $  e^{-\frac{W^2}{4}  (m-k_0)^2}   e^{-\frac{W^2}{4}(n-k_1)^2} e^{i  (k_0 x_0 + k_1 x0_1 - k_0 xc_0 - k_1 xc_1)} \big] $
 
 \item la fórmula muy similar a la 1d (sobre todo si reemplazo con los vectores)
-\item 2 gauss una centrada en $k=[k_0,k_1]$ y la otra en -k
+\item 2 gauss una centrada en $k=[k_0,k_1]$ y la otra en -k igual que se ve en el gráfico  (la transf fourier inicial calculados de forma numérica)
+\item En el caso homogeneo la transf fourier se queda igual , en el otro no
+
 \end{description}
+
+
+
+\begin{figure}[!ht]
+ \centering
+ \includegraphics[scale=0.5]{fourier_ini.png}
+ \caption{\emph{Fourier inicial (sin modificar los valores de los  coef ni las frecuencias según las expl de 1d)}}
+\end{figure}
 
 
 \paragraph{Ray tracing}
@@ -418,7 +428,15 @@ De forma similar si cs decrece en esta dirección, $k_0$ crece y el paquete se a
 
 \end{description}
 
+
 \end{description}
+
+\paragraph{Videos}
+\begin{description}
+\item están en la carpeta videos. las simulaciones duran mucho y algunos tienen pequeños errores como en el caso de los  2 paquetes uno de los videos tiene la trayectoria de abajo calculada mal de forma analítica o el color de fondo que no queda constante (los límites del colormap en imshow). También debía haber guardado para cada simulación en la carpeta donde guardo las imagenes una copia de los ficheros *.py para saber exacatmente los parámetros de la perturbación , medio, condiciones de contorno,  esquema numérico,...
+\end{description}
+
+
 \end{document}
 
 
