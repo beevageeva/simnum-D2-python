@@ -1,8 +1,8 @@
 import matplotlib
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.ticker import FormatStrFormatter
-useWindow = False
-#useWindow = True
+#useWindow = False
+useWindow = True
 if useWindow:
 	matplotlib.use('TkAgg')
 else:
@@ -14,8 +14,8 @@ import sys, os
 
 from notifier_params import plots, plotAnalitical
 
-saveImages = True
-#saveImages = False
+#saveImages = True
+saveImages = False
 
 
 
@@ -31,8 +31,8 @@ plotSeparateTraj = True
 #ylim = {"pres":{ "maxY": 1.0003, "minY": 0.9997} , "vel" : { "maxY": 0.00025, "minY": -0.00025}, "rho":{ "maxY": 2.0002, "minY": 1.9998}} 
 #xlim = {"minX" : 0, "maxX" : 4.3}
 #no need to specify maxY and minY if set useFirstYLim to true
-#ylim = {"pres":{"useFirstYLim": True} , "vel0" : {"useFirstYLim": True}, "vel1" : {"useFirstYLim": True}, "rho" : {"useFirstYLim" :  True}} 
-ylim = None
+ylim = {"pres":{"useFirstYLim": True} , "vel0" : {"useFirstYLim": True}, "vel1" : {"useFirstYLim": True}, "rho" : {"useFirstYLim" :  True}} 
+#ylim = None
 xlim = None
 
 

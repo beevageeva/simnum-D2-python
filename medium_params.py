@@ -8,8 +8,8 @@ from sys import exit
 p00 = 1.0
 v00 = 0.0
 
-#mediumType = "homog"
-mediumType = "inhomog"  #variable density rho00 to test with wave packet
+mediumType = "homog"
+#mediumType = "inhomog"  #variable density rho00 to test with wave packet
 
 if(mediumType=="homog"):
 	#rho00 = 2.0
@@ -19,9 +19,9 @@ if(mediumType=="homog"):
 
 elif(mediumType=="inhomog"):
 
-	#rhoType = 1
-	rhoType = 4
-	#TODO not used	
+	rhoType = 1
+	#rhoType = 4
+	#the following TODO not used	 (grad cs constante)
 	#rhoType = 3
 	#rhoType = 2
 
