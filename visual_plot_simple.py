@@ -19,8 +19,8 @@ saveImages = False
 
 
 
-#plotSeparateTraj = False
-plotSeparateTraj = True
+plotSeparateTraj = False
+#plotSeparateTraj = True
 
 
 #homog
@@ -71,7 +71,7 @@ class VisualPlot:
 			ax.imshow(vals)
 		ax.relim()
 		ax.autoscale_view(True,True,True)
-		fig.tight_layout(pad=0.2, w_pad=0.2, h_pad=0.2)
+		fig.tight_layout(pad=0.01)
 		arrayToAppendAxes.append(ax)
 
 

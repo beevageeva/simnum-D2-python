@@ -187,6 +187,11 @@ f_{m_{i+1,j+1},1} - f_{m_{i,j+1},1} )  +  \frac{1}{dz_1}
 \item argFunc puede ser una función lineal de $x_0$ y $x_1$ (en perturbatoin\_params waveType = "lineal") o radial (en este caso la perturbación de la velocidad se genera a partir del gradiente de la función de perturbación y la densidad y presión  de tal forma que cumplan las relaciones de las amplitudes)
 
 \end{description}
+\paragraph{Visualización}
+\begin{description}
+\item los valores de las  variables que quiero representar (p, \rho , v) son ahora arrays 2D y la velocidad tiene 2 componentes. Los dibujo como imagen y también puedo representar proyecciones de los valores en las 2 direcciones o en una dirección cualquiera
+\item en el caso "wavepacket" dibujo la trayectoria por encima de la imagen actual o también la puedo mostrar aparte (util por si está mal calculada! y luego no tengo que rehacer todo el calculo numérico )
+\end{description}
 	
 \subsection{Tests}
 
