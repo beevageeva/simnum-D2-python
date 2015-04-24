@@ -186,6 +186,9 @@ f_{m_{i+1,j+1},1} - f_{m_{i,j+1},1} )  +  \frac{1}{dz_1}
 \item la función de la perturbación(h) es ahora función de 2 variables(argFunc en perturbation\_params.py)  y la velocidad tiene 2 componentes
 \item argFunc puede ser una función lineal de $x_0$ y $x_1$ (en perturbatoin\_params waveType = "lineal") o radial (en este caso la perturbación de la velocidad se genera a partir del gradiente de la función de perturbación y la densidad y presión  de tal forma que cumplan las relaciones de las amplitudes)
 
+\paragraph{Condiciones de contorno}
+las mismas repeat , refl como en el caso 1D , añadí diff (que quería usar para la hankel) que se implemnetó usando la misma función para densidad , presión y velocidad que en caso refl para densidad y presión (el el caso refl la funcion para las condiciones de contorno para la velocdad era distinta)
+
 \end{description}
 \paragraph{Visualización}
 \begin{description}
@@ -421,10 +424,10 @@ $  e^{-\frac{W^2}{4}  (m-k_0)^2}   e^{-\frac{W^2}{4}(n-k_1)^2} e^{i  (k_0 x_0 + 
 
 \item \textbf{Caso inhomogéneo} $cs(x) = cs(x_0) \implies k1 $ constante  
 \begin{description}
-\item $k_1 = 0$ las trayectorias son rectas, si cs crece en la dirección de k inicial , $k_0$ decrece, la componente en la direccion $x_0$ de las otras
-componentes del paquete de ondas decrecen también y el paquete se abre
-De forma similar si cs decrece en esta dirección, $k_0$ crece y el paquete se alarga
-\item $k_0>0, k_1>0$ (el paquete va de izq arriba - derecha abajo), cs decrece en la direccion $x_0$ (arriba - abajo) , $k_0$ decrece y el paquete gira a la derecha
+\item $k_1 = 0$ las trayectorias son rectas, si cs crece en la dirección de k inicial , $k_0$ decrece (el paquete se alarga en la dirección $x_0$ como en el caso 1d , ver la proyección en esta dimensión)), 
+la componente en la direccion $x_0$ de las otras
+componentes  k del paquete de ondas decrecen también y el paquete se abre 
+\item $k_0>0, k_1>0$ (el paquete va de izq arriba - derecha abajo), cs crece en la direccion $x_0$ (arriba - abajo)  $ \implies k_0$ decreceen esta dirección y el paquete gira a la derecha
 
 \end{description}
 
@@ -433,7 +436,13 @@ De forma similar si cs decrece en esta dirección, $k_0$ crece y el paquete se a
 
 \paragraph{Videos}
 \begin{description}
-\item están en la carpeta videos. las simulaciones duran mucho y algunos tienen pequeños errores como en el caso de los  2 paquetes uno de los videos tiene la trayectoria de abajo calculada mal de forma analítica o el color de fondo que no queda constante (los límites del colormap en imshow). También debía haber guardado para cada simulación en la carpeta donde guardo las imagenes una copia de los ficheros *.py para saber exacatmente los parámetros de la perturbación , medio, condiciones de contorno,  esquema numérico,...
+\item están en la carpeta videos(el carton, 2 paquetes de onda (los nombres de los ficheros empiezan por 2p) 1 paquete de ondas ( el nombre empieza por 1p)
+( intentos de hankel con dependencia radial y la funcion de pert (hankel) repr el gradiente de velocidad - empiezan por h )
+ ). Las simulaciones duran mucho (nint = 1024 en las 2 direcciones)
+y algunos tienen pequeños errores como en el caso de los  2 paquetes uno de los videos tiene la trayectoria de abajo calculada mal de forma analítica o en el caso de 1 paquete de onda que  va en la misma direccion en cual varia la densidad (1pInV*.mp4)
+me olvidé poner los límites fijos para rhoCurve y  el 
+color de fondo  no queda constante (los límites del colormap en imshow)y tampoco los limites de esta variable en el gráfico de la proyección en esta dirección.
+. También debía haber guardado para cada simulación en la carpeta donde guardo las imagenes una copia de los ficheros *.py para saber exacatmente los parámetros de la perturbación , medio, condiciones de contorno,  esquema numérico,.. usados para cada experimento
 \end{description}
 
 
