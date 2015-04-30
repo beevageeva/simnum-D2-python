@@ -11,13 +11,19 @@ from constants import z0, zf
 from math import pi,sqrt
 from perturbation_params import argFunc
 
-k0 = 60.0
+#k0 = 60.0
 #k0 = 30.0
 #k0 = 50.0
+
+#5000.0 / 340 * 15000.0/3   first 5000 is freq (Hz)
+k0 = 73529
+#k0 = 100
+
 #k0 = 15.0
 #W = 0.05
-W = 0.2
-#W = 0.15
+#W = 0.2
+#W = 0.15 last
+W = 150.0
 
 #with rhoType = 1 k0=50 W = 0.15 works
 #with rhoType = 2 k0=60 W = 0.25 works ?
@@ -30,15 +36,14 @@ if mediumType == "homog":
 	zc = [0.5 * (z0[0]+ zf[0]), 0.5 * (z0[1] + zf[1])] #in the middle
 elif mediumType == "inhomog":
 	from medium_params import rhoType
-	if rhoType == 4:
-		zc = [z0[0] + 0.5 * (zf[0] - z0[0]), z0[1] + 0.15 * (zf[1] - z0[1])]
-	else:
+	if rhoType == 1:
 		from medium_params import  inhomogSubtype
 		if inhomogSubtype == 1:
 			zc = [z0[0] + 0.2 * (zf[0] - z0[0]), z0[1] + 0.2 * (zf[1] - z0[1])]
 		else:
 			zc = [z0[0] + 0.8 * (zf[0] - z0[0]), z0[1] + 0.2 * (zf[1] - z0[1])]
-
+	else:
+		zc = [z0[0] + 0.5 * (zf[0] - z0[0]), z0[1] + 0.1 * (zf[1] - z0[1])]
 #zc = [0.65 * (z0[0]+ zf[0]), 0.65 * (z0[1] + zf[1])] #at the end to test reflection
 
 def getSoundWaveGaussFunction(zc, W):
@@ -103,7 +108,7 @@ def getTrajectory(z, time):
 	#	k2 = k2[indexK]
 		useMirror = True
 	newz = np.ones(z[0].shape)	
-	dt = 0.01
+	dt = 0.0001
 	dz0 = getDz0()
 	dz1 = getDz1()
 	ind0 = getZIndex0(zc[0])	
@@ -118,6 +123,7 @@ def getTrajectory(z, time):
 		#gradCs1 = derivZ1(cs00z)
 		gradCs = np.gradient(cs00(z), getDz0(), getDz1())
 	#TODO this is a crap!
+	print("zc[0] = %e , zc[1] = %e " % (zc[0],zc[1]))
 	for i in range(len(k1)):
 		tt = 0
 		print("k1=%e,k2=%e" % (k1[i],k2[i]))	
@@ -166,5 +172,7 @@ def getTrajectory(z, time):
 					for j in range(ind1-lat,ind1+lat):
 						newz[i,j] = 0
 			tt+=dt
+	print("indices in mask = 0")
+	print(np.where(newz==0))	
 	return newz
 	

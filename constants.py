@@ -1,13 +1,15 @@
 gamma = 5.0/3
 
-z0 = [3.1, 3.1]
-zf = [7.4, 7.4]
+#z0 = [3.1, 3.1]
+#zf = [7.4, 7.4]
+
+z0 = [0,0]
+zf = [3200, 15000]
 
 
-
-domainType = "centered"   #argType = r expects a domainType = centered
+#domainType = "centered"   #argType = r expects a domainType = centered
 #domainType = "pos00" #use it with d1 and wave packet
-#domainType = "unmodified"
+domainType = "unmodified"
 
 if domainType == "centered":
 	#centered
@@ -25,12 +27,7 @@ elif domainType == "pos00":
 
 	
 
-#nint = 64
-#nint=128
-#nint =  256
-nint = 1024
-#nint = 2048
-#nint = 32
+nint = (512,1024)
 
 
 

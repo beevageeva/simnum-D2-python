@@ -1,8 +1,8 @@
 import matplotlib
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.ticker import FormatStrFormatter
-#useWindow = False
-useWindow = True
+useWindow = False
+#useWindow = True
 if useWindow:
 	matplotlib.use('TkAgg')
 else:
@@ -14,8 +14,8 @@ import sys, os
 
 from notifier_params import plots, plotAnalitical
 
-#saveImages = True
-saveImages = False
+saveImages = True
+#saveImages = False
 
 
 
@@ -31,7 +31,7 @@ plotSeparateTraj = False
 #ylim = {"pres":{ "maxY": 1.0003, "minY": 0.9997} , "vel" : { "maxY": 0.00025, "minY": -0.00025}, "rho":{ "maxY": 2.0002, "minY": 1.9998}} 
 #xlim = {"minX" : 0, "maxX" : 4.3}
 #no need to specify maxY and minY if set useFirstYLim to true
-ylim = {"pres":{"useFirstYLim": True} , "vel0" : {"useFirstYLim": True}, "vel1" : {"useFirstYLim": True}, "rho" : {"useFirstYLim" :  True}} 
+ylim = {"pres":{"useFirstYLim": True} , "vel0" : {"useFirstYLim": True}, "vel1" : {"useFirstYLim": True}, "rho" : {"useFirstYLim" :  True},  "rhoCurve" : {"useFirstYLim" :  True}} 
 #ylim = None
 xlim = None
 
@@ -76,12 +76,14 @@ class VisualPlot:
 
 
 	
-	def addAxisProj(self, ax, title, vals, markMaxValue = None, newz = None):
-		if newz is None:
-			newz = self.z[1][0]
+	def addAxisProj(self, ax, title, vals, newz, markMaxValue = None):
 		ax.set_xlabel("z")
 		ax.set_ylabel(title)
 		ax.grid(True)
+		#print("addAxisProj newzshape")	
+		#print(newz.shape)
+		#print("addAxisProj valsshape")	
+		#print(vals.shape)
 		ax.plot(newz, vals)
 		if(not markMaxValue is None):
 			ax.vlines(markMaxValue, np.min(vals[0]) if plotAnalitical else np.min(vals), np.max(vals[0]) if plotAnalitical else np.max(vals), color='b', label="max")
@@ -206,7 +208,11 @@ class VisualPlot:
 					markMaxValue = self.z[1][0][markMaxIndex]
 					#TODO if it works replace this by newtitle
 					self.maxPoints["dim0"][title] = markMaxValue
-				self.addAxisProj(ax, title, values, markMaxValue)
+				#print("prohj AXIS self.z[0] shape")
+				#print(self.z[0].shape)
+				#print("prohj AXIS self.z[1] shape")
+				#print(self.z[1].shape)
+				self.addAxisProj(ax, title, values, self.z[0][:,0], markMaxValue)
 				self.axes[title].append(ax)
 			if hasattr(self, "dim1ProjIndex"):
 				values = vals[self.dim1ProjIndex,:]
@@ -217,7 +223,7 @@ class VisualPlot:
 					markMaxIndex = np.argmax(values)
 					markMaxValue = self.z[1][0][markMaxIndex]
 					self.maxPoints["dim1"][title] = markMaxValue
-				self.addAxisProj(ax, title, values, markMaxValue)
+				self.addAxisProj(ax, title, values, self.z[1][0], markMaxValue)
 				self.axes[title].append(ax)
 			if hasattr(self, "projMask"):
 				values = vals[self.projMask]
@@ -239,7 +245,7 @@ class VisualPlot:
 					markMaxIndex = np.argmax(values)
 					markMaxValue = newz[markMaxIndex]
 					self.maxPoints["line"][title] = markMaxValue
-				self.addAxisProj(ax, title, values, markMaxValue, newz)
+				self.addAxisProj(ax, title, values, newz, markMaxValue)
 				self.axes[title].append(ax)
 
 			if testKeyInDict("color", plots):
@@ -293,9 +299,7 @@ class VisualPlot:
 		ax.relim()
 		ax.autoscale_view(True,True,True)
 
-	def updateAxisProj(self, ax, title, vals, markMaxValue = None, maxLegend = None, newz = None):
-		if newz is None:
-			newz =  self.z[1][0]	
+	def updateAxisProj(self, ax, title, vals, newz, markMaxValue = None, maxLegend = None):
 		ax.cla()
 		ax.set_xlabel("z")
 		ax.set_ylabel(title)
@@ -372,7 +376,7 @@ class VisualPlot:
 				maxSpeed  = getSpeedPeriodic0(markMaxValue, self.maxPoints["dim0"][title], dt)
 				markMaxTitle = "ms= %4.3f" % maxSpeed
 				self.maxPoints["dim0"][title] = markMaxValue
-			self.updateAxisProj(ax[ni], title, values, markMaxValue, markMaxTitle)
+			self.updateAxisProj(ax[ni], title, values,self.z[0][:,0], markMaxValue, markMaxTitle)
 			ni+=1
 		if hasattr(self, "dim1ProjIndex"):
 			values =  [vals[0][self.dim1ProjIndex,:], vals[1][self.dim1ProjIndex,:]] if plotAnalitical else vals[self.dim1ProjIndex,:]
@@ -384,7 +388,7 @@ class VisualPlot:
 				maxSpeed = getSpeedPeriodic1(markMaxValue, self.maxPoints["dim1"][title], dt)	
 				markMaxTitle = "ms= %4.3f" % maxSpeed
 				self.maxPoints["dim1"][title] = markMaxValue
-			self.updateAxisProj(ax[ni], title, values, markMaxValue, markMaxTitle)
+			self.updateAxisProj(ax[ni], title, values,self.z[1][0], markMaxValue, markMaxTitle)
 			ni+=1
 
 		if hasattr(self, "projMask"):
@@ -407,7 +411,7 @@ class VisualPlot:
 				#maxSpeed = getSpeedPeriodic1(markMaxValue, self.maxPoints["line"][title], dt)	
 				#markMaxTitle = "ms= %4.3f" % maxSpeed
 				self.maxPoints["line"][title] = markMaxValue
-			self.updateAxisProj(ax[ni], title, values, markMaxValue, markMaxTitle, newz)
+			self.updateAxisProj(ax[ni], title, values, newz, markMaxValue, markMaxTitle)
 			ni+=1
 
 		if testKeyInDict("color", plots):
@@ -454,7 +458,7 @@ class VisualPlot:
 		from common import getDz1, getDz0, nint
 		from scipy.fftpack import fft2,fftfreq,fftshift #forFourierTransform
 		
-		numPoints = nint+2
+		numPoints = (nint[0]+2) * (nint[1]+2)
 		Y=fft2(vals)/(numPoints)
 		#The mean is Y[0,0]
 		Y[0,0] = 0

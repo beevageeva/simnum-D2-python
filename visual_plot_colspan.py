@@ -529,7 +529,7 @@ class VisualPlot:
 	def fftplot(self, ax, vals):
 		from common import getDz1, getDz0, nint
 		
-		numPoints = nint+2
+		numPoints = (nint[0]+2) * (nint[1]+2)
 		Y=fft(vals)/(numPoints)
 		plotVals = np.absolute(Y)
 		

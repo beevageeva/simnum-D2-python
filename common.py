@@ -3,21 +3,21 @@ import numpy as np
 
 
 def getDz0():
-	return float(zf[0] - z0[0]) / nint
+	return float(zf[0] - z0[0]) / nint[0]
 
 def getDz1():
-	return float(zf[1] - z0[1]) / nint
+	return float(zf[1] - z0[1]) / nint[1]
 
 def getZArray():
 	dz0 = getDz0()
 	dz1 = getDz1()
-	a = np.linspace(z0[0]-0.5 *dz0, zf[0]+0.5*dz0, nint+2)
-	b = np.linspace(z0[1]-0.5 *dz1, zf[1]+0.5*dz1, nint+2)
+	a = np.linspace(z0[0]-0.5 *dz0, zf[0]+0.5*dz0, nint[0]+2)
+	b = np.linspace(z0[1]-0.5 *dz1, zf[1]+0.5*dz1, nint[1]+2)
 	return np.meshgrid(a, b, indexing='ij')
 
 
-def getArrayZShape(x0,y0,n=nint+2):
-	return np.array([[[x0,]*n,]*n,[[y0,]*n,]*n] )
+def getArrayZShape(x0,y0,n1=nint[0]+2, n2=nint[1]+2):
+	return np.array([[[x0,]*n2,]*n1,[[y0,]*n2,]*n1] )
 	
 
 def getPeriodicX(xval, a, b):
@@ -54,10 +54,10 @@ def getPeriodicX2(xval, a, b):
 	return xval
 
 def getZIndex0(z):
-	return int( float(nint+1)*(float(z) - z0[0])/(zf[0] - z0[0]) )
+	return int( float(nint[0]+1)*(float(z) - z0[0])/(zf[0] - z0[0]) )
 
 def getZIndex1(z):
-	return int( float(nint+1)*(float(z) - z0[1])/(zf[1] - z0[1]) )
+	return int( float(nint[1]+1)*(float(z) - z0[1])/(zf[1] - z0[1]) )
 
 
 def getSpeedPeriodic(newVal, oldVal, z0, zf, dt):
