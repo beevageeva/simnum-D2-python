@@ -15,9 +15,9 @@ from perturbation_params import argFunc
 #k0 = 30.0
 #k0 = 50.0
 
-from perturbation_params import getK0FromWavelength
-k0 = getK0FromWavelength(12.5455)
 #k0 = 100
+#use when in perturbation_params.py wlNorm = False
+k0 = 1.0 / 12.5495
 
 #k0 = 15.0
 #W = 0.05
@@ -83,7 +83,6 @@ def getSoundWaveFunction(argFunc, k0, zc, W):
 	"""
 	def gaussPacketFunction(z):
 		from common import getArrayZShape
-
 		return np.multiply(getSoundWaveGaussFunction(zc, W)(z),  np.cos(2.0 * pi * k0 * argFunc(z-getArrayZShape(z0[0], z0[1])) ) )
 	return gaussPacketFunction
 

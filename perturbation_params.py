@@ -25,19 +25,22 @@ if waveType == "lineal":
 	#argType = "y"
 	#argType = "d1" 
 	argType = "2d1" 
-	
+
+	wlNorm = False	
 
 	if(argType == "x"):
 		nx = 1.0
 		from common import getDz0
 		wl = zf[0] - z0[0] + getDz0()
-		k1 = nx / wl
+		if wlNorm:
+			k1 = nx / wl
+		else:
+			k1=1
 		#k1 = nx 
 		k2 = 0
 		argFunc = lambda x: k1 * x[0]
 		velFunc = lambda x: (x,np.zeros(x.shape))
 
-		getK0FromWavelength = lambda lbd: (wl * nx /lbd,  wl * nx /lbd)
 
 		
 	elif argType == "y":
@@ -46,11 +49,13 @@ if waveType == "lineal":
 		#ny = 3.0
 		ny = 1.0
 		k1=0
-		k2 = ny / wl
+		if wlNorm:
+			k2 = ny / wl
+		else:
+			k2=1
 		#k2 = ny
 		argFunc = lambda x: k2 * x[1]
 		velFunc = lambda x: (np.zeros(x.shape),x)
-		getK0FromWavelength = lambda lbd: (wl * ny /lbd,  wl * ny /lbd)
 	elif argType == "d1":
 		from common import getDz0, getDz1
 		wl1 = zf[0] - z0[0] + getDz0()
@@ -61,8 +66,12 @@ if waveType == "lineal":
 		ny = 4.0	
 		#nx= 4.0/7.0
 		#ny = 3.0/7.0	
-		k1 = nx/wl1
-		k2 = ny/wl2
+		if wlNorm:
+			k1 = nx/wl1
+			k2 = ny/wl2
+		else:
+			k1=nx/(nx+ny)
+			k2=ny/(nx+ny)
 		#k1 = nx
 		#k2 = ny
 		modk = math.sqrt(k1**2 + k2**2)
@@ -79,8 +88,12 @@ if waveType == "lineal":
 		ny = 15.0	
 		#nx= 4.0/7.0
 		#ny = 3.0/7.0	
-		k1o = nx/wl1
-		k2o = ny/wl2
+		if wlNorm:
+			k1o = nx/wl1
+			k2o = ny/wl2
+		else:
+			k1o=nx/(nx+ny)
+			k2o=ny/(nx+ny)
 		k1 = [k1o,-k1o]
 		k2 = [k2o,k2o]
 		#k1 = nx
