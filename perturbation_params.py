@@ -36,6 +36,9 @@ if waveType == "lineal":
 		k2 = 0
 		argFunc = lambda x: k1 * x[0]
 		velFunc = lambda x: (x,np.zeros(x.shape))
+
+		getK0FromWavelength = lambda lbd: (wl * nx /lbd,  wl * nx /lbd)
+
 		
 	elif argType == "y":
 		from common import getDz1
@@ -47,6 +50,7 @@ if waveType == "lineal":
 		#k2 = ny
 		argFunc = lambda x: k2 * x[1]
 		velFunc = lambda x: (np.zeros(x.shape),x)
+		getK0FromWavelength = lambda lbd: (wl * ny /lbd,  wl * ny /lbd)
 	elif argType == "d1":
 		from common import getDz0, getDz1
 		wl1 = zf[0] - z0[0] + getDz0()
@@ -64,6 +68,7 @@ if waveType == "lineal":
 		modk = math.sqrt(k1**2 + k2**2)
 		argFunc = lambda x: k1 * x[0] + k2 * x[1]
 		velFunc = lambda x: (k1/modk * x ,k2/modk * x)
+		getK0FromWavelength = lambda lbd: (wl1 * nx /lbd,  wl2 * ny /lbd)
 
 	#TODO implem general superpositoin
 	elif argType == "2d1":
@@ -83,6 +88,7 @@ if waveType == "lineal":
 		modk = math.sqrt(k1o**2 + k2o**2)
 		argFunc = [lambda x: k1o * x[0] + k2o * x[1], lambda x: -k1o * x[0] + k2o * x[1] ]
 		velFunc = [lambda x: (k1o/modk * x ,k2o/modk * x) , lambda x: (-k1o/modk * x ,k2o/modk * x)]
+		getK0FromWavelength = lambda lbd: (wl1 * nx /lbd,  wl2 * ny /lbd)
 
 elif waveType == "radial":
 	argFunc = lambda x: np.sqrt(x[0]**2+x[1]**2)

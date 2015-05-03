@@ -15,8 +15,8 @@ from perturbation_params import argFunc
 #k0 = 30.0
 #k0 = 50.0
 
-#5000.0 / 340 * 15000.0/3   first 5000 is freq (Hz)
-k0 = 73529
+from perturbation_params import getK0FromWavelength
+k0 = getK0FromWavelength(12.5455)
 #k0 = 100
 
 #k0 = 15.0
