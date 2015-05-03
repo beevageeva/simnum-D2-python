@@ -85,7 +85,8 @@ if waveType == "lineal":
 		wl1 = zf[0] - z0[0] + getDz0()
 		wl2 = zf[1] - z0[1] + getDz1()
 		nx= 1.0
-		ny = 15.0	
+		#ny = 15.0	
+		ny = 3.0	
 		#nx= 4.0/7.0
 		#ny = 3.0/7.0	
 		if wlNorm:

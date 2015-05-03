@@ -72,7 +72,8 @@ elif(mediumType=="inhomog"):
 
 
 	elif rhoType == 4:
-		ze = [0.02*(z0[0] + zf[0]),0.02*(z0[1] + zf[1])]
+		#ze = [0.02*(z0[0] + zf[0]),0.02*(z0[1] + zf[1])]
+		ze = [0.1*(z0[0] + zf[0]),0.1*(z0[1] + zf[1])]
 		rho00 = 0.05
 		rho01 = 0.8
 		#inversion termica
@@ -88,7 +89,9 @@ elif(mediumType=="inhomog"):
 		rho00 = p00/ (T00 * Rsp)
 		rho01 = p00/ (T01 * Rsp)
 		#end inversion termica
-		we = 0.07
+		#we = 0.07
+		#we = 0.7
+		we = 5.0
 		#we = 0.5#second exp of inhom
 		#I have to apply func (argument function) before applying tanh: see initcond_soundwave
 		densFunc = lambda z: 1 + np.tanh(z /we)
