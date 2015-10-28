@@ -9,13 +9,14 @@ from sys import exit
 A = 3.0 * 10.0 ** (-4)
 #A = 5.0 * 10.0 ** (-2)
 
-waveType = "lineal"
-#waveType = "radial"
-functionType = "wavepacket"
+#waveType = "lineal"
+waveType = "radial"
+#functionType = "wavepacket"
 #functionType = "wavepacket_carton"
 #functionType = "sine" 
 #functionType = "gauss" 
 #functionType = "hankel" 
+functionType = "stationary" 
 
 
 
@@ -79,7 +80,7 @@ if waveType == "lineal":
 		velFunc = lambda x: (k1/modk * x ,k2/modk * x)
 		getK0FromWavelength = lambda lbd: (wl1 * nx /lbd,  wl2 * ny /lbd)
 
-	#TODO implem general superpositoin
+	#TODO implem general superposition
 	elif argType == "2d1":
 		from common import getDz0, getDz1
 		wl1 = zf[0] - z0[0] + getDz0()
@@ -106,13 +107,12 @@ if waveType == "lineal":
 
 elif waveType == "radial":
 	argFunc = lambda x: np.sqrt(x[0]**2+x[1]**2)
-	from sound_wave_monochr_params import k
 	from medium_params import mediumType
 	if mediumType == "inhomog":
 		print("radial not impl for inhomog")
 		exit(0)
-	from medium_params import cs00
-	omega = cs00 * k
+	#radialType = "gradient"
+	radialType = "stationary"
 
 
 
