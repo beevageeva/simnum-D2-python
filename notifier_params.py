@@ -23,10 +23,10 @@ if waveType == "lineal":
 
 
 #use it in wave packet
-#plotPresFFT = False
-plotPresFFT = True
+plotPresFFT = False
+#plotPresFFT = True
 #plotVelFFT = True
 plotVelFFT = False
 
-#plotAnalitical = True
-plotAnalitical = False
+plotAnalitical = True
+#plotAnalitical = False

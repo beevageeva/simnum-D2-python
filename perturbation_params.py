@@ -15,8 +15,8 @@ waveType = "radial"
 #functionType = "wavepacket_carton"
 #functionType = "sine" 
 #functionType = "gauss" 
-#functionType = "hankel" 
-functionType = "stationary" 
+functionType = "hankel" 
+#functionType = "stationary" 
 
 
 
@@ -111,8 +111,6 @@ elif waveType == "radial":
 	if mediumType == "inhomog":
 		print("radial not impl for inhomog")
 		exit(0)
-	#radialType = "gradient"
-	radialType = "stationary"
 
 
 

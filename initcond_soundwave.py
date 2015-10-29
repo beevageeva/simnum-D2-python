@@ -27,13 +27,14 @@ def getGradientFunctionSym(functionType):
 
 
 def getRadialAnalitic(z, t):
-	from perturbation_params import A,  functionType, waveType, argFunc, radialType
+	from perturbation_params import A,  functionType, waveType, argFunc
 	from medium_params import p00, v00, cs00, rho00,  mediumType
 	from sound_wave_monochr_params import k
 	omega = cs00 * k
 	radius = np.sqrt(z[0]**2 + z[1]**2)
-	if radialType == "gradient":
-		w = getFunctionFromType(argFunc, functionType)
+	if functionType == "hankel":
+		from sound_wave_hankel_params import getSoundWaveFunction
+		w = getSoundWaveFunction(k)
 		#I have already argFunc called in the function definition
 		f = w(z)
 		#now w is the velocity potential # gradient
@@ -55,7 +56,9 @@ def getRadialAnalitic(z, t):
 		
 	
 		v1 = (v00 + A * np.real(fder * np.exp(-1j * t * omega))) / radius 
-		vel = np.dstack((v1 * z[0] , v1 * z[1]))
+		#vel = np.dstack((v1 * z[0] , v1 * z[1]))
+		#TODO changed	
+		vel = np.dstack((v1 * z[0]/radius , v1 * z[1]/radius))
 	#	n = len(z[0])
 	#	for i in range(n/2):
 	#		for j in range(n/2):
@@ -63,9 +66,6 @@ def getRadialAnalitic(z, t):
 	#			vel[n/2+i][n/2+j][0] *=-1
 	#			vel[n/2+i][n/2+j][1] *=-1
 	#			#change sign and assure symmetric
-	#			
-	#
-	#
 	#			vel[n/2-i-1][n/2-j-1][0] = -vel[n/2+i][n/2+j][0]
 	#			vel[n/2-i-1][n/2-j-1][1] = -vel[n/2+i][n/2+j][1]
 	#			vel[n/2-i-1][n/2+j][0] = vel[n/2+i][n/2+j][0]
@@ -79,13 +79,15 @@ def getRadialAnalitic(z, t):
 	##				vel[n/2-i-1][n/2+j][1] *= -1
 	##				vel[n/2+i][n/2-j-1][0] *= -1
 				
-		presPert = A * rho00* omega * np.real(1j  * f * np.exp(-1j * t * omega))
-	elif radialType == "stationary":
+		#presPert = A * rho00* omega * np.real(1j  * f * np.exp(-1j * t * omega))
+		#TODO changed 1j to -1j
+		presPert = A * rho00* omega * np.real(-1j  * f * np.exp(-1j * t * omega))
+	elif functionType == "stationary":
 		from math import pi
 		alpha = pi / 2
 		presPert = 2 * A / radius * np.cos(k*radius + alpha) * np.cos(omega * t)
 		v1 = v00 -2 * A / (rho00 * omega) * (-k / radius * np.sin(k * radius + alpha) - 1/ radius**2 * np.cos(k*radius + alpha) ) * np.sin(omega * t)
-		vel = np.dstack((v1 * z[0] , v1 * z[1]))
+		vel = np.dstack((v1 * z[0]/radius , v1 * z[1]/radius))
 	return {'pres': p00 + presPert , 'rho': rho00  + presPert / (cs00**2), 'vel': vel }
 
 
@@ -107,10 +109,6 @@ def getFunctionFromType(argFunc, functionType):
 		elif functionType == "wavepacket_carton":
 			from sound_wave_packet_carton_params import getSoundWaveFunction, k0, zc, W
 			w = getSoundWaveFunction(k0, zc, W)
-		elif functionType == "hankel":
-			from sound_wave_hankel_params import getSoundWaveFunction
-			from sound_wave_monochr_params import k
-			w = getSoundWaveFunction(k)
 		elif functionType == "defined":
 			from sound_wave_defined_params import getSoundWaveFunction
 	except ImportError:	
